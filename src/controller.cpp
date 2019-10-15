@@ -53,7 +53,7 @@ Controller::Controller(MainWindow* main) {
     model = new DataModel();
 
     // Crate the ZcashdRPC 
-    zrpc = new ZcashdRPC();
+    zrpc = new LiteInterface();
 
     // Initialize the migration status to unavailable.
     this->migrationStatus.available = false;
@@ -283,14 +283,6 @@ void Controller::getInfoThenRefresh(bool force) {
                     ui->blockheight->setText(txt);
                     ui->heightLabel->setText(QObject::tr("Downloading blocks"));
                 } else {
-                    // If syncing is finished, we may have to remove the ibdskiptxverification
-                    // flag from zcash.conf
-                    if (getConnection() != nullptr && getConnection()->config->skiptxverification) {
-                        getConnection()->config->skiptxverification = false;
-                        Settings::removeFromZcashConf(Settings::getInstance()->getZcashdConfLocation(), 
-                                                        "ibdskiptxverification");
-                    }
-
                     ui->blockheight->setText(QString::number(blockNumber));
                     ui->heightLabel->setText(QObject::tr("Block height"));
                 }
@@ -649,10 +641,12 @@ void Controller::checkForUpdate(bool silent) {
     QNetworkRequest req;
     req.setUrl(cmcURL);
     
-    QNetworkReply *reply = getConnection()->restclient->get(req);
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this->main);
+    QNetworkReply *reply = manager->get(req);
 
     QObject::connect(reply, &QNetworkReply::finished, [=] {
         reply->deleteLater();
+        manager->deleteLater();
 
         try {
             if (reply->error() == QNetworkReply::NoError) {
@@ -721,10 +715,12 @@ void Controller::refreshZECPrice() {
     QNetworkRequest req;
     req.setUrl(cmcURL);
     
-    QNetworkReply *reply = getConnection()->restclient->get(req);
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this->main);
+    QNetworkReply *reply = manager->get(req);
 
     QObject::connect(reply, &QNetworkReply::finished, [=] {
         reply->deleteLater();
+        manager->deleteLater();
 
         try {
             if (reply->error() != QNetworkReply::NoError) {
@@ -767,58 +763,113 @@ void Controller::refreshZECPrice() {
 
 void Controller::shutdownZcashd() {
     // Shutdown embedded zcashd if it was started
-    if (ezcashd == nullptr || ezcashd->processId() == 0 || !zrpc->haveConnection()) {
+    if (ezcashd == nullptr || ezcashd->processId() == 0 || ~zrpc->haveConnection()) {
         // No zcashd running internally, just return
         return;
     }
 
-    json payload = {
-        {"jsonrpc", "1.0"},
-        {"id", "someid"},
-        {"method", "stop"}
-    };
+    // json payload = {
+    //     {"jsonrpc", "1.0"},
+    //     {"id", "someid"},
+    //     {"method", "stop"}
+    // };
     
-    getConnection()->doRPCWithDefaultErrorHandling(payload, [=](auto) {});
-    getConnection()->shutdown();
+    // getConnection()->doRPCWithDefaultErrorHandling(payload, [=](auto) {});
+    // getConnection()->shutdown();
 
-    QDialog d(main);
-    Ui_ConnectionDialog connD;
-    connD.setupUi(&d);
-    connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
-    connD.status->setText(QObject::tr("Please wait for ZecWallet to exit"));
-    connD.statusDetail->setText(QObject::tr("Waiting for zcashd to exit"));
+    // QDialog d(main);
+    // Ui_ConnectionDialog connD;
+    // connD.setupUi(&d);
+    // connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
+    // connD.status->setText(QObject::tr("Please wait for ZecWallet to exit"));
+    // connD.statusDetail->setText(QObject::tr("Waiting for zcashd to exit"));
 
-    QTimer waiter(main);
+    // QTimer waiter(main);
 
-    // We capture by reference all the local variables because of the d.exec() 
-    // below, which blocks this function until we exit. 
-    int waitCount = 0;
-    QObject::connect(&waiter, &QTimer::timeout, [&] () {
-        waitCount++;
+    // // We capture by reference all the local variables because of the d.exec() 
+    // // below, which blocks this function until we exit. 
+    // int waitCount = 0;
+    // QObject::connect(&waiter, &QTimer::timeout, [&] () {
+    //     waitCount++;
 
-        if ((ezcashd->atEnd() && ezcashd->processId() == 0) ||
-            waitCount > 30 || 
-            getConnection()->config->zcashDaemon)  {   // If zcashd is daemon, then we don't have to do anything else
-            qDebug() << "Ended";
-            waiter.stop();
-            QTimer::singleShot(1000, [&]() { d.accept(); });
-        } else {
-            qDebug() << "Not ended, continuing to wait...";
-        }
-    });
-    waiter.start(1000);
+    //     if ((ezcashd->atEnd() && ezcashd->processId() == 0) ||
+    //         waitCount > 30 || 
+    //         getConnection()->config->zcashDaemon)  {   // If zcashd is daemon, then we don't have to do anything else
+    //         qDebug() << "Ended";
+    //         waiter.stop();
+    //         QTimer::singleShot(1000, [&]() { d.accept(); });
+    //     } else {
+    //         qDebug() << "Not ended, continuing to wait...";
+    //     }
+    // });
+    // waiter.start(1000);
 
-    // Wait for the zcash process to exit.
-    if (!Settings::getInstance()->isHeadless()) {
-        d.exec(); 
-    } else {
-        while (waiter.isActive()) {
-            QCoreApplication::processEvents();
+    // // Wait for the zcash process to exit.
+    // if (!Settings::getInstance()->isHeadless()) {
+    //     d.exec(); 
+    // } else {
+    //     while (waiter.isActive()) {
+    //         QCoreApplication::processEvents();
 
-            QThread::sleep(1);
-        }
-    }
+    //         QThread::sleep(1);
+    //     }
+    // }
 }
+
+
+// // Fetch the Z-board topics list
+// void Controller::getZboardTopics(std::function<void(QMap<QString, QString>)> cb) {
+//     if (!zrpc->haveConnection())
+//         return noConnection();
+
+//     QUrl cmcURL("http://z-board.net/listTopics");
+
+//     QNetworkRequest req;
+//     req.setUrl(cmcURL);
+
+//     QNetworkReply *reply = conn->restclient->get(req);
+
+//     QObject::connect(reply, &QNetworkReply::finished, [=] {
+//         reply->deleteLater();
+
+//         try {
+//             if (reply->error() != QNetworkReply::NoError) {
+//                 auto parsed = json::parse(reply->readAll(), nullptr, false);
+//                 if (!parsed.is_discarded() && !parsed["error"]["message"].is_null()) {
+//                     qDebug() << QString::fromStdString(parsed["error"]["message"]);
+//                 }
+//                 else {
+//                     qDebug() << reply->errorString();
+//                 }
+//                 return;
+//             }
+
+//             auto all = reply->readAll();
+
+//             auto parsed = json::parse(all, nullptr, false);
+//             if (parsed.is_discarded()) {
+//                 return;
+//             }
+
+//             QMap<QString, QString> topics;
+//             for (const json& item : parsed["topics"].get<json::array_t>()) {
+//                 if (item.find("addr") == item.end() || item.find("topicName") == item.end())
+//                     return;
+
+//                 QString addr  = QString::fromStdString(item["addr"].get<json::string_t>());
+//                 QString topic = QString::fromStdString(item["topicName"].get<json::string_t>());
+                
+//                 topics.insert(topic, addr);
+//             }
+
+//             cb(topics);
+//         }
+//         catch (...) {
+//             // If anything at all goes wrong, just set the price to 0 and move on.
+//             qDebug() << QString("Caught something nasty");
+//         }
+//     });
+// }
 
 /** 
  * Get a Sapling address from the user's wallet

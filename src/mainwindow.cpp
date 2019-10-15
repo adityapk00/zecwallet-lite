@@ -715,29 +715,29 @@ void MainWindow::backupWalletDat() {
     if (!rpc->getConnection())
         return;
 
-    QDir zcashdir(rpc->getConnection()->config->zcashDir);
-    QString backupDefaultName = "zcash-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
+    // QDir zcashdir(rpc->getConnection()->config->zcashDir);
+    // QString backupDefaultName = "zcash-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
 
-    if (Settings::getInstance()->isTestnet()) {
-        zcashdir.cd("testnet3");
-        backupDefaultName = "testnet-" + backupDefaultName;
-    }
+    // if (Settings::getInstance()->isTestnet()) {
+    //     zcashdir.cd("testnet3");
+    //     backupDefaultName = "testnet-" + backupDefaultName;
+    // }
     
-    QFile wallet(zcashdir.filePath("wallet.dat"));
-    if (!wallet.exists()) {
-        QMessageBox::critical(this, tr("No wallet.dat"), tr("Couldn't find the wallet.dat on this computer") + "\n" +
-            tr("You need to back it up from the machine zcashd is running on"), QMessageBox::Ok);
-        return;
-    }
+    // QFile wallet(zcashdir.filePath("wallet.dat"));
+    // if (!wallet.exists()) {
+    //     QMessageBox::critical(this, tr("No wallet.dat"), tr("Couldn't find the wallet.dat on this computer") + "\n" +
+    //         tr("You need to back it up from the machine zcashd is running on"), QMessageBox::Ok);
+    //     return;
+    // }
     
-    QUrl backupName = QFileDialog::getSaveFileUrl(this, tr("Backup wallet.dat"), backupDefaultName, "Data file (*.dat)");
-    if (backupName.isEmpty())
-        return;
+    // QUrl backupName = QFileDialog::getSaveFileUrl(this, tr("Backup wallet.dat"), backupDefaultName, "Data file (*.dat)");
+    // if (backupName.isEmpty())
+    //     return;
 
-    if (!wallet.copy(backupName.toLocalFile())) {
-        QMessageBox::critical(this, tr("Couldn't backup"), tr("Couldn't backup the wallet.dat file.") + 
-            tr("You need to back it up manually."), QMessageBox::Ok);
-    }
+    // if (!wallet.copy(backupName.toLocalFile())) {
+    //     QMessageBox::critical(this, tr("Couldn't backup"), tr("Couldn't backup the wallet.dat file.") + 
+    //         tr("You need to back it up manually."), QMessageBox::Ok);
+    // }
 }
 
 void MainWindow::exportAllKeys() {

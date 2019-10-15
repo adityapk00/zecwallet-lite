@@ -8,7 +8,7 @@
 #include "txtablemodel.h"
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
-#include "zcashdrpc.h"
+#include "liteinterface.h"
 #include "connection.h"
 
 using json = nlohmann::json;
@@ -109,7 +109,7 @@ private:
     BalancesTableModel*         balancesTableModel          = nullptr;
 
     DataModel*                  model;
-    ZcashdRPC*                  zrpc;
+    LiteInterface*               zrpc;
 
     QTimer*                     timer;
     QTimer*                     txTimer;

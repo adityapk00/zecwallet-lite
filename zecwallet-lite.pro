@@ -62,7 +62,7 @@ SOURCES += \
     src/viewalladdresses.cpp \
     src/datamodel.cpp \
     src/controller.cpp \
-    src/zcashdrpc.cpp 
+    src/liteinterface.cpp 
 
 HEADERS += \
     src/mainwindow.h \
@@ -91,7 +91,7 @@ HEADERS += \
     src/viewalladdresses.h \
     src/datamodel.h \
     src/controller.h \
-    src/zcashdrpc.h \
+    src/liteinterface.h \
     lib/zecwalletlitelib.h 
 
 FORMS += \

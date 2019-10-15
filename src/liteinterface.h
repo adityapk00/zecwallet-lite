@@ -19,10 +19,10 @@ struct TransactionItem {
 };
 
 
-class ZcashdRPC {
+class LiteInterface {
 public:
-    ZcashdRPC();
-    ~ZcashdRPC();
+    LiteInterface();
+    ~LiteInterface();
 
     bool haveConnection();
     void setConnection(Connection* c);
