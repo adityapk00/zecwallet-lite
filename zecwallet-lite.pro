@@ -91,7 +91,8 @@ HEADERS += \
     src/viewalladdresses.h \
     src/datamodel.h \
     src/controller.h \
-    src/zcashdrpc.h 
+    src/zcashdrpc.h \
+    lib/zecwalletlitelib.h 
 
 FORMS += \
     src/mainwindow.ui \
@@ -133,28 +134,32 @@ QMAKE_INFO_PLIST = res/Info.plist
 win32: RC_ICONS = res/icon.ico
 ICON = res/logo.icns
 
-libsodium.target = $$PWD/res/libsodium.a
-libsodium.commands = res/libsodium/buildlibsodium.sh
-
-QMAKE_EXTRA_TARGETS += libsodium
-QMAKE_CLEAN += res/libsodium.a
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/res/ -llibsodium
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/res/ -llibsodiumd
-else:unix: LIBS += -L$$PWD/res/ -lsodium
+unix:        librust.target   = $$PWD/lib/target/release/libzecwalletlite.a
+else:win32:  librust.target   = $$PWD/lib/target/x86_64-pc-windows-gnu/release/zecwalletlite.lib
+
+unix:        librust.commands = $(MAKE) -C $$PWD/lib 
+else:win32:  librust.commands = $(MAKE) -C $$PWD/lib winrelease
+
+librustclean.commands = "rm -rf $$PWD/lib/target"
+distclean.depends += librustclean
+
+
+QMAKE_EXTRA_TARGETS += librust librustclean distclean
+QMAKE_CLEAN += $$PWD/lib/target/release/libzecwalletlite.a
+
+win32: LIBS += -L$$PWD/lib/target/x86_64-pc-windows-gnu/release -lzecwalletlite
+else:macx: LIBS += -L$$PWD/lib/target/release -lzecwalletlite -framework Security -framework Foundation
+else:unix: LIBS += -L$$PWD/lib/target/release -lzecwalletlite -ldl 
+
+win32: PRE_TARGETDEPS += $$PWD/lib/target/x86_64-pc-windows-gnu/release/zecwalletlite.lib
+else:unix::PRE_TARGETDEPS += $$PWD/lib/target/release/libzecwalletlite.a
 
 INCLUDEPATH += $$PWD/res
 DEPENDPATH += $$PWD/res
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/res/liblibsodium.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/res/liblibsodium.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/res/libsodium.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/res/libsodiumd.lib
-else:unix: PRE_TARGETDEPS += $$PWD/res/libsodium.a
 
 DISTFILES +=
