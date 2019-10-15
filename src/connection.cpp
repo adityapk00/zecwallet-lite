@@ -23,8 +23,8 @@ ConnectionLoader::ConnectionLoader(MainWindow* main, Controller* rpc) {
 }
 
 ConnectionLoader::~ConnectionLoader() {    
-    delete d;
     delete connD;
+    delete d;
 }
 
 void ConnectionLoader::loadConnection() {
@@ -34,6 +34,8 @@ void ConnectionLoader::loadConnection() {
 }
 
 void ConnectionLoader::doAutoConnect(bool tryEzcashdStart) {
+    qDebug() << "Doing autoconnect";
+
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
     config->dangerous = true;
     config->server = QString("https://127.0.0.1:9067");
@@ -46,7 +48,6 @@ void ConnectionLoader::doAutoConnect(bool tryEzcashdStart) {
     // After the lib is initialized, try to do get info
     connection->doRPC("info", "", [=](auto reply) {
        // If success, set the connection
-        d->hide();
         main->logger->write("Connection is online.");
         this->doRPCSetConnection(connection); 
     }, [=](auto err, auto errJson) {});
@@ -57,7 +58,7 @@ void ConnectionLoader::doRPCSetConnection(Connection* conn) {
     
     d->accept();
 
-    delete this;
+    QTimer::singleShot(1, [=]() { delete this; });
 }
 
 Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> config) {
@@ -97,9 +98,17 @@ void ConnectionLoader::showError(QString explanation) {
 
 void Executor::run() {
     char* resp = litelib_execute(this->cmd.toStdString().c_str());
-    QString reply = QString::fromStdString(resp);
+
+    // Copy the string, since we need to return this back to rust
+    char* resp_copy = new char[strlen(resp) + 1];
+    strcpy(resp_copy, resp);
     litelib_rust_free_string(resp);
 
+    QString reply = QString::fromStdString(resp_copy);
+    memset(resp_copy, '-', strlen(resp_copy));
+    delete[] resp_copy;
+
+    qDebug() << "Reply=" << reply;    
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
 
     emit responseReady(parsed);
@@ -130,7 +139,7 @@ void Connection::doRPC(const QString cmd, const QString args, const std::functio
     QObject::connect(runner, &Executor::responseReady, [=] (json resp) {
         cb(resp);
     });
-    
+
     QThreadPool::globalInstance()->start(runner);    
 }
 
