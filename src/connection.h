@@ -9,24 +9,9 @@ using json = nlohmann::json;
 
 class Controller;
 
-enum ConnectionType {
-    DetectedConfExternalZcashD = 1,
-    UISettingsZCashD,
-    InternalZcashD
-};
-
 struct ConnectionConfig {
-    QString host;
-    QString port;
-    QString rpcuser;
-    QString rpcpassword;
-    bool    usingZcashConf;
-    bool    zcashDaemon;
-    bool    skiptxverification;
-    QString zcashDir;
-    QString proxy;
-
-    ConnectionType connType;
+    QString server;
+    bool    dangerous;
 };
 
 class Connection;
@@ -81,17 +66,35 @@ private:
     QTime downloadTime;
 };
 
+class Executor : public QRunnable {
+public: 
+    Executor(QString cmd, QString args) {
+        this->cmd = cmd;
+        this->args = args;
+    };
+
+    ~Executor() = default;
+    bool autoDelete() const { return true; }
+
+    virtual void run();
+
+signals:
+    void responseReady(json);    
+
+private:
+    QString cmd;
+    QString args;    
+}
+
 /**
  * Represents a connection to a zcashd. It may even start a new zcashd if needed.
  * This is also a UI class, so it may show a dialog waiting for the connection.
 */
-class Connection {
+class Connection : public QObject {
 public:
-    Connection(MainWindow* m, QNetworkAccessManager* c, QNetworkRequest* r, std::shared_ptr<ConnectionConfig> conf);
+    Connection(MainWindow* m, std::shared_ptr<ConnectionConfig> conf);
     ~Connection();
 
-    QNetworkAccessManager*              restclient;
-    QNetworkRequest*                    request;
     std::shared_ptr<ConnectionConfig>   config;
     MainWindow*                         main;
 

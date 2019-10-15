@@ -18,7 +18,7 @@ lazy_static! {
 
 // Initialize a new lightclient and store its value
 #[no_mangle]
-pub extern fn initialze(dangerous: bool, server: *const c_char) -> *mut c_char {
+pub extern fn litelib_initialze(dangerous: bool, server: *const c_char) -> *mut c_char {
     let server_str = unsafe {
         assert!(!server.is_null());
 
@@ -49,7 +49,7 @@ pub extern fn initialze(dangerous: bool, server: *const c_char) -> *mut c_char {
 }
 
 #[no_mangle]
-pub extern fn execute(cmd: *const c_char) -> *mut c_char {
+pub extern fn litelib_execute(cmd: *const c_char) -> *mut c_char {
     let cmd_str = unsafe {
         assert!(!cmd.is_null());
 
@@ -77,7 +77,7 @@ pub extern fn execute(cmd: *const c_char) -> *mut c_char {
  * back to rust, so it can be freed. Failure to call this function will result in a memory leak
  */ 
 #[no_mangle]
-pub extern fn rust_free_string(s: *mut c_char) {
+pub extern fn litelib_rust_free_string(s: *mut c_char) {
     unsafe {
         if s.is_null() { return }
         CString::from_raw(s)
