@@ -24,7 +24,7 @@ make clean
 if [[ "$OSTYPE" == "darwin"* ]]; then
     make CFLAGS="-mmacosx-version-min=10.11" CPPFLAGS="-mmacosx-version-min=10.11" -j4
 else
-    make -j4
+    make -j8
 fi
 cd ..
 
