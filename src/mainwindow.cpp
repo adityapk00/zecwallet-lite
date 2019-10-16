@@ -17,7 +17,6 @@
 #include "balancestablemodel.h"
 #include "settings.h"
 #include "version.h"
-#include "turnstile.h"
 #include "senttxstore.h"
 #include "connection.h"
 #include "requestdialog.h"
@@ -141,7 +140,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setupTransactionsTab();
     setupReceiveTab();
     setupBalancesTab();
-    setupTurnstileDialog();
     setupZcashdTab();
 
     rpc = new Controller(this);
@@ -221,21 +219,6 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     // Bubble up
     if (event)
         QMainWindow::closeEvent(event);
-}
-
-
-void MainWindow::setupTurnstileDialog() {        
-    // Turnstile migration
-    QObject::connect(ui->actionTurnstile_Migration, &QAction::triggered, [=] () {
-        // If the underlying zcashd has support for the migration and there is no existing migration
-        // in progress, use that.         
-        if (rpc->getMigrationStatus()->available) {
-            Turnstile::showZcashdMigration(this);
-        } else {
-            // Else, do nothing
-        }
-    });
-
 }
 
 void MainWindow::setupStatusBar() {

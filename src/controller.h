@@ -82,14 +82,10 @@ public:
     QString getDefaultSaplingAddress();
     QString getDefaultTAddress();   
     
-    const MigrationStatus*      getMigrationStatus() { return &migrationStatus; }
-    void  setMigrationStatus(bool status) { zrpc->setMigrationStatus(status); }
-    
 private:
     void refreshBalances();
 
     void refreshTransactions();    
-    void refreshMigration();
     void refreshSentZTrans();
     void refreshReceivedZTrans(QList<QString> zaddresses);
 
@@ -115,8 +111,6 @@ private:
     Ui::MainWindow*             ui;
     MainWindow*                 main;
 
-    // Sapling turnstile migration status (for the zcashd v2.0.5 tool)
-    MigrationStatus             migrationStatus;
 
     // Current balance in the UI. If this number updates, then refresh the UI
     QString                     currentBalance;

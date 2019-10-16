@@ -93,7 +93,6 @@ private:
     void setupBalancesTab();
     void setupZcashdTab();
 
-    void setupTurnstileDialog();
     void setupSettingsModal();
     void setupStatusBar();
     

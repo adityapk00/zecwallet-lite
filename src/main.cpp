@@ -4,7 +4,6 @@
 #include "mainwindow.h"
 #include "controller.h"
 #include "settings.h"
-#include "turnstile.h"
 
 #include "version.h"
 

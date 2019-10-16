@@ -3,7 +3,6 @@
 #include "addressbook.h"
 #include "settings.h"
 #include "senttxstore.h"
-#include "turnstile.h"
 #include "version.h"
 #include "websockets.h"
 
@@ -54,9 +53,6 @@ Controller::Controller(MainWindow* main) {
 
     // Crate the ZcashdRPC 
     zrpc = new LiteInterface();
-
-    // Initialize the migration status to unavailable.
-    this->migrationStatus.available = false;
 }
 
 Controller::~Controller() {
@@ -235,66 +231,7 @@ void Controller::getInfoThenRefresh(bool force) {
             refreshBalances();        
             refreshAddresses();     // This calls refreshZSentTransactions() and refreshReceivedZTrans()
             refreshTransactions();
-            refreshMigration();     // Sapling turnstile migration status.
         }
-
-        // Call to see if the blockchain is syncing. 
-        zrpc->fetchBlockchainInfo([=](const json& reply) {
-            auto progress    = reply["verificationprogress"].get<double>();
-            bool isSyncing   = progress < 0.9999; // 99.99%
-            int  blockNumber = reply["blocks"].get<json::number_unsigned_t>();
-
-            int estimatedheight = 0;
-            if (reply.find("estimatedheight") != reply.end()) {
-                estimatedheight = reply["estimatedheight"].get<json::number_unsigned_t>();
-            }
-
-            Settings::getInstance()->setSyncing(isSyncing);
-            Settings::getInstance()->setBlockNumber(blockNumber);
-
-            // Update zcashd tab if it exists
-            if (ezcashd) {
-                if (isSyncing) {
-                    QString txt = QString::number(blockNumber);
-                    if (estimatedheight > 0) {
-                        txt = txt % " / ~" % QString::number(estimatedheight);
-                    }
-                    txt = txt %  " ( " % QString::number(progress * 100, 'f', 2) % "% )";
-                    ui->blockheight->setText(txt);
-                    ui->heightLabel->setText(QObject::tr("Downloading blocks"));
-                } else {
-                    ui->blockheight->setText(QString::number(blockNumber));
-                    ui->heightLabel->setText(QObject::tr("Block height"));
-                }
-            }
-
-            // Update the status bar
-            QString statusText = QString() %
-                (isSyncing ? QObject::tr("Syncing") : QObject::tr("Connected")) %
-                " (" %
-                (Settings::getInstance()->isTestnet() ? QObject::tr("testnet:") : "") %
-                QString::number(blockNumber) %
-                (isSyncing ? ("/" % QString::number(progress*100, 'f', 2) % "%") : QString()) %
-                ")";
-            main->statusLabel->setText(statusText);   
-
-            // Update the balances view to show a warning if the node is still syncing
-            ui->lblSyncWarning->setVisible(isSyncing);
-            ui->lblSyncWarningReceive->setVisible(isSyncing);
-
-            auto zecPrice = Settings::getInstance()->getUSDFromZecAmount(1);
-            QString tooltip;
-            tooltip = QObject::tr("Connected to zcashd");
-            
-            tooltip = tooltip % "(v " % QString::number(Settings::getInstance()->getZcashdVersion()) % ")";
-
-            if (!zecPrice.isEmpty()) {
-                tooltip = "1 " % Settings::getTokenName() % " = " % zecPrice % "\n" % tooltip;
-            }
-            main->statusLabel->setToolTip(tooltip);
-            main->statusIcon->setToolTip(tooltip);
-        });
-
     }, [=](QString err) {
         // zcashd has probably disappeared.
         this->noConnection();
@@ -377,29 +314,6 @@ bool Controller::processUnspent(const json& reply, QMap<QString, qint64>* balanc
 
     return anyUnconfirmed;
 };
-
-/**
- * Refresh the turnstile migration status
- */
-void Controller::refreshMigration() {
-    // Turnstile migration is only supported in zcashd v2.0.5 and above
-    if (Settings::getInstance()->getZcashdVersion() < 2000552)
-        return;
-
-    zrpc->fetchMigrationStatus([=](json reply) {
-        this->migrationStatus.available = true;
-        this->migrationStatus.enabled   = reply["enabled"].get<json::boolean_t>();
-        this->migrationStatus.saplingAddress = QString::fromStdString(reply["destination_address"]);
-        this->migrationStatus.unmigrated = QString::fromStdString(reply["unmigrated_amount"]).toDouble();
-        this->migrationStatus.migrated = QString::fromStdString(reply["finalized_migrated_amount"]).toDouble();
-
-        QList<QString> ids;
-        for (auto& it : reply["migration_txids"].get<json::array_t>()) {
-            ids.push_back(QString::fromStdString(it.get<json::string_t>()));
-        }
-        this->migrationStatus.txids = ids;
-    });
-}
 
 void Controller::refreshBalances() {    
     if (!zrpc->haveConnection()) 
