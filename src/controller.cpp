@@ -70,13 +70,6 @@ Controller::~Controller() {
     delete zrpc;
 }
 
-void Controller::setEZcashd(QProcess* p) {
-    ezcashd = p;
-
-    if (ezcashd && ui->tabWidget->widget(4) == nullptr) {
-        ui->tabWidget->addTab(main->zcashdtab, "zcashd");
-    }
-}
 
 // Called when a connection to zcashd is available. 
 void Controller::setConnection(Connection* c) {
@@ -209,10 +202,13 @@ void Controller::getInfoThenRefresh(bool force) {
     static bool prevCallSucceeded = false;
 
     zrpc->fetchInfo([=] (const json& reply) {   
+        qDebug() << "Info updated";
+
         prevCallSucceeded = true;
+
         // Testnet?
-        if (!reply["testnet"].is_null()) {
-            Settings::getInstance()->setTestnet(reply["testnet"].get<json::boolean_t>());
+        if (!reply["chain_name"].is_null()) {
+            Settings::getInstance()->setTestnet(reply["chain_name"].get<json::string_t>() == "test");
         };
 
         // Recurring pamynets are testnet only
@@ -224,8 +220,9 @@ void Controller::getInfoThenRefresh(bool force) {
         main->statusIcon->setPixmap(i.pixmap(16, 16));
 
         static int    lastBlock = 0;
-        int curBlock  = reply["blocks"].get<json::number_integer_t>();
-        int version = reply["version"].get<json::number_integer_t>();
+        int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
+        //int version = reply["version"].get<json::string_t>();
+        int version = 1;
         Settings::getInstance()->setZcashdVersion(version);
 
         // See if recurring payments needs anything
@@ -240,23 +237,6 @@ void Controller::getInfoThenRefresh(bool force) {
             refreshTransactions();
             refreshMigration();     // Sapling turnstile migration status.
         }
-
-        int connections = reply["connections"].get<json::number_integer_t>();
-        Settings::getInstance()->setPeers(connections);
-
-        if (connections == 0) {
-            // If there are no peers connected, then the internet is probably off or something else is wrong. 
-            QIcon i = QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
-            main->statusIcon->setPixmap(i.pixmap(16, 16));
-        }
-
-        // Get network sol/s
-        if (ezcashd) {
-            zrpc->fetchNetSolOps([=] (qint64 solrate) {
-                ui->numconnections->setText(QString::number(connections));
-                ui->solrate->setText(QString::number(solrate) % " Sol/s");
-            });
-        } 
 
         // Call to see if the blockchain is syncing. 
         zrpc->fetchBlockchainInfo([=](const json& reply) {
@@ -304,12 +284,8 @@ void Controller::getInfoThenRefresh(bool force) {
 
             auto zecPrice = Settings::getInstance()->getUSDFromZecAmount(1);
             QString tooltip;
-            if (connections > 0) {
-                tooltip = QObject::tr("Connected to zcashd");
-            }
-            else {
-                tooltip = QObject::tr("zcashd has no peer connections");
-            }
+            tooltip = QObject::tr("Connected to zcashd");
+            
             tooltip = tooltip % "(v " % QString::number(Settings::getInstance()->getZcashdVersion()) % ")";
 
             if (!zecPrice.isEmpty()) {
@@ -428,9 +404,9 @@ void Controller::refreshBalances() {
 
     // 1. Get the Balances
     zrpc->fetchBalance([=] (json reply) {    
-        auto balT      = QString::fromStdString(reply["transparent"]).toDouble();
-        auto balZ      = QString::fromStdString(reply["private"]).toDouble();
-        auto balTotal  = QString::fromStdString(reply["total"]).toDouble();
+        auto balT      = reply["tbalance"].get<json::number_unsigned_t>();
+        auto balZ      = reply["zbalance"].get<json::number_unsigned_t>();
+        auto balTotal  = balT + balZ;
 
         AppDataModel::getInstance()->setBalances(balT, balZ);
 
@@ -763,7 +739,7 @@ void Controller::refreshZECPrice() {
 
 void Controller::shutdownZcashd() {
     // Shutdown embedded zcashd if it was started
-    if (ezcashd == nullptr || ezcashd->processId() == 0 || ~zrpc->haveConnection()) {
+    if (ezcashd == nullptr || ezcashd->processId() == 0 || !zrpc->haveConnection()) {
         // No zcashd running internally, just return
         return;
     }

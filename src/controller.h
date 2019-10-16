@@ -40,9 +40,6 @@ public:
     Connection* getConnection() { return zrpc->getConnection(); }
     void setConnection(Connection* c);
 
-    void setEZcashd(QProcess* p);
-    const QProcess* getEZcashD() { return ezcashd; }
-
     void refresh(bool force = false);
     void refreshAddresses();    
     

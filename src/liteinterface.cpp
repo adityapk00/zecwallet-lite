@@ -179,14 +179,7 @@ void LiteInterface::fetchBalance(const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "z_gettotalbalance"},
-    //     {"params", {0}}             // Get Unconfirmed balance as well.
-    // };
-
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
+    conn->doRPCWithDefaultErrorHandling("balance", "", cb);
 }
 
 void LiteInterface::fetchTransactions(const std::function<void(json)>& cb) {
@@ -228,13 +221,7 @@ void LiteInterface::fetchInfo(const std::function<void(json)>& cb,
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "getinfo"}
-    // };
-
-    // conn->doRPC(payload, cb, err); 
+    conn->doRPC("info", "", cb, err);
 }
 
 void LiteInterface::fetchBlockchainInfo(const std::function<void(json)>& cb) {

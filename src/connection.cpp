@@ -43,6 +43,7 @@ void ConnectionLoader::doAutoConnect(bool tryEzcashdStart) {
     // Initialize the library
     main->logger->write(QObject::tr("Attempting to initialize"));
     litelib_initialze(config->dangerous, config->server.toStdString().c_str());
+    
     auto connection = makeConnection(config);
 
     // After the lib is initialized, try to do get info
@@ -87,7 +88,6 @@ void ConnectionLoader::showInformation(QString info, QString detail) {
  * Show error will close the loading dialog and show an error. 
 */
 void ConnectionLoader::showError(QString explanation) {    
-    rpc->setEZcashd(nullptr);
     rpc->noConnection();
 
     QMessageBox::critical(main, QObject::tr("Connection Error"), explanation, QMessageBox::Ok);

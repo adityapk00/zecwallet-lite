@@ -335,14 +335,7 @@ void MainWindow::setupSettingsModal() {
             isUsingTor = !rpc->getConnection()->config->proxy.isEmpty();
         }
         settings.chkTor->setChecked(isUsingTor);
-        if (rpc->getEZcashD() == nullptr) {
-            settings.chkTor->setEnabled(false);
-            settings.lblTor->setEnabled(false);
-            QString tooltip = tr("Tor configuration is available only when running an embedded zcashd.");
-            settings.chkTor->setToolTip(tooltip);
-            settings.lblTor->setToolTip(tooltip);
-        }
-
+        
         // Connection Settings
         QIntValidator validator(0, 65535);
         settings.port->setValidator(&validator);
