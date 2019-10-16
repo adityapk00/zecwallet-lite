@@ -141,7 +141,7 @@ void Controller::noConnection() {
     main->ui->statusBar->showMessage(QObject::tr("No Connection"), 1000);
 
     // Clear balances table.
-    QMap<QString, double> emptyBalances;
+    QMap<QString, qint64> emptyBalances;
     QList<UnspentOutput>  emptyOutputs;
     balancesTableModel->setNewData(emptyBalances, emptyOutputs);
 
@@ -295,7 +295,7 @@ void Controller::getInfoThenRefresh(bool force) {
             main->statusIcon->setToolTip(tooltip);
         });
 
-    }, [=](QNetworkReply* reply, const json&) {
+    }, [=](QString err) {
         // zcashd has probably disappeared.
         this->noConnection();
 
@@ -304,7 +304,7 @@ void Controller::getInfoThenRefresh(bool force) {
         if (!shown && prevCallSucceeded) { // show error only first time
             shown = true;
             QMessageBox::critical(main, QObject::tr("Connection Error"), QObject::tr("There was an error connecting to zcashd. The error was") + ": \n\n"
-                + reply->errorString(), QMessageBox::StandardButton::Ok);
+                + err, QMessageBox::StandardButton::Ok);
             shown = false;
         }
 
@@ -356,22 +356,25 @@ void Controller::updateUI(bool anyUnconfirmed) {
 };
 
 // Function to process reply of the listunspent and z_listunspent API calls, used below.
-bool Controller::processUnspent(const json& reply, QMap<QString, double>* balancesMap, QList<UnspentOutput>* newUtxos) {
+bool Controller::processUnspent(const json& reply, QMap<QString, qint64>* balancesMap, QList<UnspentOutput>* newUtxos) {
     bool anyUnconfirmed = false;
-    for (auto& it : reply.get<json::array_t>()) {
-        QString qsAddr = QString::fromStdString(it["address"]);
-        auto confirmations = it["confirmations"].get<json::number_unsigned_t>();
-        if (confirmations == 0) {
-            anyUnconfirmed = true;
-        }
 
-        newUtxos->push_back(
-            UnspentOutput{ qsAddr, QString::fromStdString(it["txid"]),
-                            Settings::getDecimalString(it["amount"].get<json::number_float_t>()),
-                            (int)confirmations, it["spendable"].get<json::boolean_t>() });
+    auto processFn = [=](const json& array) {
+        for (auto& it : array) {
+            QString qsAddr  = QString::fromStdString(it["address"]);
+            int block       = it["created_in_block"].get<json::number_unsigned_t>();
+            QString txid    = QString::fromStdString(it["created_in_txid"]);
+            QString amount  = Settings::getDecimalString(it["value"].get<json::number_unsigned_t>());
 
-        (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] + it["amount"].get<json::number_float_t>();
-    }
+            newUtxos->push_back(UnspentOutput{ qsAddr, txid, amount, block, true });
+
+            (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] + it["value"].get<json::number_unsigned_t>();
+        }    
+    };
+
+    processFn(reply["unspent_notes"].get<json::array_t>());
+    processFn(reply["utxos"].get<json::array_t>());
+
     return anyUnconfirmed;
 };
 
@@ -423,23 +426,19 @@ void Controller::refreshBalances() {
     // 2. Get the UTXOs
     // First, create a new UTXO list. It will be replacing the existing list when everything is processed.
     auto newUtxos = new QList<UnspentOutput>();
-    auto newBalances = new QMap<QString, double>();
+    auto newBalances = new QMap<QString, qint64>();
 
     // Call the Transparent and Z unspent APIs serially and then, once they're done, update the UI
-    zrpc->fetchTransparentUnspent([=] (json reply) {
-        auto anyTUnconfirmed = processUnspent(reply, newBalances, newUtxos);
+    zrpc->fetchUnspent([=] (json reply) {
+        auto anyUnconfirmed = processUnspent(reply, newBalances, newUtxos);
 
-        zrpc->fetchZUnspent([=] (json reply) {
-            auto anyZUnconfirmed = processUnspent(reply, newBalances, newUtxos);
+        // Swap out the balances and UTXOs
+        model->replaceBalances(newBalances);
+        model->replaceUTXOs(newUtxos);
 
-            // Swap out the balances and UTXOs
-            model->replaceBalances(newBalances);
-            model->replaceUTXOs(newUtxos);
+        updateUI(anyUnconfirmed);
 
-            updateUI(anyTUnconfirmed || anyZUnconfirmed);
-
-            main->balancesReady();
-        });        
+        main->balancesReady();
     });
 }
 

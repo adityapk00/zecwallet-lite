@@ -7,7 +7,7 @@ BalancesTableModel::BalancesTableModel(QObject *parent)
     : QAbstractTableModel(parent) {    
 }
 
-void BalancesTableModel::setNewData(const QMap<QString, double> balances, 
+void BalancesTableModel::setNewData(const QMap<QString, qint64> balances, 
     const QList<UnspentOutput> outputs)
 {    
     loading = false;
@@ -22,7 +22,7 @@ void BalancesTableModel::setNewData(const QMap<QString, double> balances,
 
     // Process the address balances into a list
     delete modeldata;
-    modeldata = new QList<std::tuple<QString, double>>();
+    modeldata = new QList<std::tuple<QString, qint64>>();
     std::for_each(balances.keyBegin(), balances.keyEnd(), [=] (auto keyIt) {
         if (balances.value(keyIt) > 0)
             modeldata->push_back(std::make_tuple(keyIt, balances.value(keyIt)));
@@ -72,7 +72,7 @@ QVariant BalancesTableModel::data(const QModelIndex &index, int role) const
         // If any of the UTXOs for this address has zero confirmations, paint it in red
         const auto& addr = std::get<0>(modeldata->at(index.row()));
         for (auto utxo : *utxos) {
-            if (utxo.address == addr && utxo.confirmations == 0) {
+            if (utxo.address == addr && !utxo.spendable) {
                 QBrush b;
                 b.setColor(Qt::red);
                 return b;

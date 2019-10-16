@@ -28,8 +28,7 @@ public:
     void setConnection(Connection* c);
     Connection* getConnection() { return conn; }
 
-    void fetchTransparentUnspent  (const std::function<void(json)>& cb);
-    void fetchZUnspent            (const std::function<void(json)>& cb);
+    void fetchUnspent             (const std::function<void(json)>& cb);
     void fetchTransactions        (const std::function<void(json)>& cb);
     void fetchZAddresses          (const std::function<void(json)>& cb);
     void fetchTAddresses          (const std::function<void(json)>& cb);
@@ -40,7 +39,7 @@ public:
     const std::function<void(QList<TransactionItem>)> txdataFn);
 
     void fetchInfo(const std::function<void(json)>& cb, 
-                    const std::function<void(QNetworkReply*, const json&)>& err);
+                    const std::function<void(QString)>& err);
     void fetchBlockchainInfo(const std::function<void(json)>& cb);
     void fetchNetSolOps(const std::function<void(qint64)> cb);
     void fetchOpStatus(const std::function<void(json)>& cb);

@@ -47,28 +47,16 @@ void LiteInterface::fetchZAddresses(const std::function<void(json)>& cb) {
     // conn->doRPCWithDefaultErrorHandling(payload, cb);
 }
 
-void LiteInterface::fetchTransparentUnspent(const std::function<void(json)>& cb) {
+void LiteInterface::fetchUnspent(const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;
+
+    conn->doRPCWithDefaultErrorHandling("notes", "", cb);
 
     // json payload = {
     //     {"jsonrpc", "1.0"},
     //     {"id", "someid"},
     //     {"method", "listunspent"},
-    //     {"params", {0}}             // Get UTXOs with 0 confirmations as well.
-    // };
-
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
-}
-
-void LiteInterface::fetchZUnspent(const std::function<void(json)>& cb) {
-    if (conn == nullptr)
-        return;
-
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "z_listunspent"},
     //     {"params", {0}}             // Get UTXOs with 0 confirmations as well.
     // };
 
@@ -217,7 +205,7 @@ void LiteInterface::sendZTransaction(json params, const std::function<void(json)
 }
 
 void LiteInterface::fetchInfo(const std::function<void(json)>& cb, 
-    const std::function<void(QNetworkReply*, const json&)>&  err) {
+    const std::function<void(QString)>&  err) {
     if (conn == nullptr)
         return;
 

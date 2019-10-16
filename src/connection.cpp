@@ -33,7 +33,7 @@ void ConnectionLoader::loadConnection() {
         d->exec();
 }
 
-void ConnectionLoader::doAutoConnect(bool tryEzcashdStart) {
+void ConnectionLoader::doAutoConnect() {
     qDebug() << "Doing autoconnect";
 
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
@@ -51,7 +51,7 @@ void ConnectionLoader::doAutoConnect(bool tryEzcashdStart) {
        // If success, set the connection
         main->logger->write("Connection is online.");
         this->doRPCSetConnection(connection); 
-    }, [=](auto err, auto errJson) {});
+    }, [=](auto err) {});
 }
 
 void ConnectionLoader::doRPCSetConnection(Connection* conn) {
@@ -96,6 +96,9 @@ void ConnectionLoader::showError(QString explanation) {
 
 
 
+/***********************************************************************************
+ *  Connection, Executor and Callback Class
+ ************************************************************************************/ 
 void Executor::run() {
     char* resp = litelib_execute(this->cmd.toStdString().c_str());
 
@@ -111,50 +114,71 @@ void Executor::run() {
     qDebug() << "Reply=" << reply;    
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
 
+    const bool isGuiThread = 
+            QThread::currentThread() == QCoreApplication::instance()->thread();
+        qDebug() << "executing RPC: isGUI=" << isGuiThread;
+
     emit responseReady(parsed);
 }
 
 
+void Callback::processRPCCallback(json resp) {
+    const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
+    qDebug() << "Doing RPC callback: isGUI=" << isGuiThread;
+    this->cb(resp);
 
-/***********************************************************************************
- *  Connection Class
- ************************************************************************************/ 
+    // Destroy self
+    delete this;
+}
+
+void Callback::processError(QString resp) {
+    const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
+    qDebug() << "Doing RPC callback: isGUI=" << isGuiThread;
+    this->errCb(resp);
+
+    // Destroy self
+    delete this;
+}
+
 Connection::Connection(MainWindow* m, std::shared_ptr<ConnectionConfig> conf) {
     this->config      = conf;
     this->main        = m;
-}
 
-Connection::~Connection() {    
+    // Register the JSON type as a type that can be passed between signals and slots.
+    qRegisterMetaType<json>("json");
 }
 
 void Connection::doRPC(const QString cmd, const QString args, const std::function<void(json)>& cb, 
-                       const std::function<void(QNetworkReply*, const json&)>& ne) {
+                       const std::function<void(QString)>& errCb) {
     if (shutdownInProgress) {
         // Ignoring RPC because shutdown in progress
         return;
     }
 
+    const bool isGuiThread = 
+        QThread::currentThread() == QCoreApplication::instance()->thread();
+    qDebug() << "Doing RPC: isGUI=" << isGuiThread;
+
     // Create a runner.
     auto runner = new Executor(cmd, args);
-    QObject::connect(runner, &Executor::responseReady, [=] (json resp) {
-        cb(resp);
-    });
+
+    // Callback object. Will delete itself
+    auto c = new Callback(cb, errCb);
+
+    QObject::connect(runner, &Executor::responseReady, c, &Callback::processRPCCallback);
+    QObject::connect(runner, &Executor::handleError, c, &Callback::processError);
 
     QThreadPool::globalInstance()->start(runner);    
 }
 
 void Connection::doRPCWithDefaultErrorHandling(const QString cmd, const QString args, const std::function<void(json)>& cb) {
-    doRPC(cmd, args, cb, [=] (auto reply, auto parsed) {
-        if (!parsed.is_discarded() && !parsed["error"]["message"].is_null()) {
-            this->showTxError(QString::fromStdString(parsed["error"]["message"]));    
-        } else {
-            this->showTxError(reply->errorString());
-        }
+    doRPC(cmd, args, cb, [=] (QString err) {
+        this->showTxError(err);
     });
 }
 
 void Connection::doRPCIgnoreError(const QString cmd, const QString args, const std::function<void(json)>& cb) {
-    doRPC(cmd, args, cb, [=] (auto, auto) {
+    doRPC(cmd, args, cb, [=] (auto) {
         // Ignored error handling
     });
 }

@@ -31,7 +31,7 @@ private:
 
     Connection* makeConnection(std::shared_ptr<ConnectionConfig> config);
 
-    void doAutoConnect(bool tryEzcashdStart = true);
+    void doAutoConnect();
 
     void showError(QString explanation);
     void showInformation(QString info, QString detail = "");
@@ -45,6 +45,32 @@ private:
     Controller*             rpc;
 };
 
+/**
+ * An object that will call the callback function in the GUI thread, and destroy itself after the callback is finished
+ */
+class Callback: public QObject {
+    Q_OBJECT
+public:
+    Callback(const std::function<void(json)> cb, const std::function<void(QString)> errCb) { this->cb = cb; this->errCb = errCb;}
+    ~Callback() = default;
+
+public slots:
+    void processRPCCallback(json resp);
+    void processError(QString error);
+
+private: 
+    std::function<void(json)> cb;
+    std::function<void(QString)> errCb;
+
+};
+
+/**
+ * A runnable that runs some lightclient Command in a non-UI thread.
+ * It emits the "responseReady" signal, which should be processed in a GUI thread.
+ * 
+ * Since the autoDelete flag is ON, the runnable should be destroyed automatically
+ * by the threadpool. 
+ */
 class Executor : public QObject, public QRunnable {
     Q_OBJECT
 
@@ -60,7 +86,8 @@ public:
     virtual void run();
 
 signals:
-    void responseReady(json);    
+    void responseReady(json);
+    void handleError(QString);
 
 private:
     QString cmd;
@@ -72,17 +99,20 @@ private:
  * This is also a UI class, so it may show a dialog waiting for the connection.
 */
 class Connection : public QObject {
+Q_OBJECT
+
 public:
     Connection(MainWindow* m, std::shared_ptr<ConnectionConfig> conf);
-    ~Connection();
+    ~Connection() = default;
 
     std::shared_ptr<ConnectionConfig>   config;
     MainWindow*                         main;
 
     void shutdown();
 
+    
     void doRPC(const QString cmd, const QString args, const std::function<void(json)>& cb, 
-               const std::function<void(QNetworkReply*, const json&)>& ne);
+               const std::function<void(QString)>& errCb);
     void doRPCWithDefaultErrorHandling(const QString cmd, const QString args, const std::function<void(json)>& cb);
     void doRPCIgnoreError(const QString cmd, const QString args, const std::function<void(json)>& cb) ;
 
