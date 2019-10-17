@@ -9,7 +9,6 @@
 #include "ui_privkey.h"
 #include "ui_about.h"
 #include "ui_settings.h"
-#include "ui_turnstile.h"
 #include "ui_turnstileprogress.h"
 #include "ui_viewalladdresses.h"
 #include "ui_validateaddress.h"
