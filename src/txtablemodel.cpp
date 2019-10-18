@@ -14,7 +14,12 @@ TxTableModel::~TxTableModel() {
 void TxTableModel::replaceData(const QList<TransactionItem>& data) {
     delete modeldata;
     modeldata = new QList<TransactionItem>();
+
+    // Copy over the data and sort it    
     std::copy(data.begin(), data.end(), std::back_inserter(*modeldata));
+    std::sort(modeldata->begin(), modeldata->end(), [=] (auto a, auto b) {
+        return a.datetime > b.datetime; // reverse sort
+    });
 
     dataChanged(index(0, 0), index(modeldata->size()-1, columnCount(index(0,0))-1));
     layoutChanged();

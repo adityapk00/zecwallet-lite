@@ -191,6 +191,7 @@ void Controller::getInfoThenRefresh(bool force) {
 
         static int    lastBlock = 0;
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
+        model->setLatestBlock(curBlock);
         //int version = reply["version"].get<json::string_t>();
         int version = 1;
         Settings::getInstance()->setZcashdVersion(version);
@@ -334,8 +335,7 @@ void Controller::refreshTransactions() {
         return noConnection();
 
     zrpc->fetchTransactions([=] (json reply) {
-        QList<TransactionItem> txdata;
-        
+        QList<TransactionItem> txdata;        
 
         for (auto& it : reply.get<json::array_t>()) {  
             QString address;
@@ -369,7 +369,7 @@ void Controller::refreshTransactions() {
                    it["block_height"].get<json::number_unsigned_t>(),
                    address,
                    QString::fromStdString(it["txid"]),
-                   1,
+                   model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
                    items
                 });
             } else {
@@ -382,7 +382,7 @@ void Controller::refreshTransactions() {
                     it["block_height"].get<json::number_unsigned_t>(),
                     address,
                     QString::fromStdString(it["txid"]),
-                    1,
+                    model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
                     items
                 };
 
