@@ -147,16 +147,8 @@ public:
 
         // Command line parser
         QCommandLineParser parser;
-        parser.setApplicationDescription("Shielded desktop wallet and embedded full node for Zcash");
+        parser.setApplicationDescription("Shielded desktop light wallet for Zcash");
         parser.addHelpOption();
-
-        // A boolean option for running it headless
-        QCommandLineOption headlessOption(QStringList() << "headless", "Running it via GUI.");
-        parser.addOption(headlessOption);
-
-        // No embedded will disable the embedded zcashd node
-        QCommandLineOption noembeddedOption(QStringList() << "no-embedded", "Disable embedded zcashd");
-        parser.addOption(noembeddedOption);
 
         // Add an option to specify the conf file
             QCommandLineOption confOption(QStringList() << "conf", "Use the zcash.conf specified instead of looking for the default one.",
@@ -177,8 +169,8 @@ public:
             return 0;            
         } 
 
-        QCoreApplication::setOrganizationName("zec-qt-wallet-org");
-        QCoreApplication::setApplicationName("zec-qt-wallet");
+        QCoreApplication::setOrganizationName("zecwallet-org");
+        QCoreApplication::setApplicationName("zecwallet");
 
         QString locale = QLocale::system().name();
         locale.truncate(locale.lastIndexOf('_'));   // Get the language code
@@ -214,20 +206,15 @@ public:
             exit(0);
         }
 
-        // Check for embedded option
-        if (parser.isSet(noembeddedOption)) {
-            Settings::getInstance()->setUseEmbedded(false);
-        } else {
-            Settings::getInstance()->setUseEmbedded(true);
-        }
-
+        Settings::getInstance()->setUseEmbedded(false);
+        
         // Check to see if a conf location was specified
         if (parser.isSet(confOption)) {
             Settings::getInstance()->setUsingZcashConf(parser.value(confOption));
         }
 
         w = new MainWindow();
-        w->setWindowTitle("ZecWallet FullNode v" + QString(APP_VERSION));
+        w->setWindowTitle("ZecWallet v" + QString(APP_VERSION));
 
         // If there was a payment URI on the command line, pay it
         if (parser.positionalArguments().length() > 0) {
@@ -246,14 +233,9 @@ public:
         a.installEventFilter(w);
 
         // Check if starting headless
-        if (parser.isSet(headlessOption)) {
-            Settings::getInstance()->setHeadless(true);
-            a.setQuitOnLastWindowClosed(false);    
-        } else {
-            Settings::getInstance()->setHeadless(false);
-            w->show();
-        }
-
+        Settings::getInstance()->setHeadless(false);
+        w->show();
+        
         return QApplication::exec();
     }
 
