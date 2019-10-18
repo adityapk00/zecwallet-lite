@@ -16,7 +16,6 @@
 #include "balancestablemodel.h"
 #include "settings.h"
 #include "version.h"
-#include "senttxstore.h"
 #include "connection.h"
 #include "requestdialog.h"
 #include "websockets.h"
@@ -273,17 +272,6 @@ void MainWindow::setupSettingsModal() {
         // Setup save sent check box
         QObject::connect(settings.chkSaveTxs, &QCheckBox::stateChanged, [=](auto checked) {
             Settings::getInstance()->setSaveZtxs(checked);
-        });
-
-        // Setup clear button
-        QObject::connect(settings.btnClearSaved, &QCheckBox::clicked, [=]() {
-            if (QMessageBox::warning(this, "Clear saved history?",
-                "Shielded z-Address transactions are stored locally in your wallet, outside zcashd. You may delete this saved information safely any time for your privacy.\nDo you want to delete the saved shielded transactions now?",
-                QMessageBox::Yes, QMessageBox::Cancel)) {
-                    SentTxStore::deleteHistory();
-                    // Reload after the clear button so existing txs disappear
-                    rpc->refresh(true);
-            }
         });
 
         // Setup theme combo

@@ -155,13 +155,7 @@ void LiteInterface::fetchTransactions(const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "listtransactions"}
-    // };
-
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
+    conn->doRPCWithDefaultErrorHandling("list", "", cb);
 }
 
 void LiteInterface::sendZTransaction(json params, const std::function<void(json)>& cb, 

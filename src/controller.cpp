@@ -2,7 +2,6 @@
 
 #include "addressbook.h"
 #include "settings.h"
-#include "senttxstore.h"
 #include "version.h"
 #include "websockets.h"
 
@@ -143,9 +142,7 @@ void Controller::noConnection() {
 
     // Clear Transactions table.
     QList<TransactionItem> emptyTxs;
-    transactionsTableModel->addTData(emptyTxs);
-    transactionsTableModel->addZRecvData(emptyTxs);
-    transactionsTableModel->addZSentData(emptyTxs);
+    transactionsTableModel->replaceData(emptyTxs);
 
     // Clear balances
     ui->balSheilded->setText("");
@@ -160,28 +157,6 @@ void Controller::noConnection() {
     ui->inputsCombo->clear();
 }
 
-// Refresh received z txs by calling z_listreceivedbyaddress/gettransaction
-void Controller::refreshReceivedZTrans(QList<QString> zaddrs) {
-    if (!zrpc->haveConnection()) 
-        return noConnection();
-
-    // We'll only refresh the received Z txs if settings allows us.
-    if (!Settings::getInstance()->getSaveZtxs()) {
-        QList<TransactionItem> emptylist;
-        transactionsTableModel->addZRecvData(emptylist);
-        return;
-    }
-        
-    zrpc->fetchReceivedZTrans(zaddrs, 
-    [=] (QString addr) {
-        model->markAddressUsed(addr);
-    },
-    [=] (QList<TransactionItem> txdata) {
-        transactionsTableModel->addZRecvData(txdata);
-    }
-    );
-} 
-
 /// This will refresh all the balance data from zcashd
 void Controller::refresh(bool force) {
     if (!zrpc->haveConnection()) 
@@ -189,7 +164,6 @@ void Controller::refresh(bool force) {
 
     getInfoThenRefresh(force);
 }
-
 
 void Controller::getInfoThenRefresh(bool force) {
     if (!zrpc->haveConnection()) 
@@ -275,8 +249,7 @@ void Controller::refreshAddresses() {
         model->replaceTaddresses(newtaddresses);
 
         // Refresh the sent and received txs from all these z-addresses
-        refreshSentZTrans();
-        refreshReceivedZTrans(model->getAllZAddresses());
+        refreshTransactions();
     });
     
 }
@@ -362,57 +335,64 @@ void Controller::refreshTransactions() {
 
     zrpc->fetchTransactions([=] (json reply) {
         QList<TransactionItem> txdata;
+        
 
         for (auto& it : reply.get<json::array_t>()) {  
-            double fee = 0;
-            if (!it["fee"].is_null()) {
-                fee = it["fee"].get<json::number_float_t>();
-            }
+            QString address;
+            qint64 total_amount;
+            QList<TransactionItemDetail> items;
 
-            QString address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
+            // First, check if there's outgoing metadata
+            if (!it["outgoing_metadata"].is_null()) {
+            
+                for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
+                    QString address = QString::fromStdString(o["address"]);
+                    qint64 amount = o["value"].get<json::number_unsigned_t>();
+                    
+                    QString memo;
+                    if (!o["memo"].is_null()) {
+                        memo = QString::fromStdString(o["memo"]);
+                    }
 
-            TransactionItem tx{
-                QString::fromStdString(it["category"]),
-                (qint64)it["time"].get<json::number_unsigned_t>(),
-                address,
-                QString::fromStdString(it["txid"]),
-                it["amount"].get<json::number_float_t>() + fee,
-                static_cast<long>(it["confirmations"].get<json::number_unsigned_t>()),
-                "", "" };
+                    items.push_back(TransactionItemDetail{address, amount, memo});
+                    total_amount += amount;
+                }
 
-            txdata.push_back(tx);
-            if (!address.isEmpty())
+                if (items.length() == 1) {
+                    address = items[0].address;
+                } else {
+                    address = "(Multiple)";
+                }
+
+                txdata.push_back(TransactionItem{
+                   "Sent",
+                   it["block_height"].get<json::number_unsigned_t>(),
+                   address,
+                   QString::fromStdString(it["txid"]),
+                   1,
+                   items
+                });
+            } else {
+                // Incoming Transaction
+                address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
                 model->markAddressUsed(address);
+
+                TransactionItem tx{
+                    "Receive",
+                    it["block_height"].get<json::number_unsigned_t>(),
+                    address,
+                    QString::fromStdString(it["txid"]),
+                    1,
+                    items
+                };
+
+                txdata.push_back(tx);
+            }
+            
         }
 
         // Update model data, which updates the table view
-        transactionsTableModel->addTData(txdata);        
-    });
-}
-
-// Read sent Z transactions from the file.
-void Controller::refreshSentZTrans() {
-    if (!zrpc->haveConnection()) 
-        return noConnection();
-
-    auto sentZTxs = SentTxStore::readSentTxFile();
-
-    // If there are no sent z txs, then empty the table. 
-    // This happens when you clear history.
-    if (sentZTxs.isEmpty()) {
-        transactionsTableModel->addZSentData(sentZTxs);
-        return;
-    }
-
-    QList<QString> txids;
-
-    for (auto sentTx: sentZTxs) {
-        txids.push_back(sentTx.txid);
-    }
-
-    // Look up all the txids to get the confirmation count for them. 
-    zrpc->fetchReceivedTTrans(txids, sentZTxs, [=](auto newSentZTxs) {
-        transactionsTableModel->addZSentData(newSentZTxs);
+        transactionsTableModel->replaceData(txdata);        
     });
 }
 
@@ -485,8 +465,6 @@ void Controller::watchTxStatus() {
 
                 if (status == "success") {
                     auto txid = QString::fromStdString(it["result"]["txid"]);
-                    
-                    SentTxStore::addToSentTx(watchingOps[id].tx, txid);
 
                     auto wtx = watchingOps[id];
                     watchingOps.remove(id);

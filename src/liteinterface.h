@@ -7,15 +7,24 @@
 
 using json = nlohmann::json;
 
+// Since each transaction can contain multiple outputs, we separate them out individually
+// into a struct with address, amount, memo
+struct TransactionItemDetail {
+    QString         address;
+    qint64          amount;
+    QString         memo;
+};
+
+// Represents a row in the transactions table. Note that each transaction can contain
+// multiple addresses (i.e., Multiple TransctionItemDetail)
 struct TransactionItem {
     QString         type;
     qint64          datetime;
     QString         address;
     QString         txid;
-    double          amount;
     long            confirmations;
-    QString         fromAddr;
-    QString         memo;
+
+    QList<TransactionItemDetail> items;
 };
 
 

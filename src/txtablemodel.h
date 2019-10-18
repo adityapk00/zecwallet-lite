@@ -20,9 +20,7 @@ public:
         Amount = 4
     };
 
-    void addTData    (const QList<TransactionItem>& data);
-    void addZSentData(const QList<TransactionItem>& data);
-    void addZRecvData(const QList<TransactionItem>& data);     
+    void replaceData    (const QList<TransactionItem>& data);
 
     QString  getTxId(int row) const;
     QString  getMemo(int row) const;
@@ -40,12 +38,6 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-    void updateAllData();
-
-    QList<TransactionItem>*  tTrans      = nullptr;
-    QList<TransactionItem>*  zrTrans     = nullptr;     // Z received
-    QList<TransactionItem>*  zsTrans     = nullptr;     // Z sent
-
     QList<TransactionItem>* modeldata    = nullptr;
 
     QList<QString>           headers;
