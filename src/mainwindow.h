@@ -18,8 +18,7 @@ using json = nlohmann::json;
 struct ToFields {
     QString addr;
     double  amount;
-    QString txtMemo;
-    QString encodedMemo;
+    QString memo;
 };
 
 // Struct used to represent a Transaction. 

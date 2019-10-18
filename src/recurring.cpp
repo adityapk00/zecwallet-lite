@@ -137,7 +137,7 @@ RecurringPaymentInfo* Recurring::getNewRecurringFromTx(QWidget* parent, MainWind
         // Default is USD
         ui.lblAmt->setText(Settings::getUSDFromZecAmount(tx.toAddrs[0].amount));
 
-        ui.txtMemo->setPlainText(tx.toAddrs[0].txtMemo);
+        ui.txtMemo->setPlainText(tx.toAddrs[0].memo);
         ui.txtMemo->setEnabled(false);
     }
 
@@ -199,7 +199,7 @@ RecurringPaymentInfo* Recurring::getNewRecurringFromTx(QWidget* parent, MainWind
 
 void Recurring::updateInfoWithTx(RecurringPaymentInfo* r, Tx tx) {
     r->toAddr = tx.toAddrs[0].addr;
-    r->memo = tx.toAddrs[0].txtMemo;
+    r->memo = tx.toAddrs[0].memo;
     r->fromAddr = tx.fromAddr;
     if (r->currency.isEmpty() || r->currency == "USD") {
         r->currency = "USD";
@@ -485,7 +485,7 @@ void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo r
     if (paymentNumbers.size() > 1)
         amt *= paymentNumbers.size();
 
-    tx.toAddrs.append(ToFields { rpi.toAddr, amt, rpi.memo, rpi.memo.toUtf8().toHex() });
+    tx.toAddrs.append(ToFields { rpi.toAddr, amt, rpi.memo });
 
     // To prevent some weird race conditions, we immediately mark the payment as paid.
     // If something goes wrong, we'll get the error callback below, and the status will be 
@@ -514,10 +514,8 @@ void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo r
  * Execute a send Tx
  */ 
 void Recurring::doSendTx(MainWindow* mainwindow, Tx tx, std::function<void(QString, QString)> cb) {
-    mainwindow->getRPC()->executeTransaction(tx, [=] (QString opid) {
-            mainwindow->ui->statusBar->showMessage(QObject::tr("Computing Recurring Tx: ") % opid);
-        },
-        [=] (QString /*opid*/, QString txid) { 
+    mainwindow->getRPC()->executeTransaction(tx, 
+        [=] (QString txid) { 
             mainwindow->ui->statusBar->showMessage(Settings::txidStatusMessage + " " + txid);
             cb(txid, "");
         },

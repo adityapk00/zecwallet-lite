@@ -39,14 +39,6 @@ Controller::Controller(MainWindow* main) {
     });
     timer->start(Settings::updateSpeed);    
 
-    // Set up the timer to watch for tx status
-    txTimer = new QTimer(main);
-    QObject::connect(txTimer, &QTimer::timeout, [=]() {
-        watchTxStatus();
-    });
-    // Start at every 10s. When an operation is pending, this will change to every second
-    txTimer->start(Settings::updateSpeed);  
-
     // Create the data model
     model = new DataModel();
 
@@ -94,10 +86,8 @@ void Controller::setConnection(Connection* c) {
 
 
 // Build the RPC JSON Parameters for this tx
-void Controller::fillTxJsonParams(json& params, Tx tx) {   
-    Q_ASSERT(params.is_array());
-    // Get all the addresses and amounts
-    json allRecepients = json::array();
+void Controller::fillTxJsonParams(json& allRecepients, Tx tx) {   
+    Q_ASSERT(allRecepients.is_array());
 
     // For each addr/amt/memo, construct the JSON and also build the confirm dialog box    
     for (int i=0; i < tx.toAddrs.size(); i++) {
@@ -106,24 +96,18 @@ void Controller::fillTxJsonParams(json& params, Tx tx) {
         // Construct the JSON params
         json rec = json::object();
         rec["address"]      = toAddr.addr.toStdString();
-        // Force it through string for rounding. Without this, decimal points beyond 8 places
-        // will appear, causing an "invalid amount" error
-        rec["amount"]       = Settings::getDecimalString(toAddr.amount).toStdString(); //.toDouble(); 
-        if (Settings::isZAddress(toAddr.addr) && !toAddr.encodedMemo.trimmed().isEmpty())
-            rec["memo"]     = toAddr.encodedMemo.toStdString();
+        rec["amount"]       = toAddr.amount;
+        if (Settings::isZAddress(toAddr.addr) && !toAddr.memo.trimmed().isEmpty())
+            rec["memo"]     = toAddr.memo.toStdString();
 
         allRecepients.push_back(rec);
     }
 
-    // Add sender    
-    params.push_back(tx.fromAddr.toStdString());
-    params.push_back(allRecepients);
-
-    // Add fees if custom fees are allowed.
-    if (Settings::getInstance()->getAllowCustomFees()) {
-        params.push_back(1); // minconf
-        params.push_back(tx.fee);
-    }
+    // // Add fees if custom fees are allowed.
+    // if (Settings::getInstance()->getAllowCustomFees()) {
+    //     params.push_back(1); // minconf
+    //     params.push_back(tx.fee);
+    // }
 }
 
 
@@ -396,22 +380,13 @@ void Controller::refreshTransactions() {
     });
 }
 
-void Controller::addNewTxToWatch(const QString& newOpid, WatchedTx wtx) {    
-    watchingOps.insert(newOpid, wtx);
-
-    watchTxStatus();
-}
-
 /**
  * Execute a transaction with the standard UI. i.e., standard status bar message and standard error
  * handling
  */
 void Controller::executeStandardUITransaction(Tx tx) {
-    executeTransaction(tx, 
-        [=] (QString opid) {
-            ui->statusBar->showMessage(QObject::tr("Computing Tx: ") % opid);
-        },
-        [=] (QString, QString txid) { 
+    executeTransaction(tx,
+        [=] (QString txid) { 
             ui->statusBar->showMessage(Settings::txidStatusMessage + " " + txid);
         },
         [=] (QString opid, QString errStr) {
@@ -428,76 +403,26 @@ void Controller::executeStandardUITransaction(Tx tx) {
 
 // Execute a transaction!
 void Controller::executeTransaction(Tx tx, 
-        const std::function<void(QString opid)> submitted,
-        const std::function<void(QString opid, QString txid)> computed,
-        const std::function<void(QString opid, QString errStr)> error) {
+        const std::function<void(QString txid)> submitted,
+        const std::function<void(QString txid, QString errStr)> error) {
     // First, create the json params
     json params = json::array();
     fillTxJsonParams(params, tx);
     std::cout << std::setw(2) << params << std::endl;
 
-    zrpc->sendZTransaction(params, [=](const json& reply) {
-        QString opid = QString::fromStdString(reply.get<json::string_t>());
+    zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
+        if (reply["result"].is_null() || reply["result"] != "success") {
+            error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
+        }
 
-        // And then start monitoring the transaction
-        addNewTxToWatch( opid, WatchedTx { opid, tx, computed, error} );
-        submitted(opid);
+        QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
+        submitted(txid);
     },
     [=](QString errStr) {
         error("", errStr);
     });
 }
 
-
-void Controller::watchTxStatus() {
-    if (!zrpc->haveConnection()) 
-        return noConnection();
-
-    zrpc->fetchOpStatus([=] (const json& reply) {
-        // There's an array for each item in the status
-        for (auto& it : reply.get<json::array_t>()) {  
-            // If we were watching this Tx and its status became "success", then we'll show a status bar alert
-            QString id = QString::fromStdString(it["id"]);
-            if (watchingOps.contains(id)) {
-                // And if it ended up successful
-                QString status = QString::fromStdString(it["status"]);
-                main->loadingLabel->setVisible(false);
-
-                if (status == "success") {
-                    auto txid = QString::fromStdString(it["result"]["txid"]);
-
-                    auto wtx = watchingOps[id];
-                    watchingOps.remove(id);
-                    wtx.completed(id, txid);
-
-                    // Refresh balances to show unconfirmed balances                    
-                    refresh(true);
-                } else if (status == "failed") {
-                    // If it failed, then we'll actually show a warning. 
-                    auto errorMsg = QString::fromStdString(it["error"]["message"]);
-
-                    auto wtx = watchingOps[id];
-                    watchingOps.remove(id);
-                    wtx.error(id, errorMsg);
-                } 
-            }
-
-            if (watchingOps.isEmpty()) {
-                txTimer->start(Settings::updateSpeed);
-            } else {
-                txTimer->start(Settings::quickUpdateSpeed);
-            }
-        }
-
-        // If there is some op that we are watching, then show the loading bar, otherwise hide it
-        if (watchingOps.empty()) {
-            main->loadingLabel->setVisible(false);
-        } else {
-            main->loadingLabel->setVisible(true);
-            main->loadingLabel->setToolTip(QString::number(watchingOps.size()) + QObject::tr(" tx computing. This can take several minutes."));
-        }
-    });
-}
 
 void Controller::checkForUpdate(bool silent) {
     if (!zrpc->haveConnection()) 

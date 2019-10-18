@@ -158,25 +158,12 @@ void LiteInterface::fetchTransactions(const std::function<void(json)>& cb) {
     conn->doRPCWithDefaultErrorHandling("list", "", cb);
 }
 
-void LiteInterface::sendZTransaction(json params, const std::function<void(json)>& cb, 
+void LiteInterface::sendTransaction(QString params, const std::function<void(json)>& cb, 
     const std::function<void(QString)>& err) {
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "z_sendmany"},
-    //     {"params", params}
-    // };
-
-    // conn->doRPC(payload, cb,  [=] (auto reply, auto parsed) {
-    //     if (!parsed.is_discarded() && !parsed["error"]["message"].is_null()) {
-    //         err(QString::fromStdString(parsed["error"]["message"]));    
-    //     } else {
-    //         err(reply->errorString());
-    //     }
-    // });
+    conn->doRPC("send", params, cb, err);
 }
 
 void LiteInterface::fetchInfo(const std::function<void(json)>& cb, 

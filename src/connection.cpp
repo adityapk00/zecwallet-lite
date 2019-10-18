@@ -100,7 +100,7 @@ void ConnectionLoader::showError(QString explanation) {
  *  Connection, Executor and Callback Class
  ************************************************************************************/ 
 void Executor::run() {
-    char* resp = litelib_execute(this->cmd.toStdString().c_str());
+    char* resp = litelib_execute(this->cmd.toStdString().c_str(), this->args.toStdString().c_str());
 
     // Copy the string, since we need to return this back to rust
     char* resp_copy = new char[strlen(resp) + 1];
@@ -111,14 +111,17 @@ void Executor::run() {
     memset(resp_copy, '-', strlen(resp_copy));
     delete[] resp_copy;
 
-    qDebug() << "Reply=" << reply;    
+    qDebug() << "Reply=" << reply;
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
-
-    const bool isGuiThread = 
-            QThread::currentThread() == QCoreApplication::instance()->thread();
+    if (parsed.is_discarded() || parsed.is_null()) {
+        emit handleError(reply);
+    } else {
+        const bool isGuiThread = 
+                QThread::currentThread() == QCoreApplication::instance()->thread();
         qDebug() << "executing RPC: isGUI=" << isGuiThread;
 
-    emit responseReady(parsed);
+        emit responseReady(parsed);
+    }
 }
 
 

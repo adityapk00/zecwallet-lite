@@ -683,7 +683,7 @@ void AppDataServer::processSendTx(QJsonObject sendTx, MainWindow* mainwindow, st
     });
 
     tx.fromAddr = bals[0].first;
-    tx.toAddrs = { ToFields{ sendTx["to"].toString(), amt, sendTx["memo"].toString(), sendTx["memo"].toString().toUtf8().toHex()} };
+    tx.toAddrs = { ToFields{ sendTx["to"].toString(), amt, sendTx["memo"].toString()} };
 
     // TODO: Respect the autoshield change setting
 
@@ -699,9 +699,7 @@ void AppDataServer::processSendTx(QJsonObject sendTx, MainWindow* mainwindow, st
 
     // And send the Tx
     mainwindow->getRPC()->executeTransaction(tx,
-        [=] (QString) {}, 
-        // Submitted Tx successfully
-        [=] (QString, QString txid) {
+        [=] (QString txid) {
             auto r = QJsonDocument(QJsonObject{
                {"version", 1.0},
                {"command", "sendTxSubmitted"},
@@ -771,20 +769,6 @@ void AppDataServer::processGetInfo(QJsonObject jobj, MainWindow* mainWindow, std
 void AppDataServer::processGetTransactions(MainWindow* mainWindow, std::shared_ptr<ClientWebSocket> pClient) {
     QJsonArray txns;
     auto model = mainWindow->getRPC()->getTransactionsModel();
-
-    // Manually add pending ops, so that computing transactions will also show up
-    auto wtxns = mainWindow->getRPC()->getWatchingTxns();
-    for (auto opid : wtxns.keys()) {
-        txns.append(QJsonObject{
-            {"type", "send"},
-            {"datetime", QDateTime::currentSecsSinceEpoch()},
-            {"amount", Settings::getDecimalString(wtxns[opid].tx.toAddrs[0].amount)},
-            {"txid", ""},
-            {"address", wtxns[opid].tx.toAddrs[0].addr},
-            {"memo", wtxns[opid].tx.toAddrs[0].txtMemo},
-            {"confirmations", 0}
-            });
-    }
     
     // Add transactions
     for (int i = 0; i < model->rowCount(QModelIndex()) && i < Settings::getMaxMobileAppTxns(); i++) {

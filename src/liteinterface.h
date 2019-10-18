@@ -68,7 +68,7 @@ public:
 
     void fetchAllPrivKeys(const std::function<void(QList<QPair<QString, QString>>)>);
 
-    void sendZTransaction(json params, const std::function<void(json)>& cb, const std::function<void(QString)>& err);
+    void sendTransaction(QString params, const std::function<void(json)>& cb, const std::function<void(QString)>& err);
 
 private:
     Connection*  conn                        = nullptr;

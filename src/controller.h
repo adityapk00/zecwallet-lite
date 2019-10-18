@@ -50,17 +50,11 @@ public:
     void executeStandardUITransaction(Tx tx); 
 
     void executeTransaction(Tx tx, 
-        const std::function<void(QString opid)> submitted,
-        const std::function<void(QString opid, QString txid)> computed,
-        const std::function<void(QString opid, QString errStr)> error);
+        const std::function<void(QString txid)> submitted,
+        const std::function<void(QString txid, QString errStr)> error);
 
     void fillTxJsonParams(json& params, Tx tx);
     
-    void watchTxStatus();
-
-    const QMap<QString, WatchedTx> getWatchingTxns() { return watchingOps; }
-    void addNewTxToWatch(const QString& newOpid, WatchedTx wtx); 
-
     const TxTableModel*               getTransactionsModel() { return transactionsTableModel; }
 
     void shutdownZcashd();
@@ -93,8 +87,6 @@ private:
     void getInfoThenRefresh(bool force);
     
     QProcess*                   ezcashd                     = nullptr;
-
-    QMap<QString, WatchedTx>    watchingOps;
 
     TxTableModel*               transactionsTableModel      = nullptr;
     BalancesTableModel*         balancesTableModel          = nullptr;

@@ -49,11 +49,17 @@ pub extern fn litelib_initialze(dangerous: bool, server: *const c_char) -> *mut 
 }
 
 #[no_mangle]
-pub extern fn litelib_execute(cmd: *const c_char) -> *mut c_char {
+pub extern fn litelib_execute(cmd: *const c_char, args: *const c_char) -> *mut c_char {
     let cmd_str = unsafe {
         assert!(!cmd.is_null());
 
         CStr::from_ptr(cmd).to_string_lossy().into_owned()
+    };
+
+    let arg_str = unsafe {
+        assert!(!args.is_null());
+
+        CStr::from_ptr(args).to_string_lossy().into_owned()
     };
 
     let resp: String;
@@ -65,7 +71,9 @@ pub extern fn litelib_execute(cmd: *const c_char) -> *mut c_char {
             return e_str.into_raw();
         }
 
-        resp = commands::do_user_command(&cmd_str, &vec![], lc.borrow().as_ref().unwrap()).clone();
+        let args = if arg_str.is_empty() { vec![] } else { vec![arg_str.as_ref()] };
+
+        resp = commands::do_user_command(&cmd_str, &args, lc.borrow().as_ref().unwrap()).clone();
     };
 
     let c_str = CString::new(resp.as_bytes()).unwrap();
