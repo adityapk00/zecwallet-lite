@@ -30,8 +30,7 @@ public:
 
     void fetchUnspent             (const std::function<void(json)>& cb);
     void fetchTransactions        (const std::function<void(json)>& cb);
-    void fetchZAddresses          (const std::function<void(json)>& cb);
-    void fetchTAddresses          (const std::function<void(json)>& cb);
+    void fetchAddresses          (const std::function<void(json)>& cb);
 
     void fetchReceivedZTrans(QList<QString> zaddrs, const std::function<void(QString)> usedAddrFn,
         const std::function<void(QList<TransactionItem>)> txdataFn);

@@ -254,31 +254,31 @@ void Controller::refreshAddresses() {
         return noConnection();
     
     auto newzaddresses = new QList<QString>();
+    auto newtaddresses = new QList<QString>();
 
-    zrpc->fetchZAddresses([=] (json reply) {
-        for (auto& it : reply.get<json::array_t>()) {   
+    zrpc->fetchAddresses([=] (json reply) {
+        auto zaddrs = reply["z_addresses"].get<json::array_t>();
+        for (auto& it : zaddrs) {   
             auto addr = QString::fromStdString(it.get<json::string_t>());
             newzaddresses->push_back(addr);
         }
 
         model->replaceZaddresses(newzaddresses);
 
-        // Refresh the sent and received txs from all these z-addresses
-        refreshSentZTrans();
-        refreshReceivedZTrans(model->getAllZAddresses());
-    });
-
-    
-    auto newtaddresses = new QList<QString>();
-    zrpc->fetchTAddresses([=] (json reply) {
-        for (auto& it : reply.get<json::array_t>()) {   
+        auto taddrs = reply["t_addresses"].get<json::array_t>();
+        for (auto& it : taddrs) {   
             auto addr = QString::fromStdString(it.get<json::string_t>());
             if (Settings::isTAddress(addr))
                 newtaddresses->push_back(addr);
         }
 
         model->replaceTaddresses(newtaddresses);
+
+        // Refresh the sent and received txs from all these z-addresses
+        refreshSentZTrans();
+        refreshReceivedZTrans(model->getAllZAddresses());
     });
+    
 }
 
 // Function to create the data model and update the views, used below.

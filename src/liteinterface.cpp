@@ -20,32 +20,13 @@ bool LiteInterface::haveConnection() {
     return conn != nullptr;
 }
 
-void LiteInterface::fetchTAddresses(const std::function<void(json)>& cb) {
+void LiteInterface::fetchAddresses(const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "getaddressesbyaccount"},
-    //     {"params", {""}}
-    // };
-
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
+    conn->doRPCWithDefaultErrorHandling("addresses", "", cb);
 }
 
-void LiteInterface::fetchZAddresses(const std::function<void(json)>& cb) {
-    if (conn == nullptr)
-        return;
-
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "z_listaddresses"},
-    // };
-
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
-}
 
 void LiteInterface::fetchUnspent(const std::function<void(json)>& cb) {
     if (conn == nullptr)
