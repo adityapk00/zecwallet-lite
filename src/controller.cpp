@@ -331,7 +331,7 @@ void Controller::refreshTransactions() {
             
                 for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
                     QString address = QString::fromStdString(o["address"]);
-                    qint64 amount = o["value"].get<json::number_unsigned_t>();
+                    qint64 amount = -1 * o["value"].get<json::number_integer_t>(); // Sent items are -ve
                     
                     QString memo;
                     if (!o["memo"].is_null()) {
@@ -350,7 +350,7 @@ void Controller::refreshTransactions() {
 
                 txdata.push_back(TransactionItem{
                    "Sent",
-                   it["block_height"].get<json::number_unsigned_t>(),
+                   it["datetime"].get<json::number_unsigned_t>(),
                    address,
                    QString::fromStdString(it["txid"]),
                    model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
@@ -361,9 +361,15 @@ void Controller::refreshTransactions() {
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
                 model->markAddressUsed(address);
 
+                items.push_back(TransactionItemDetail{
+                    address,
+                    it["amount"].get<json::number_integer_t>(),
+                    ""
+                });
+
                 TransactionItem tx{
                     "Receive",
-                    it["block_height"].get<json::number_unsigned_t>(),
+                    it["datetime"].get<json::number_unsigned_t>(),
                     address,
                     QString::fromStdString(it["txid"]),
                     model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
