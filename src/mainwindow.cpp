@@ -695,13 +695,20 @@ void MainWindow::exportKeys(QString addr) {
     // Call the API
     auto isDialogAlive = std::make_shared<bool>(true);
 
-    auto fnUpdateUIWithKeys = [=](QList<QPair<QString, QString>> privKeys) {
+    auto fnUpdateUIWithKeys = [=](json reply) {
         // Check to see if we are still showing.
         if (! *(isDialogAlive.get()) ) return;
 
+        if (reply.is_discarded() || !reply.is_array()) {
+            pui.privKeyTxt->setPlainText(tr("Error loading private keys"));
+            pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
+
+            return;
+        }
+        
         QString allKeysTxt;
-        for (auto keypair : privKeys) {
-            allKeysTxt = allKeysTxt % keypair.second % " # addr=" % keypair.first % "\n";
+        for (auto i : reply.get<json::array_t>()) {
+            allKeysTxt = allKeysTxt % QString::fromStdString(i["private_key"]) % " # addr=" % QString::fromStdString(i["address"]) % "\n";
         }
 
         pui.privKeyTxt->setPlainText(allKeysTxt);
@@ -711,19 +718,8 @@ void MainWindow::exportKeys(QString addr) {
     if (allKeys) {
         rpc->fetchAllPrivKeys(fnUpdateUIWithKeys);
     }
-    else {        
-        auto fnAddKey = [=](json key) {
-            QList<QPair<QString, QString>> singleAddrKey;
-            singleAddrKey.push_back(QPair<QString, QString>(addr, QString::fromStdString(key.get<json::string_t>())));
-            fnUpdateUIWithKeys(singleAddrKey);
-        };
-
-        if (Settings::getInstance()->isZAddress(addr)) {
-            rpc->fetchZPrivKey(addr, fnAddKey);
-        }
-        else {
-            rpc->fetchTPrivKey(addr, fnAddKey);
-        }        
+    else { 
+        rpc->fetchPrivKey(addr, fnUpdateUIWithKeys);                
     }
     
     d.exec();

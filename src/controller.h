@@ -64,9 +64,8 @@ public:
     void createNewZaddr(bool sapling, const std::function<void(json)>& cb) { zrpc->createNewZaddr(sapling, cb); }
     void createNewTaddr(const std::function<void(json)>& cb) { zrpc->createNewTaddr(cb); }
 
-    void fetchZPrivKey(QString addr, const std::function<void(json)>& cb) { zrpc->fetchZPrivKey(addr, cb); }
-    void fetchTPrivKey(QString addr, const std::function<void(json)>& cb) { zrpc->fetchTPrivKey(addr, cb); }
-    void fetchAllPrivKeys(const std::function<void(QList<QPair<QString, QString>>)> cb) { zrpc->fetchAllPrivKeys(cb); }
+    void fetchPrivKey(QString addr, const std::function<void(json)>& cb) { zrpc->fetchPrivKey(addr, cb); }
+    void fetchAllPrivKeys(const std::function<void(json)> cb) { zrpc->fetchAllPrivKeys(cb); }
 
     // void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) { zrpc->importZPrivKey(addr, rescan, cb); }
     // void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) { zrpc->importTPrivKey(addr, rescan, cb); }
