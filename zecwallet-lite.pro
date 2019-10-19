@@ -51,7 +51,6 @@ SOURCES += \
     src/addressbook.cpp \
     src/logger.cpp \
     src/addresscombo.cpp \
-    src/validateaddress.cpp \
     src/websockets.cpp \
     src/mobileappconnector.cpp \
     src/recurring.cpp \
@@ -78,7 +77,6 @@ HEADERS += \
     src/addressbook.h \
     src/logger.h \
     src/addresscombo.h \
-    src/validateaddress.h \
     src/websockets.h \
     src/mobileappconnector.h \
     src/recurring.h \
@@ -97,13 +95,10 @@ FORMS += \
     src/settings.ui \
     src/about.ui \
     src/confirm.ui \
-    src/turnstileprogress.ui \
     src/privkey.ui \
     src/memodialog.ui \ 
-    src/validateaddress.ui \
     src/viewalladdresses.ui \
     src/connection.ui \
-    src/zboard.ui \
     src/addressbook.ui \
     src/mobileappconnector.ui \
     src/createzcashconfdialog.ui \

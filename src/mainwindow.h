@@ -57,8 +57,6 @@ public:
     void balancesReady();
     void payZcashURI(QString uri = "", QString myAddr = "");
 
-    void validateAddress();
-
     void updateLabels();
     void updateTAddrCombo(bool checked);
     void updateFromCombo();
@@ -119,7 +117,6 @@ private:
     
     void donate();
     void addressBook();
-    //void postToZBoard();
     void importPrivKey();
     void exportAllKeys();
     void exportKeys(QString addr = "");

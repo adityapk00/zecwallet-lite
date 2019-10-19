@@ -62,10 +62,9 @@ public:
 
     void fetchZPrivKey(QString addr, const std::function<void(json)>& cb);
     void fetchTPrivKey(QString addr, const std::function<void(json)>& cb);
-    void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
-    void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
-    void validateAddress(QString address, const std::function<void(json)>& cb);
-
+    //void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
+    //void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
+   
     void fetchAllPrivKeys(const std::function<void(QList<QPair<QString, QString>>)>);
 
     void sendTransaction(QString params, const std::function<void(json)>& cb, const std::function<void(QString)>& err);

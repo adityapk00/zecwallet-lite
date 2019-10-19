@@ -1062,7 +1062,6 @@
     <addaction name="actionRequest_zcash"/>
     <addaction name="actionPay_URI"/>
     <addaction name="separator"/>
-    <addaction name="actionImport_Private_Key"/>
     <addaction name="actionExport_All_Private_Keys"/>
     <addaction name="actionBackup_wallet_dat"/>
     <addaction name="separator"/>
@@ -1084,10 +1083,6 @@
      <string>&amp;Apps</string>
     </property>
     <addaction name="actionConnect_Mobile_App"/>
-    <addaction name="actionValidate_Address"/>
-    <addaction name="separator"/>
-    <addaction name="actionz_board_net"/>
-    <addaction name="actionTurnstile_Migration"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -1129,19 +1124,6 @@
   <action name="actionCheck_for_Updates">
    <property name="text">
     <string>Check github.com for &amp;updates</string>
-   </property>
-  </action>
-  <action name="actionTurnstile_Migration">
-   <property name="text">
-    <string>Sapling &amp;turnstile</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+A, Ctrl+T</string>
-   </property>
-  </action>
-  <action name="actionImport_Private_Key">
-   <property name="text">
-    <string>&amp;Import private key</string>
    </property>
   </action>
   <action name="actionExport_All_Private_Keys">
@@ -1193,11 +1175,6 @@
   <action name="actionFile_a_bug">
    <property name="text">
     <string>File a bug...</string>
-   </property>
-  </action>
-  <action name="actionValidate_Address">
-   <property name="text">
-    <string>Validate Address</string>
    </property>
   </action>
  </widget>

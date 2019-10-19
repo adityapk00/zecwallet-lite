@@ -44,31 +44,18 @@ void LiteInterface::fetchUnspent(const std::function<void(json)>& cb) {
     // conn->doRPCWithDefaultErrorHandling(payload, cb);
 }
 
-void LiteInterface::createNewZaddr(bool sapling, const std::function<void(json)>& cb) {
+void LiteInterface::createNewZaddr(bool, const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "z_getnewaddress"},
-    //     {"params", { sapling ? "sapling" : "sprout" }},
-    // };
-    
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
+    conn->doRPCWithDefaultErrorHandling("new", "z", cb);
 }
 
 void LiteInterface::createNewTaddr(const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "getnewaddress"},
-    // };
-
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
+    conn->doRPCWithDefaultErrorHandling("new", "t", cb);
 }
 
 void LiteInterface::fetchZPrivKey(QString addr, const std::function<void(json)>& cb) {
@@ -99,50 +86,34 @@ void LiteInterface::fetchTPrivKey(QString addr, const std::function<void(json)>&
     // conn->doRPCWithDefaultErrorHandling(payload, cb);
 }
 
-void LiteInterface::importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) {
-    if (conn == nullptr)
-        return;
+// void LiteInterface::importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) {
+//     if (conn == nullptr)
+//         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "z_importkey"},
-    //     {"params", { addr.toStdString(), (rescan? "yes" : "no") }},
-    // };
+//     // json payload = {
+//     //     {"jsonrpc", "1.0"},
+//     //     {"id", "someid"},
+//     //     {"method", "z_importkey"},
+//     //     {"params", { addr.toStdString(), (rescan? "yes" : "no") }},
+//     // };
     
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
-}
+//     // conn->doRPCWithDefaultErrorHandling(payload, cb);
+// }
 
 
-void LiteInterface::importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) {
-    if (conn == nullptr)
-        return;
+// void LiteInterface::importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) {
+//     if (conn == nullptr)
+//         return;
 
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "importprivkey"},
-    //     {"params", { addr.toStdString(), (rescan? "yes" : "no") }},
-    // };
+//     // json payload = {
+//     //     {"jsonrpc", "1.0"},
+//     //     {"id", "someid"},
+//     //     {"method", "importprivkey"},
+//     //     {"params", { addr.toStdString(), (rescan? "yes" : "no") }},
+//     // };
     
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
-}
-
-void LiteInterface::validateAddress(QString address, const std::function<void(json)>& cb) {
-    if (conn == nullptr)
-        return;
-
-    // QString method = Settings::isZAddress(address) ? "z_validateaddress" : "validateaddress";
-
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", method.toStdString() },
-    //     {"params", { address.toStdString() } },
-    // };
-    
-    // conn->doRPCWithDefaultErrorHandling(payload, cb);
-}
+//     // conn->doRPCWithDefaultErrorHandling(payload, cb);
+// }
 
 void LiteInterface::fetchBalance(const std::function<void(json)>& cb) {
     if (conn == nullptr)
