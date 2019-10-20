@@ -42,7 +42,7 @@ void ConnectionLoader::doAutoConnect() {
 
     // Initialize the library
     main->logger->write(QObject::tr("Attempting to initialize"));
-    litelib_initialze(config->dangerous, config->server.toStdString().c_str());
+    litelib_initialze_existing(config->dangerous, config->server.toStdString().c_str());
     
     auto connection = makeConnection(config);
 
