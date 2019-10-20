@@ -18,8 +18,7 @@ using json = nlohmann::json;
 struct ToFields {
     QString addr;
     double  amount;
-    QString txtMemo;
-    QString encodedMemo;
+    QString memo;
 };
 
 // Struct used to represent a Transaction. 
@@ -57,8 +56,6 @@ public:
 
     void balancesReady();
     void payZcashURI(QString uri = "", QString myAddr = "");
-
-    void validateAddress();
 
     void updateLabels();
     void updateTAddrCombo(bool checked);
@@ -120,7 +117,6 @@ private:
     
     void donate();
     void addressBook();
-    //void postToZBoard();
     void importPrivKey();
     void exportAllKeys();
     void exportKeys(QString addr = "");

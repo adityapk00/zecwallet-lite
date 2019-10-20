@@ -44,7 +44,6 @@ SOURCES += \
     src/3rdparty/qrcode/QrSegment.cpp \
     src/settings.cpp \
     src/sendtab.cpp \
-    src/senttxstore.cpp \
     src/txtablemodel.cpp \
     src/qrcodelabel.cpp \
     src/connection.cpp \
@@ -52,7 +51,6 @@ SOURCES += \
     src/addressbook.cpp \
     src/logger.cpp \
     src/addresscombo.cpp \
-    src/validateaddress.cpp \
     src/websockets.cpp \
     src/mobileappconnector.cpp \
     src/recurring.cpp \
@@ -73,14 +71,12 @@ HEADERS += \
     src/3rdparty/json/json.hpp \
     src/settings.h \
     src/txtablemodel.h \
-    src/senttxstore.h \
     src/qrcodelabel.h \
     src/connection.h \
     src/fillediconlabel.h \
     src/addressbook.h \
     src/logger.h \
     src/addresscombo.h \
-    src/validateaddress.h \
     src/websockets.h \
     src/mobileappconnector.h \
     src/recurring.h \
@@ -99,13 +95,10 @@ FORMS += \
     src/settings.ui \
     src/about.ui \
     src/confirm.ui \
-    src/turnstileprogress.ui \
     src/privkey.ui \
     src/memodialog.ui \ 
-    src/validateaddress.ui \
     src/viewalladdresses.ui \
     src/connection.ui \
-    src/zboard.ui \
     src/addressbook.ui \
     src/mobileappconnector.ui \
     src/createzcashconfdialog.ui \

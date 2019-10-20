@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "addressbook.h"
 #include "viewalladdresses.h"
-#include "validateaddress.h"
 #include "ui_mainwindow.h"
 #include "ui_mobileappconnector.h"
 #include "ui_addressbook.h"
@@ -9,15 +8,12 @@
 #include "ui_privkey.h"
 #include "ui_about.h"
 #include "ui_settings.h"
-#include "ui_turnstile.h"
 #include "ui_turnstileprogress.h"
 #include "ui_viewalladdresses.h"
-#include "ui_validateaddress.h"
 #include "controller.h"
 #include "balancestablemodel.h"
 #include "settings.h"
 #include "version.h"
-#include "senttxstore.h"
 #include "connection.h"
 #include "requestdialog.h"
 #include "websockets.h"
@@ -85,9 +81,6 @@ MainWindow::MainWindow(QWidget *parent) :
         payZcashURI();
     });
 
-    // Import Private Key
-    QObject::connect(ui->actionImport_Private_Key, &QAction::triggered, this, &MainWindow::importPrivKey);
-
     // Export All Private Keys
     QObject::connect(ui->actionExport_All_Private_Keys, &QAction::triggered, this, &MainWindow::exportAllKeys);
 
@@ -96,13 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Export transactions
     QObject::connect(ui->actionExport_transactions, &QAction::triggered, this, &MainWindow::exportTransactions);
-
-    // Z-board seems to have been abandoned
-    // z-Board.net
-    // QObject::connect(ui->actionz_board_net, &QAction::triggered, this, &MainWindow::postToZBoard);
-
-    // Validate Address
-    QObject::connect(ui->actionValidate_Address, &QAction::triggered, this, &MainWindow::validateAddress);
 
     // Connect mobile app
     QObject::connect(ui->actionConnect_Mobile_App, &QAction::triggered, this, [=] () {
@@ -274,17 +260,6 @@ void MainWindow::setupSettingsModal() {
         // Setup save sent check box
         QObject::connect(settings.chkSaveTxs, &QCheckBox::stateChanged, [=](auto checked) {
             Settings::getInstance()->setSaveZtxs(checked);
-        });
-
-        // Setup clear button
-        QObject::connect(settings.btnClearSaved, &QCheckBox::clicked, [=]() {
-            if (QMessageBox::warning(this, "Clear saved history?",
-                "Shielded z-Address transactions are stored locally in your wallet, outside zcashd. You may delete this saved information safely any time for your privacy.\nDo you want to delete the saved shielded transactions now?",
-                QMessageBox::Yes, QMessageBox::Cancel)) {
-                    SentTxStore::deleteHistory();
-                    // Reload after the clear button so existing txs disappear
-                    rpc->refresh(true);
-            }
         });
 
         // Setup theme combo
@@ -460,73 +435,30 @@ void MainWindow::donate() {
     ui->tabWidget->setCurrentIndex(1);
 }
 
-/**
- * Validate an address
- */
-void MainWindow::validateAddress() {
-    // Make sure everything is up and running
-    if (!getRPC() || !getRPC()->getConnection())
-        return;
+// void MainWindow::doImport(QList<QString>* keys) {
+//     if (rpc->getConnection() == nullptr) {
+//         // No connection, just return
+//         return;
+//     }
 
-    // First thing is ask the user for an address
-    bool ok;
-    auto address = QInputDialog::getText(this, tr("Enter Address to validate"), 
-        tr("Transparent or Shielded Address:") + QString(" ").repeated(140),    // Pad the label so the dialog box is wide enough
-        QLineEdit::Normal, "", &ok);
-    if (!ok)
-        return;
+//     if (keys->isEmpty()) {
+//         delete keys;
+//         ui->statusBar->showMessage(tr("Private key import rescan finished"));
+//         return;
+//     }
 
-    getRPC()->validateAddress(address, [=] (json props) {
-        QDialog d(this);
-        Ui_ValidateAddress va;
-        va.setupUi(&d);
-        Settings::saveRestore(&d);
-        Settings::saveRestoreTableHeader(va.tblProps, &d, "validateaddressprops");
-        va.tblProps->horizontalHeader()->setStretchLastSection(true);
+//     // Pop the first key
+//     QString key = keys->first();
+//     keys->pop_front();
+//     bool rescan = keys->isEmpty();
 
-        va.lblAddress->setText(address);
-
-        QList<QPair<QString, QString>> propsList;
-        for (auto it = props.begin(); it != props.end(); it++) {
-
-            propsList.append(
-                QPair<QString, QString>(
-                    QString::fromStdString(it.key()), QString::fromStdString(it.value().dump()))
-            );
-        }
-
-        ValidateAddressesModel model(va.tblProps, propsList);
-        va.tblProps->setModel(&model);
-
-        d.exec();
-    });
-
-}
-
-void MainWindow::doImport(QList<QString>* keys) {
-    if (rpc->getConnection() == nullptr) {
-        // No connection, just return
-        return;
-    }
-
-    if (keys->isEmpty()) {
-        delete keys;
-        ui->statusBar->showMessage(tr("Private key import rescan finished"));
-        return;
-    }
-
-    // Pop the first key
-    QString key = keys->first();
-    keys->pop_front();
-    bool rescan = keys->isEmpty();
-
-    if (key.startsWith("SK") ||
-        key.startsWith("secret")) { // Z key
-        rpc->importZPrivKey(key, rescan, [=] (auto) { this->doImport(keys); });                   
-    } else {
-        rpc->importTPrivKey(key, rescan, [=] (auto) { this->doImport(keys); });
-    }
-}
+//     if (key.startsWith("SK") ||
+//         key.startsWith("secret")) { // Z key
+//         rpc->importZPrivKey(key, rescan, [=] (auto) { this->doImport(keys); });                   
+//     } else {
+//         rpc->importTPrivKey(key, rescan, [=] (auto) { this->doImport(keys); });
+//     }
+// }
 
 
 // Callback invoked when the RPC has finished loading all the balances, and the UI 
@@ -619,50 +551,50 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
 }
 
 
-void MainWindow::importPrivKey() {
-    QDialog d(this);
-    Ui_PrivKey pui;
-    pui.setupUi(&d);
-    Settings::saveRestore(&d);
+// void MainWindow::importPrivKey() {
+//     QDialog d(this);
+//     Ui_PrivKey pui;
+//     pui.setupUi(&d);
+//     Settings::saveRestore(&d);
 
-    pui.buttonBox->button(QDialogButtonBox::Save)->setVisible(false);
-    pui.helpLbl->setText(QString() %
-                        tr("Please paste your private keys (z-Addr or t-Addr) here, one per line") % ".\n" %
-                        tr("The keys will be imported into your connected zcashd node"));  
+//     pui.buttonBox->button(QDialogButtonBox::Save)->setVisible(false);
+//     pui.helpLbl->setText(QString() %
+//                         tr("Please paste your private keys (z-Addr or t-Addr) here, one per line") % ".\n" %
+//                         tr("The keys will be imported into your connected zcashd node"));  
 
-    if (d.exec() == QDialog::Accepted && !pui.privKeyTxt->toPlainText().trimmed().isEmpty()) {
-        auto rawkeys = pui.privKeyTxt->toPlainText().trimmed().split("\n");
+//     if (d.exec() == QDialog::Accepted && !pui.privKeyTxt->toPlainText().trimmed().isEmpty()) {
+//         auto rawkeys = pui.privKeyTxt->toPlainText().trimmed().split("\n");
 
-        QList<QString> keysTmp;
-        // Filter out all the empty keys.
-        std::copy_if(rawkeys.begin(), rawkeys.end(), std::back_inserter(keysTmp), [=] (auto key) {
-            return !key.startsWith("#") && !key.trimmed().isEmpty();
-        });
+//         QList<QString> keysTmp;
+//         // Filter out all the empty keys.
+//         std::copy_if(rawkeys.begin(), rawkeys.end(), std::back_inserter(keysTmp), [=] (auto key) {
+//             return !key.startsWith("#") && !key.trimmed().isEmpty();
+//         });
 
-        auto keys = new QList<QString>();
-        std::transform(keysTmp.begin(), keysTmp.end(), std::back_inserter(*keys), [=](auto key) {
-            return key.trimmed().split(" ")[0];
-        });
+//         auto keys = new QList<QString>();
+//         std::transform(keysTmp.begin(), keysTmp.end(), std::back_inserter(*keys), [=](auto key) {
+//             return key.trimmed().split(" ")[0];
+//         });
 
-        // Special case. 
-        // Sometimes, when importing from a paperwallet or such, the key is split by newlines, and might have 
-        // been pasted like that. So check to see if the whole thing is one big private key
-        if (Settings::getInstance()->isValidSaplingPrivateKey(keys->join(""))) {
-            auto multiline = keys;
-            keys = new QList<QString>();
-            keys->append(multiline->join(""));
-            delete multiline;
-        }
+//         // Special case. 
+//         // Sometimes, when importing from a paperwallet or such, the key is split by newlines, and might have 
+//         // been pasted like that. So check to see if the whole thing is one big private key
+//         if (Settings::getInstance()->isValidSaplingPrivateKey(keys->join(""))) {
+//             auto multiline = keys;
+//             keys = new QList<QString>();
+//             keys->append(multiline->join(""));
+//             delete multiline;
+//         }
 
-        // Start the import. The function takes ownership of keys
-        QTimer::singleShot(1, [=]() {doImport(keys);});
+//         // Start the import. The function takes ownership of keys
+//         QTimer::singleShot(1, [=]() {doImport(keys);});
 
-        // Show the dialog that keys will be imported. 
-        QMessageBox::information(this,
-            "Imported", tr("The keys were imported. It may take several minutes to rescan the blockchain. Until then, functionality may be limited"),
-            QMessageBox::Ok);
-    }
-}
+//         // Show the dialog that keys will be imported. 
+//         QMessageBox::information(this,
+//             "Imported", tr("The keys were imported. It may take several minutes to rescan the blockchain. Until then, functionality may be limited"),
+//             QMessageBox::Ok);
+//     }
+// }
 
 /** 
  * Export transaction history into a CSV file
@@ -763,13 +695,20 @@ void MainWindow::exportKeys(QString addr) {
     // Call the API
     auto isDialogAlive = std::make_shared<bool>(true);
 
-    auto fnUpdateUIWithKeys = [=](QList<QPair<QString, QString>> privKeys) {
+    auto fnUpdateUIWithKeys = [=](json reply) {
         // Check to see if we are still showing.
         if (! *(isDialogAlive.get()) ) return;
 
+        if (reply.is_discarded() || !reply.is_array()) {
+            pui.privKeyTxt->setPlainText(tr("Error loading private keys"));
+            pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
+
+            return;
+        }
+        
         QString allKeysTxt;
-        for (auto keypair : privKeys) {
-            allKeysTxt = allKeysTxt % keypair.second % " # addr=" % keypair.first % "\n";
+        for (auto i : reply.get<json::array_t>()) {
+            allKeysTxt = allKeysTxt % QString::fromStdString(i["private_key"]) % " # addr=" % QString::fromStdString(i["address"]) % "\n";
         }
 
         pui.privKeyTxt->setPlainText(allKeysTxt);
@@ -779,19 +718,8 @@ void MainWindow::exportKeys(QString addr) {
     if (allKeys) {
         rpc->fetchAllPrivKeys(fnUpdateUIWithKeys);
     }
-    else {        
-        auto fnAddKey = [=](json key) {
-            QList<QPair<QString, QString>> singleAddrKey;
-            singleAddrKey.push_back(QPair<QString, QString>(addr, QString::fromStdString(key.get<json::string_t>())));
-            fnUpdateUIWithKeys(singleAddrKey);
-        };
-
-        if (Settings::getInstance()->isZAddress(addr)) {
-            rpc->fetchZPrivKey(addr, fnAddKey);
-        }
-        else {
-            rpc->fetchTPrivKey(addr, fnAddKey);
-        }        
+    else { 
+        rpc->fetchPrivKey(addr, fnUpdateUIWithKeys);                
     }
     
     d.exec();
@@ -980,7 +908,7 @@ void MainWindow::setupTransactionsTab() {
 
 void MainWindow::addNewZaddr(bool sapling) {
     rpc->createNewZaddr(sapling, [=] (json reply) {
-        QString addr = QString::fromStdString(reply.get<json::string_t>());
+        QString addr = QString::fromStdString(reply.get<json::array_t>()[0]);
         // Make sure the RPC class reloads the z-addrs for future use
         rpc->refreshAddresses();
 
@@ -1031,7 +959,7 @@ std::function<void(bool)> MainWindow::addZAddrsToComboList(bool sapling) {
 void MainWindow::setupReceiveTab() {
     auto addNewTAddr = [=] () {
         rpc->createNewTaddr([=] (json reply) {
-            QString addr = QString::fromStdString(reply.get<json::string_t>());
+            QString addr = QString::fromStdString(reply.get<json::array_t>()[0]);
             // Make sure the RPC class reloads the t-addrs for future use
             rpc->refreshAddresses();
 

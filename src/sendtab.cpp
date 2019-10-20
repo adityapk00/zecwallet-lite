@@ -521,7 +521,7 @@ Tx MainWindow::createTxFromSendPage() {
         totalAmt += amt;
         QString memo = ui->sendToWidgets->findChild<QLabel*>(QString("MemoTxt")  % QString::number(i+1))->text().trimmed();
         
-        tx.toAddrs.push_back( ToFields{addr, amt, memo, memo.toUtf8().toHex()} );
+        tx.toAddrs.push_back( ToFields{addr, amt, memo} );
     }
 
     if (Settings::getInstance()->getAllowCustomFees()) {
@@ -550,7 +550,7 @@ Tx MainWindow::createTxFromSendPage() {
 
             if (Settings::getDecimalString(change) != "0") {
                 QString changeMemo = tr("Change from ") + tx.fromAddr;
-                tx.toAddrs.push_back(ToFields{ *saplingAddr, change, changeMemo, changeMemo.toUtf8().toHex() });
+                tx.toAddrs.push_back(ToFields{ *saplingAddr, change, changeMemo });
             }
         }
     }
@@ -649,11 +649,11 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
             confirm.gridLayout->addWidget(AmtUSD, row, 2, 1, 1);            
 
             // Memo
-            if (Settings::isZAddress(toAddr.addr) && !toAddr.txtMemo.isEmpty()) {
+            if (Settings::isZAddress(toAddr.addr) && !toAddr.memo.isEmpty()) {
                 row++;
                 auto Memo = new QLabel(confirm.sendToAddrs);
                 Memo->setObjectName(QStringLiteral("Memo") % QString::number(i + 1));
-                Memo->setText(toAddr.txtMemo);
+                Memo->setText(toAddr.memo);
                 QFont font1 = Addr->font();
                 font1.setPointSize(font1.pointSize() - 1);
                 Memo->setFont(font1);
@@ -769,12 +769,7 @@ void MainWindow::sendButton() {
 
         // And send the Tx
         rpc->executeTransaction(tx, 
-            // Submitted
-            [=] (QString opid) {
-                ui->statusBar->showMessage(tr("Computing Tx: ") % opid);
-            },
-            // Accepted
-            [=] (QString, QString txid) { 
+            [=] (QString txid) { 
                 ui->statusBar->showMessage(Settings::txidStatusMessage + " " + txid);
 
                 // If this was a recurring payment, update the payment with the info

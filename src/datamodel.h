@@ -23,6 +23,9 @@ public:
 
     void markAddressUsed(QString address);
 
+    void setLatestBlock(int blockHeight);
+    int  getLatestBlock() { return this->latestBlock; }
+
     const QList<QString>             getAllZAddresses()     { QReadLocker locker(lock); return *zaddresses; }
     const QList<QString>             getAllTAddresses()     { QReadLocker locker(lock); return *taddresses; }
     const QList<UnspentOutput>       getUTXOs()             { QReadLocker locker(lock); return *utxos; }
@@ -33,7 +36,7 @@ public:
     DataModel();
     ~DataModel();
 private: 
-
+    int latestBlock;
 
     QList<UnspentOutput>*   utxos           = nullptr;
     QMap<QString, qint64>*  balances        = nullptr;

@@ -9,34 +9,20 @@ TxTableModel::TxTableModel(QObject *parent)
 
 TxTableModel::~TxTableModel() {
     delete modeldata;
-    delete tTrans;
-    delete zsTrans;
-    delete zrTrans;
 }
 
-void TxTableModel::addZSentData(const QList<TransactionItem>& data) {
-    delete zsTrans;
-    zsTrans = new QList<TransactionItem>();
-    std::copy(data.begin(), data.end(), std::back_inserter(*zsTrans));
+void TxTableModel::replaceData(const QList<TransactionItem>& data) {
+    delete modeldata;
+    modeldata = new QList<TransactionItem>();
 
-    updateAllData();
-}
+    // Copy over the data and sort it    
+    std::copy(data.begin(), data.end(), std::back_inserter(*modeldata));
+    std::sort(modeldata->begin(), modeldata->end(), [=] (auto a, auto b) {
+        return a.datetime > b.datetime; // reverse sort
+    });
 
-void TxTableModel::addZRecvData(const QList<TransactionItem>& data) {
-    delete zrTrans;
-    zrTrans = new QList<TransactionItem>();
-    std::copy(data.begin(), data.end(), std::back_inserter(*zrTrans));
-
-    updateAllData();
-}
-
-
-void TxTableModel::addTData(const QList<TransactionItem>& data) {
-    delete tTrans;
-    tTrans = new QList<TransactionItem>();
-    std::copy(data.begin(), data.end(), std::back_inserter(*tTrans));
-
-    updateAllData();
+    dataChanged(index(0, 0), index(modeldata->size()-1, columnCount(index(0,0))-1));
+    layoutChanged();
 }
 
 bool TxTableModel::exportToCsv(QString fileName) const {
@@ -61,8 +47,9 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         for (int col = 0; col < headers.length(); col++) {
             out << "\"" << data(index(row, col), Qt::DisplayRole).toString() << "\",";
         }
+
         // Memo
-        out << "\"" << modeldata->at(row).memo << "\"";
+        out << "\"" << this->getMemo(row) << "\"";
         out << endl;
     }
 
@@ -70,25 +57,6 @@ bool TxTableModel::exportToCsv(QString fileName) const {
     return true;
 }
 
-void TxTableModel::updateAllData() {    
-    auto newmodeldata = new QList<TransactionItem>();
-
-    if (tTrans  != nullptr) std::copy( tTrans->begin(),  tTrans->end(), std::back_inserter(*newmodeldata));
-    if (zsTrans != nullptr) std::copy(zsTrans->begin(), zsTrans->end(), std::back_inserter(*newmodeldata));
-    if (zrTrans != nullptr) std::copy(zrTrans->begin(), zrTrans->end(), std::back_inserter(*newmodeldata));
-
-    // Sort by reverse time
-    std::sort(newmodeldata->begin(), newmodeldata->end(), [=] (auto a, auto b) {
-        return a.datetime > b.datetime; // reverse sort
-    });
-
-    // And then swap out the modeldata with the new one.
-    delete modeldata;
-    modeldata = newmodeldata;
-
-    dataChanged(index(0, 0), index(modeldata->size()-1, columnCount(index(0,0))-1));
-    layoutChanged();
-}
 
  int TxTableModel::rowCount(const QModelIndex&) const
  {
@@ -135,18 +103,31 @@ void TxTableModel::updateAllData() {
                 }
         case Column::Time: return QDateTime::fromMSecsSinceEpoch(dat.datetime *  (qint64)1000).toLocalTime().toString();
         case Column::Confirmations: return QString::number(dat.confirmations);
-        case Column::Amount: return Settings::getZECDisplayFormat(dat.amount);
+        case Column::Amount: {
+            // Sum up all the amounts
+            qint64 total = 0;
+            for (int i=0; i < dat.items.length(); i++) {
+                total += dat.items[i].amount;
+            }
+            return Settings::getZECDisplayFormat(total);
+        }
         }
     } 
 
     if (role == Qt::ToolTipRole) {
         switch (index.column()) {
         case Column::Type: {
-                    if (dat.memo.startsWith("zcash:")) {
-                        return Settings::paymentURIPretty(Settings::parseURI(dat.memo));
+                    // If there are multiple memos, then mark them as such
+                    if (dat.items.length() == 1) {
+                        auto memo = dat.items[0].memo;
+                        if (memo.startsWith("zcash:")) {
+                            return Settings::paymentURIPretty(Settings::parseURI(memo));
+                        } else {
+                            return modeldata->at(index.row()).type + 
+                            (memo.isEmpty() ? "" : " tx memo: \"" + memo + "\"");
+                        }
                     } else {
-                        return modeldata->at(index.row()).type + 
-                        (dat.memo.isEmpty() ? "" : " tx memo: \"" + dat.memo + "\"");
+                        return "Multiple";
                     }
                 }
         case Column::Address: {
@@ -158,21 +139,33 @@ void TxTableModel::updateAllData() {
                 }
         case Column::Time: return QDateTime::fromMSecsSinceEpoch(modeldata->at(index.row()).datetime * (qint64)1000).toLocalTime().toString();
         case Column::Confirmations: return QString("%1 Network Confirmations").arg(QString::number(dat.confirmations));
-        case Column::Amount: return Settings::getInstance()->getUSDFromZecAmount(modeldata->at(index.row()).amount);
+        case Column::Amount: {
+            // Sum up all the amounts
+            qint64 total = 0;
+            for (int i=0; i < dat.items.length(); i++) {
+                total += dat.items[i].amount;
+            }
+            return Settings::getInstance()->getUSDFromZecAmount(total);
         }    
+        }
     }
 
     if (role == Qt::DecorationRole && index.column() == 0) {
-        if (!dat.memo.isEmpty()) {
-            // If the memo is a Payment URI, then show a payment request icon
-            if (dat.memo.startsWith("zcash:")) {
-                QIcon icon(":/icons/res/paymentreq.gif");
-                return QVariant(icon.pixmap(16, 16));
-            } else {
-                // Return the info pixmap to indicate memo
-                QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);            
-                return QVariant(icon.pixmap(16, 16));
-                }
+        bool hasMemo = false;
+        for (int i=0; i < dat.items.length(); i++) {
+            if (!dat.items[i].memo.isEmpty()) {
+                hasMemo = true;
+            }
+        }
+
+        // If the memo is a Payment URI, then show a payment request icon
+        if (dat.items.length() == 1 && dat.items[0].memo.startsWith("zcash:")) {
+            QIcon icon(":/icons/res/paymentreq.gif");
+            return QVariant(icon.pixmap(16, 16));
+        } else if (hasMemo) {
+            // Return the info pixmap to indicate memo
+            QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);            
+            return QVariant(icon.pixmap(16, 16));
         } else {
             // Empty pixmap to make it align
             QPixmap p(16, 16);
@@ -208,7 +201,21 @@ QString TxTableModel::getTxId(int row) const {
 }
 
 QString TxTableModel::getMemo(int row) const {
-    return modeldata->at(row).memo;
+    auto dat = modeldata->at(row);
+    bool hasMemo = false;
+    for (int i=0; i < dat.items.length(); i++) {
+        if (!dat.items[i].memo.isEmpty()) {
+            hasMemo = true;
+        }
+    }
+
+    if (dat.items.length() == 1) {
+        return dat.items[0].memo;
+    } else if (hasMemo) {
+        return "(Multiple)";
+    } else {
+        return "";
+    }
 }
 
 qint64 TxTableModel::getConfirmations(int row) const {
@@ -228,5 +235,11 @@ QString TxTableModel::getType(int row) const {
 }
 
 QString TxTableModel::getAmt(int row) const {
-    return Settings::getDecimalString(modeldata->at(row).amount);
+    auto dat = modeldata->at(row);
+    
+    qint64 total = 0;
+    for (int i=0; i < dat.items.length(); i++) {
+        total += dat.items[i].amount;
+    }
+    return Settings::getDecimalString(total);
 }

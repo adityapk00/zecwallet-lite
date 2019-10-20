@@ -23,6 +23,10 @@ DataModel::~DataModel() {
     delete taddresses;
 }
 
+void DataModel::setLatestBlock(int blockHeight) {
+    this->latestBlock = blockHeight;
+}
+
 void DataModel::replaceZaddresses(QList<QString>* newZ) {
     QWriteLocker locker(lock);
     Q_ASSERT(newZ);
