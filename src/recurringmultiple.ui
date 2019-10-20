@@ -41,7 +41,7 @@
    <item row="8" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>How should ZecWallet proceed?</string>
+      <string>How should silentdragon proceed?</string>
      </property>
     </widget>
    </item>

@@ -7,7 +7,7 @@ use std::ffi::{CStr, CString};
 use std::sync::{Mutex};
 use std::cell::RefCell;
 
-use zecwalletlitelib::{commands, lightclient::{LightClient, LightClientConfig}};
+use silentdragonlitelib::{commands, lightclient::{LightClient, LightClientConfig}};
 
 // We'll use a MUTEX to store a global lightclient instance, 
 // so we don't have to keep creating it. We need to store it here, in rust
@@ -16,9 +16,23 @@ lazy_static! {
     static ref LIGHTCLIENT: Mutex<RefCell<Option<LightClient>>> = Mutex::new(RefCell::new(None));
 }
 
+// Check if there is an existing wallet
+#[no_mangle]
+pub extern fn litelib_wallet_exists(chain_name: *const c_char) -> bool {
+    let chain_name_str = unsafe {
+        assert!(!chain_name.is_null());
+
+        CStr::from_ptr(chain_name).to_string_lossy().into_owned()
+    };
+
+    let config = LightClientConfig::create_unconnected(chain_name_str);
+
+    config.wallet_exists()
+}
+
 // Initialize a new lightclient and store its value
 #[no_mangle]
-pub extern fn litelib_initialze(dangerous: bool, server: *const c_char) -> *mut c_char {
+pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char) -> *mut c_char {
     let server_str = unsafe {
         assert!(!server.is_null());
 
@@ -34,7 +48,7 @@ pub extern fn litelib_initialze(dangerous: bool, server: *const c_char) -> *mut 
         }
     };
 
-    let lightclient = match LightClient::new(None, &config, latest_block_height) {
+    let lightclient = match LightClient::read_from_disk(&config) {
         Ok(l) => l,
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();

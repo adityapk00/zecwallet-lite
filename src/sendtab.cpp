@@ -62,7 +62,7 @@ void MainWindow::setupSendTab() {
     // Disable custom fees if settings say no
     ui->minerFeeAmt->setReadOnly(!Settings::getInstance()->getAllowCustomFees());
     QObject::connect(ui->minerFeeAmt, &QLineEdit::textChanged, [=](auto txt) {
-        ui->lblMinerFeeUSD->setText(Settings::getUSDFromZecAmount(txt.toDouble()));
+        ui->lblMinerFeeUSD->setText(Settings::getUSDFromhushAmount(txt.toDouble()));
     });
     ui->minerFeeAmt->setText(Settings::getDecimalString(Settings::getMinerFee()));    
 
@@ -70,7 +70,7 @@ void MainWindow::setupSendTab() {
     QObject::connect(ui->tabWidget, &QTabWidget::currentChanged, [=] (int pos) {
         if (pos == 1) {
             QString txt = ui->minerFeeAmt->text();
-            ui->lblMinerFeeUSD->setText(Settings::getUSDFromZecAmount(txt.toDouble()));
+            ui->lblMinerFeeUSD->setText(Settings::getUSDFromhushAmount(txt.toDouble()));
         }
     });
     
@@ -225,10 +225,10 @@ void MainWindow::updateFromCombo() {
 void MainWindow::inputComboTextChanged(int index) {
     auto addr   = ui->inputsCombo->itemText(index);
     auto bal    = rpc->getModel()->getAllBalances().value(addr);
-    auto balFmt = Settings::getZECDisplayFormat(bal);
+    auto balFmt = Settings::gethushDisplayFormat(bal);
 
     ui->sendAddressBalance->setText(balFmt);
-    ui->sendAddressBalanceUSD->setText(Settings::getUSDFromZecAmount(bal));
+    ui->sendAddressBalanceUSD->setText(Settings::getUSDFromhushAmount(bal));
 }
 
     
@@ -341,7 +341,7 @@ void MainWindow::addressChanged(int itemNumber, const QString& text) {
 
 void MainWindow::amountChanged(int item, const QString& text) {
     auto usd = ui->sendToWidgets->findChild<QLabel*>(QString("AmtUSD") % QString::number(item));
-    usd->setText(Settings::getUSDFromZecAmount(text.toDouble()));
+    usd->setText(Settings::getUSDFromhushAmount(text.toDouble()));
 
     // If there is a recurring payment, update the info there as well
     if (sendTxRecurringInfo != nullptr) {
@@ -633,10 +633,10 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
             Addr->setFont(fixedFont);
             confirm.gridLayout->addWidget(Addr, row, 0, 1, 1);
 
-            // Amount (ZEC)
+            // Amount (hush)
             auto Amt = new QLabel(confirm.sendToAddrs);
             Amt->setObjectName(QString("Amt") % QString::number(i + 1));
-            Amt->setText(Settings::getZECDisplayFormat(toAddr.amount));
+            Amt->setText(Settings::gethushDisplayFormat(toAddr.amount));
             Amt->setAlignment(Qt::AlignRight | Qt::AlignTrailing | Qt::AlignVCenter);
             confirm.gridLayout->addWidget(Amt, row, 1, 1, 1);
             totalSpending += toAddr.amount;
@@ -644,7 +644,7 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
             // Amount (USD)
             auto AmtUSD = new QLabel(confirm.sendToAddrs);
             AmtUSD->setObjectName(QString("AmtUSD") % QString::number(i + 1));
-            AmtUSD->setText(Settings::getUSDFromZecAmount(toAddr.amount));
+            AmtUSD->setText(Settings::getUSDFromhushAmount(toAddr.amount));
             AmtUSD->setAlignment(Qt::AlignRight | Qt::AlignTrailing | Qt::AlignVCenter);
             confirm.gridLayout->addWidget(AmtUSD, row, 2, 1, 1);            
 
@@ -686,7 +686,7 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
         minerFee->setObjectName(QStringLiteral("minerFee"));
         minerFee->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         confirm.gridLayout->addWidget(minerFee, row, 1, 1, 1);
-        minerFee->setText(Settings::getZECDisplayFormat(tx.fee));
+        minerFee->setText(Settings::gethushDisplayFormat(tx.fee));
         totalSpending += tx.fee;
 
         auto minerFeeUSD = new QLabel(confirm.sendToAddrs);
@@ -695,7 +695,7 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
         minerFeeUSD->setObjectName(QStringLiteral("minerFeeUSD"));
         minerFeeUSD->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         confirm.gridLayout->addWidget(minerFeeUSD, row, 2, 1, 1);
-        minerFeeUSD->setText(Settings::getUSDFromZecAmount(tx.fee));
+        minerFeeUSD->setText(Settings::getUSDFromhushAmount(tx.fee));
 
         if (Settings::getInstance()->getAllowCustomFees() && tx.fee != Settings::getMinerFee()) {
             confirm.warningLabel->setVisible(true);            
@@ -724,9 +724,9 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
     confirm.sendFrom->setText(fnSplitAddressForWrap(tx.fromAddr));
     confirm.sendFrom->setFont(fixedFont);    
     QString tooltip = tr("Current balance      : ") +
-        Settings::getZECUSDDisplayFormat(rpc->getModel()->getAllBalances().value(tx.fromAddr));
+        Settings::gethushUSDDisplayFormat(rpc->getModel()->getAllBalances().value(tx.fromAddr));
     tooltip += "\n" + tr("Balance after this Tx: ") +
-        Settings::getZECUSDDisplayFormat(rpc->getModel()->getAllBalances().value(tx.fromAddr) - totalSpending);
+        Settings::gethushUSDDisplayFormat(rpc->getModel()->getAllBalances().value(tx.fromAddr) - totalSpending);
     confirm.sendFrom->setToolTip(tooltip);
 
     // Show the dialog and submit it if the user confirms

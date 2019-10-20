@@ -5,7 +5,7 @@
 #include "ui_createzcashconfdialog.h"
 #include "controller.h"
 
-#include "../lib/zecwalletlitelib.h"
+#include "../lib/silentdragonlitelib.h"
 
 #include "precompiled.h"
 
@@ -38,11 +38,11 @@ void ConnectionLoader::doAutoConnect() {
 
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
     config->dangerous = true;
-    config->server = QString("https://127.0.0.1:9067");
+    config->server = QString("https://127.0.0.1:9069");
 
     // Initialize the library
     main->logger->write(QObject::tr("Attempting to initialize"));
-    litelib_initialze(config->dangerous, config->server.toStdString().c_str());
+    litelib_initialze_existing(config->dangerous, config->server.toStdString().c_str());
     
     auto connection = makeConnection(config);
 

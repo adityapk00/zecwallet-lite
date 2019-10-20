@@ -6,18 +6,18 @@ endif
 
 all: release
 
-winrelease: target/x86_64-pc-windows-gnu/release/zecwalletlite.lib
+winrelease: target/x86_64-pc-windows-gnu/release/silentdragonlite.lib
 
-target/x86_64-pc-windows-gnu/release/zecwalletlite.lib: src/lib.rs Cargo.toml
+target/x86_64-pc-windows-gnu/release/silentdragonlite.lib: src/lib.rs Cargo.toml
 	cargo build --lib --release --target x86_64-pc-windows-gnu
 
-release: target/release/zecwalletlite.$(EXT)
-debug: target/debug/zecwalletlite.$(EXT) 
+release: target/release/silentdragonlite.$(EXT)
+debug: target/debug/silentdragonlite.$(EXT) 
 
-target/release/zecwalletlite.$(EXT): src/lib.rs Cargo.toml
+target/release/silentdragonlite.$(EXT): src/lib.rs Cargo.toml
 	cargo build --lib --release
 
-target/debug/zecwalletlite.$(EXT): src/lib.rs Cargo.toml
+target/debug/silentdragonlite.$(EXT): src/lib.rs Cargo.toml
 	cargo build --lib
 
 clean:

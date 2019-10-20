@@ -81,7 +81,7 @@ QJsonObject RecurringPaymentInfo::toJson() {
 }
 
 QString RecurringPaymentInfo::getAmountPretty() const {
-    return currency == "USD" ? Settings::getUSDFormat(amt) : Settings::getZECDisplayFormat(amt);
+    return currency == "USD" ? Settings::getUSDFormat(amt) : Settings::gethushDisplayFormat(amt);
 }
 
 QString RecurringPaymentInfo::getScheduleDescription() const {
@@ -135,19 +135,19 @@ RecurringPaymentInfo* Recurring::getNewRecurringFromTx(QWidget* parent, MainWind
         ui.lblTo->setText(tx.toAddrs[0].addr);
 
         // Default is USD
-        ui.lblAmt->setText(Settings::getUSDFromZecAmount(tx.toAddrs[0].amount));
+        ui.lblAmt->setText(Settings::getUSDFromhushAmount(tx.toAddrs[0].amount));
 
         ui.txtMemo->setPlainText(tx.toAddrs[0].memo);
         ui.txtMemo->setEnabled(false);
     }
 
-    // Wire up ZEC/USD toggle
+    // Wire up hush/USD toggle
     QObject::connect(ui.cmbCurrency, &QComboBox::currentTextChanged, [&](QString c) {
         if (tx.toAddrs.length() < 1)
             return;
 
         if (c == "USD") {
-            ui.lblAmt->setText(Settings::getUSDFromZecAmount(tx.toAddrs[0].amount));
+            ui.lblAmt->setText(Settings::getUSDFromhushAmount(tx.toAddrs[0].amount));
         }
         else {
             ui.lblAmt->setText(Settings::getDecimalString(tx.toAddrs[0].amount));
@@ -203,7 +203,7 @@ void Recurring::updateInfoWithTx(RecurringPaymentInfo* r, Tx tx) {
     r->fromAddr = tx.fromAddr;
     if (r->currency.isEmpty() || r->currency == "USD") {
         r->currency = "USD";
-        r->amt = tx.toAddrs[0].amount * Settings::getInstance()->getZECPrice();
+        r->amt = tx.toAddrs[0].amount * Settings::getInstance()->gethushPrice();
     }
     else {
         r->currency = Settings::getTokenName();
@@ -459,21 +459,21 @@ void Recurring::processMultiplePending(RecurringPaymentInfo rpi, MainWindow* mai
 }
 
 void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo rpi, QList<int> paymentNumbers) {
-    // Amount is in USD or ZEC?
+    // Amount is in USD or hush?
     auto amt = rpi.amt;
     if (rpi.currency == "USD") {
         // If there is no price, then fail the payment
-        if (Settings::getInstance()->getZECPrice() == 0) {
+        if (Settings::getInstance()->gethushPrice() == 0) {
             for (auto paymentNumber: paymentNumbers) {
                 updatePaymentItem(rpi.getHash(), paymentNumber, 
-                    "", QObject::tr("No ZEC price was available to convert from USD"),
+                    "", QObject::tr("No hush price was available to convert from USD"),
                     PaymentStatus::ERROR);
             }
             return;
         }
         
-        // Translate it into ZEC
-        amt = rpi.amt / Settings::getInstance()->getZECPrice();
+        // Translate it into hush
+        amt = rpi.amt / Settings::getInstance()->gethushPrice();
     }
 
     // Build a Tx

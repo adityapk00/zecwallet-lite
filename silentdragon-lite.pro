@@ -13,7 +13,7 @@ PRECOMPILED_HEADER = src/precompiled.h
 QT += widgets
 QT += websockets
 
-TARGET = zecwallet
+TARGET = silentdragonlite
 
 TEMPLATE = app
 
@@ -86,7 +86,7 @@ HEADERS += \
     src/datamodel.h \
     src/controller.h \
     src/liteinterface.h \
-    lib/zecwalletlitelib.h 
+    lib/silentdragonlitelib.h 
 
 FORMS += \
     src/mainwindow.ui \
@@ -133,8 +133,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 libsodium.target = $$PWD/res/libsodium.a
 libsodium.commands = res/libsodium/buildlibsodium.sh
 
-unix:        librust.target   = $$PWD/lib/target/release/libzecwalletlite.a
-else:win32:  librust.target   = $$PWD/lib/target/x86_64-pc-windows-gnu/release/zecwalletlite.lib
+unix:        librust.target   = $$PWD/lib/target/release/libsilentdragonlite.a
+else:win32:  librust.target   = $$PWD/lib/target/x86_64-pc-windows-gnu/release/silentdragonlite.lib
 
 unix:        librust.commands = $(MAKE) -C $$PWD/lib 
 else:win32:  librust.commands = $(MAKE) -C $$PWD/lib winrelease
@@ -144,14 +144,14 @@ distclean.depends += librustclean
 
 
 QMAKE_EXTRA_TARGETS += librust libsodium librustclean distclean
-QMAKE_CLEAN += $$PWD/lib/target/release/libzecwalletlite.a res/libsodium.a
+QMAKE_CLEAN += $$PWD/lib/target/release/libsilentdragonlite.a res/libsodium.a
 
-win32: LIBS += -L$$PWD/lib/target/x86_64-pc-windows-gnu/release -lzecwalletlite -L$$PWD/res/ -llibsodium
-else:macx: LIBS += -L$$PWD/lib/target/release -lzecwalletlite -framework Security -framework Foundation -L$$PWD/res/ -lsodium
-else:unix: LIBS += -L$$PWD/lib/target/release -lzecwalletlite -ldl -L$$PWD/res/ -lsodium
+win32: LIBS += -L$$PWD/lib/target/x86_64-pc-windows-gnu/release -lsilentdragonlite -L$$PWD/res/ -llibsodium
+else:macx: LIBS += -L$$PWD/lib/target/release -lsilentdragonlite -framework Security -framework Foundation -L$$PWD/res/ -lsodium
+else:unix: LIBS += -L$$PWD/lib/target/release -lsilentdragonlite -ldl -L$$PWD/res/ -lsodium
 
-win32: PRE_TARGETDEPS += $$PWD/lib/target/x86_64-pc-windows-gnu/release/zecwalletlite.lib $$PWD/res/liblibsodium.a
-else:unix::PRE_TARGETDEPS += $$PWD/lib/target/release/libzecwalletlite.a $$PWD/res/libsodium.a
+win32: PRE_TARGETDEPS += $$PWD/lib/target/x86_64-pc-windows-gnu/release/silentdragonlite.lib $$PWD/res/liblibsodium.a
+else:unix::PRE_TARGETDEPS += $$PWD/lib/target/release/libsilentdragonlite.a $$PWD/res/libsodium.a
 
 INCLUDEPATH += $$PWD/res
 DEPENDPATH += $$PWD/res

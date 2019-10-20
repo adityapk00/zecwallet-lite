@@ -1,14 +1,14 @@
 [package]
 name = "qtlib"
 version = "0.1.0"
-authors = ["ZecWallet"]
+authors = ["silentdragon"]
 edition = "2018"
 
 [lib]
-name = "zecwalletlite"
+name = "silentdragonlite"
 crate-type = ["staticlib"]
 
 [dependencies]
 libc = "0.2.58"
 lazy_static = "1.4.0"
-zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "e3a0fd2dea59c0cf6434148bf77fef84830cce02" }
+silentdragonlitelib = { git = "https://github.com/DenioD/silentdragonlite-cli", rev = "8c9523ad90d7f9b6f4da362f34e3431a27de0532" }

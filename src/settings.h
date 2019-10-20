@@ -77,8 +77,8 @@ public:
     void    setUsingZcashConf(QString confLocation);
     const   QString& getZcashdConfLocation() { return _confLocation; }
 
-    void    setZECPrice(double p) { zecPrice = p; }
-    double  getZECPrice();
+    void    sethushPrice(double p) { hushPrice = p; }
+    double  gethushPrice();
 
     void    setPeers(int peers);
     int     getPeers();
@@ -101,9 +101,9 @@ public:
     static QString getDecimalString(double amt);
     static QString getUSDFormat(double usdAmt);
 
-    static QString getUSDFromZecAmount(double bal);
-    static QString getZECDisplayFormat(double bal);
-    static QString getZECUSDDisplayFormat(double bal);
+    static QString getUSDFromhushAmount(double bal);
+    static QString gethushDisplayFormat(double bal);
+    static QString gethushUSDDisplayFormat(double bal);
 
     static QString getTokenName();
     static QString getDonationAddr();
@@ -142,7 +142,7 @@ private:
     bool    _headless         = false;
     int     _peerConnections  = 0;
     
-    double  zecPrice          = 0.0;
+    double  hushPrice          = 0.0;
 };
 
 #endif // SETTINGS_H

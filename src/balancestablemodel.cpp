@@ -88,14 +88,14 @@ QVariant BalancesTableModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) {
         switch (index.column()) {
         case 0: return AddressBook::addLabelToAddress(std::get<0>(modeldata->at(index.row())));
-        case 1: return Settings::getZECDisplayFormat(std::get<1>(modeldata->at(index.row())));
+        case 1: return Settings::gethushDisplayFormat(std::get<1>(modeldata->at(index.row())));
         }
     }
 
     if(role == Qt::ToolTipRole) {
         switch (index.column()) {
         case 0: return AddressBook::addLabelToAddress(std::get<0>(modeldata->at(index.row())));
-        case 1: return Settings::getUSDFromZecAmount(std::get<1>(modeldata->at(index.row())));
+        case 1: return Settings::getUSDFromhushAmount(std::get<1>(modeldata->at(index.row())));
         }
     }
     

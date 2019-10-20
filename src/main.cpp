@@ -169,8 +169,8 @@ public:
             return 0;            
         } 
 
-        QCoreApplication::setOrganizationName("zecwallet-org");
-        QCoreApplication::setApplicationName("zecwallet");
+        QCoreApplication::setOrganizationName("silentdragon-org");
+        QCoreApplication::setApplicationName("silentdragon");
 
         QString locale = QLocale::system().name();
         locale.truncate(locale.lastIndexOf('_'));   // Get the language code
@@ -214,7 +214,7 @@ public:
         }
 
         w = new MainWindow();
-        w->setWindowTitle("Zecwallet v" + QString(APP_VERSION));
+        w->setWindowTitle("silentdragon v" + QString(APP_VERSION));
 
         // If there was a payment URI on the command line, pay it
         if (parser.positionalArguments().length() > 0) {

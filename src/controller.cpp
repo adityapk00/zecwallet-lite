@@ -28,7 +28,7 @@ Controller::Controller(MainWindow* main) {
     priceTimer = new QTimer(main);
     QObject::connect(priceTimer, &QTimer::timeout, [=]() {
         if (Settings::getInstance()->getAllowFetchPrices())
-            refreshZECPrice();
+            refreshhushPrice();
     });
     priceTimer->start(Settings::priceRefreshSpeed);  // Every hour
 
@@ -71,9 +71,9 @@ void Controller::setConnection(Connection* c) {
     Settings::removeFromZcashConf(zcashConfLocation, "rescan");
     Settings::removeFromZcashConf(zcashConfLocation, "reindex");
 
-    // If we're allowed to get the Zec Price, get the prices
+    // If we're allowed to get the hush Price, get the prices
     if (Settings::getInstance()->getAllowFetchPrices())
-        refreshZECPrice();
+        refreshhushPrice();
 
     // If we're allowed to check for updates, check for a new release
     if (Settings::getInstance()->getCheckForUpdates())
@@ -285,14 +285,14 @@ void Controller::refreshBalances() {
 
         AppDataModel::getInstance()->setBalances(balT, balZ);
 
-        ui->balSheilded   ->setText(Settings::getZECDisplayFormat(balZ));
-        ui->balTransparent->setText(Settings::getZECDisplayFormat(balT));
-        ui->balTotal      ->setText(Settings::getZECDisplayFormat(balTotal));
+        ui->balSheilded   ->setText(Settings::gethushDisplayFormat(balZ));
+        ui->balTransparent->setText(Settings::gethushDisplayFormat(balT));
+        ui->balTotal      ->setText(Settings::gethushDisplayFormat(balTotal));
 
 
-        ui->balSheilded   ->setToolTip(Settings::getZECDisplayFormat(balZ));
-        ui->balTransparent->setToolTip(Settings::getZECDisplayFormat(balT));
-        ui->balTotal      ->setToolTip(Settings::getZECDisplayFormat(balTotal));
+        ui->balSheilded   ->setToolTip(Settings::gethushDisplayFormat(balZ));
+        ui->balTransparent->setToolTip(Settings::gethushDisplayFormat(balT));
+        ui->balTotal      ->setToolTip(Settings::gethushDisplayFormat(balTotal));
     });
 
     // 2. Get the UTXOs
@@ -434,7 +434,7 @@ void Controller::checkForUpdate(bool silent) {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
-    QUrl cmcURL("https://api.github.com/repos/ZcashFoundation/zecwallet/releases");
+    QUrl cmcURL("https://api.github.com/repos/ZcashFoundation/silentdragon/releases");
 
     QNetworkRequest req;
     req.setUrl(cmcURL);
@@ -482,7 +482,7 @@ void Controller::checkForUpdate(bool silent) {
                             .arg(currentVersion.toString()),
                         QMessageBox::Yes, QMessageBox::Cancel);
                     if (ans == QMessageBox::Yes) {
-                        QDesktopServices::openUrl(QUrl("https://github.com/ZcashFoundation/zecwallet/releases"));
+                        QDesktopServices::openUrl(QUrl("https://github.com/ZcashFoundation/silentdragon/releases"));
                     } else {
                         // If the user selects cancel, don't bother them again for this version
                         s.setValue("update/lastversion", maxVersion.toString());
@@ -503,8 +503,8 @@ void Controller::checkForUpdate(bool silent) {
     });
 }
 
-// Get the ZEC->USD price from coinmarketcap using their API
-void Controller::refreshZECPrice() {
+// Get the hush->USD price from coinmarketcap using their API
+void Controller::refreshhushPrice() {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
@@ -528,7 +528,7 @@ void Controller::refreshZECPrice() {
                 } else {
                     qDebug() << reply->errorString();
                 }
-                Settings::getInstance()->setZECPrice(0);
+                Settings::getInstance()->sethushPrice(0);
                 return;
             } 
 
@@ -536,7 +536,7 @@ void Controller::refreshZECPrice() {
             
             auto parsed = json::parse(all, nullptr, false);
             if (parsed.is_discarded()) {
-                Settings::getInstance()->setZECPrice(0);
+                Settings::getInstance()->sethushPrice(0);
                 return;
             }
 
@@ -544,7 +544,7 @@ void Controller::refreshZECPrice() {
                 if (item["symbol"].get<json::string_t>() == Settings::getTokenName().toStdString()) {
                     QString price = QString::fromStdString(item["price_usd"].get<json::string_t>());
                     qDebug() << Settings::getTokenName() << " Price=" << price;
-                    Settings::getInstance()->setZECPrice(price.toDouble());
+                    Settings::getInstance()->sethushPrice(price.toDouble());
 
                     return;
                 }
@@ -555,7 +555,7 @@ void Controller::refreshZECPrice() {
         }
 
         // If nothing, then set the price to 0;
-        Settings::getInstance()->setZECPrice(0);
+        Settings::getInstance()->sethushPrice(0);
     });
 }
 
@@ -579,7 +579,7 @@ void Controller::shutdownZcashd() {
     // Ui_ConnectionDialog connD;
     // connD.setupUi(&d);
     // connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
-    // connD.status->setText(QObject::tr("Please wait for ZecWallet to exit"));
+    // connD.status->setText(QObject::tr("Please wait for silentdragon to exit"));
     // connD.statusDetail->setText(QObject::tr("Waiting for zcashd to exit"));
 
     // QTimer waiter(main);

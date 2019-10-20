@@ -27,13 +27,13 @@ void AddressCombo::setCurrentText(const QString& text) {
 void AddressCombo::addItem(const QString& text, double bal) {
     QString txt = AddressBook::addLabelToAddress(text);
     if (bal > 0)
-        txt = txt % "(" % Settings::getZECDisplayFormat(bal) % ")";
+        txt = txt % "(" % Settings::gethushDisplayFormat(bal) % ")";
         
     QComboBox::addItem(txt);
 }
 
 void AddressCombo::insertItem(int index, const QString& text, double bal) {
     QString txt = AddressBook::addLabelToAddress(text) % 
-                    "(" % Settings::getZECDisplayFormat(bal) % ")";
+                    "(" % Settings::gethushDisplayFormat(bal) % ")";
     QComboBox::insertItem(index, txt);
 }

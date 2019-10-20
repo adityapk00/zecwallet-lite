@@ -33,7 +33,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Scan this QRCode from your ZecWallet companion app to connect your phone</string>
+      <string>Scan this QRCode from your silentdragon companion app to connect your phone</string>
      </property>
     </widget>
    </item>
@@ -81,7 +81,7 @@
       <item row="3" column="0">
        <widget class="QCheckBox" name="chkInternetConn">
         <property name="text">
-         <string>Allow connections over the internet via ZecWallet wormhole</string>
+         <string>Allow connections over the internet via silentdragon wormhole</string>
         </property>
        </widget>
       </item>
@@ -91,7 +91,7 @@
    <item row="1" column="2" rowspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>ZecWallet Companion App</string>
+      <string>silentdragon Companion App</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="5" column="0">

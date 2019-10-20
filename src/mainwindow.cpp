@@ -4,11 +4,9 @@
 #include "ui_mainwindow.h"
 #include "ui_mobileappconnector.h"
 #include "ui_addressbook.h"
-#include "ui_zboard.h"
 #include "ui_privkey.h"
 #include "ui_about.h"
 #include "ui_settings.h"
-#include "ui_turnstileprogress.h"
 #include "ui_viewalladdresses.h"
 #include "controller.h"
 #include "balancestablemodel.h"
@@ -41,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	    
     ui->setupUi(this);
-    logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("zec-qt-wallet.log"));
+    logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("hush-qt-wallet.log"));
 
     // Status Bar
     setupStatusBar();
@@ -57,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // File a bug
     QObject::connect(ui->actionFile_a_bug, &QAction::triggered, [=]() {
-        QDesktopServices::openUrl(QUrl("https://github.com/zcashfoundation/zecwallet/issues/new"));
+        QDesktopServices::openUrl(QUrl("https://github.com/zcashfoundation/silentdragon/issues/new"));
     });
 
     // Set up check for updates action
@@ -269,7 +267,7 @@ void MainWindow::setupSettingsModal() {
         QObject::connect(settings.comboBoxTheme, &QComboBox::currentTextChanged, [=] (QString theme_name) {
             this->slot_change_theme(theme_name);
             // Tell the user to restart
-            QMessageBox::information(this, tr("Restart"), tr("Please restart ZecWallet to have the theme apply"), QMessageBox::Ok);
+            QMessageBox::information(this, tr("Restart"), tr("Please restart silentdragon to have the theme apply"), QMessageBox::Ok);
         });
 
         // Save sent transactions
@@ -357,7 +355,7 @@ void MainWindow::setupSettingsModal() {
                 rpc->getConnection()->config->proxy = "proxy=127.0.0.1:9050";
 
                 QMessageBox::information(this, tr("Enable Tor"), 
-                    tr("Connection over Tor has been enabled. To use this feature, you need to restart ZecWallet."), 
+                    tr("Connection over Tor has been enabled. To use this feature, you need to restart silentdragon."), 
                     QMessageBox::Ok);
             }
 
@@ -367,7 +365,7 @@ void MainWindow::setupSettingsModal() {
                 rpc->getConnection()->config->proxy.clear();
 
                 QMessageBox::information(this, tr("Disable Tor"),
-                    tr("Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart ZecWallet."),
+                    tr("Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart silentdragon."),
                     QMessageBox::Ok);
             }
 
@@ -396,9 +394,9 @@ void MainWindow::setupSettingsModal() {
             }
 
             if (showRestartInfo) {
-                auto desc = tr("ZecWallet needs to restart to rescan/reindex. ZecWallet will now close, please restart ZecWallet to continue");
+                auto desc = tr("silentdragon needs to restart to rescan/reindex. silentdragon will now close, please restart silentdragon to continue");
                 
-                QMessageBox::information(this, tr("Restart ZecWallet"), desc, QMessageBox::Ok);
+                QMessageBox::information(this, tr("Restart silentdragon"), desc, QMessageBox::Ok);
                 QTimer::singleShot(1, [=]() { this->close(); });
             }
         }
@@ -427,9 +425,9 @@ void MainWindow::donate() {
     ui->Address1->setText(Settings::getDonationAddr());
     ui->Address1->setCursorPosition(0);
     ui->Amount1->setText("0.01");
-    ui->MemoTxt1->setText(tr("Thanks for supporting ZecWallet!"));
+    ui->MemoTxt1->setText(tr("Thanks for supporting silentdragon!"));
 
-    ui->statusBar->showMessage(tr("Donate 0.01 ") % Settings::getTokenName() % tr(" to support ZecWallet"));
+    ui->statusBar->showMessage(tr("Donate 0.01 ") % Settings::getTokenName() % tr(" to support silentdragon"));
 
     // And switch to the send tab.
     ui->tabWidget->setCurrentIndex(1);
@@ -1080,7 +1078,7 @@ void MainWindow::setupReceiveTab() {
         }
         
         ui->rcvLabel->setText(label);
-        ui->rcvBal->setText(Settings::getZECUSDDisplayFormat(rpc->getModel()->getAllBalances().value(addr)));
+        ui->rcvBal->setText(Settings::gethushUSDDisplayFormat(rpc->getModel()->getAllBalances().value(addr)));
         ui->txtReceive->setPlainText(addr);       
         ui->qrcodeDisplay->setQrcodeString(addr);
         if (rpc->getModel()->getUsedAddresses().value(addr, false)) {

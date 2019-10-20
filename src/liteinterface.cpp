@@ -56,34 +56,6 @@ void LiteInterface::fetchPrivKey(QString addr, const std::function<void(json)>& 
     conn->doRPCWithDefaultErrorHandling("export", addr, cb);
 }
 
-// void LiteInterface::importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) {
-//     if (conn == nullptr)
-//         return;
-
-//     // json payload = {
-//     //     {"jsonrpc", "1.0"},
-//     //     {"id", "someid"},
-//     //     {"method", "z_importkey"},
-//     //     {"params", { addr.toStdString(), (rescan? "yes" : "no") }},
-//     // };
-    
-//     // conn->doRPCWithDefaultErrorHandling(payload, cb);
-// }
-
-
-// void LiteInterface::importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) {
-//     if (conn == nullptr)
-//         return;
-
-//     // json payload = {
-//     //     {"jsonrpc", "1.0"},
-//     //     {"id", "someid"},
-//     //     {"method", "importprivkey"},
-//     //     {"params", { addr.toStdString(), (rescan? "yes" : "no") }},
-//     // };
-    
-//     // conn->doRPCWithDefaultErrorHandling(payload, cb);
-// }
 
 void LiteInterface::fetchBalance(const std::function<void(json)>& cb) {
     if (conn == nullptr)

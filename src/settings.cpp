@@ -111,8 +111,8 @@ bool Settings::isSaplingActive() {
            (!isTestnet() && getBlockNumber() > 419200);
 }
 
-double Settings::getZECPrice() { 
-    return zecPrice; 
+double Settings::gethushPrice() { 
+    return hushPrice; 
 }
 
 bool Settings::getAutoShield() {
@@ -197,9 +197,9 @@ void Settings::saveRestoreTableHeader(QTableView* table, QDialog* d, QString tab
 void Settings::openAddressInExplorer(QString address) {
     QString url;
     if (Settings::getInstance()->isTestnet()) {
-        url = "https://chain.so/address/ZECTEST/" + address;
+        url = "https://chain.so/address/hushTEST/" + address;
     } else {
-        url = "https://chain.so/address/ZEC/" + address;
+        url = "https://chain.so/address/hush/" + address;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
@@ -207,10 +207,10 @@ void Settings::openAddressInExplorer(QString address) {
 void Settings::openTxInExplorer(QString txid) {
     QString url;
     if (Settings::getInstance()->isTestnet()) {
-        url = "https://chain.so/tx/ZECTEST/" + txid;
+        url = "https://chain.so/tx/hushTEST/" + txid;
     }
     else {
-        url = "https://chain.so/tx/ZEC/" + txid;
+        url = "https://chain.so/tx/hush/" + txid;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
@@ -220,8 +220,8 @@ QString Settings::getUSDFormat(double bal) {
 }
 
 
-QString Settings::getUSDFromZecAmount(double bal) {
-    return getUSDFormat(bal * Settings::getInstance()->getZECPrice());
+QString Settings::getUSDFromhushAmount(double bal) {
+    return getUSDFormat(bal * Settings::getInstance()->gethushPrice());
 }
 
 
@@ -237,17 +237,17 @@ QString Settings::getDecimalString(double amt) {
     return f;
 }
 
-QString Settings::getZECDisplayFormat(double bal) {
+QString Settings::gethushDisplayFormat(double bal) {
     // This is idiotic. Why doesn't QString have a way to do this?
     return getDecimalString(bal) % " " % Settings::getTokenName();
 }
 
-QString Settings::getZECUSDDisplayFormat(double bal) {
-    auto usdFormat = getUSDFromZecAmount(bal);
+QString Settings::gethushUSDDisplayFormat(double bal) {
+    auto usdFormat = getUSDFromhushAmount(bal);
     if (!usdFormat.isEmpty())
-        return getZECDisplayFormat(bal) % " (" % usdFormat % ")";
+        return gethushDisplayFormat(bal) % " (" % usdFormat % ")";
     else
-        return getZECDisplayFormat(bal);
+        return gethushDisplayFormat(bal);
 }
 
 const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (right click to copy) txid:"));
@@ -256,7 +256,7 @@ QString Settings::getTokenName() {
     if (Settings::getInstance()->isTestnet()) {
         return "TAZ";
     } else {
-        return "ZEC";
+        return "HUSH";
     }
 }
 
@@ -354,7 +354,7 @@ bool Settings::isValidAddress(QString addr) {
 
 // Get a pretty string representation of this Payment URI
 QString Settings::paymentURIPretty(PaymentURI uri) {
-    return QString() + "Payment Request\n" + "Pay: " + uri.addr + "\nAmount: " + getZECDisplayFormat(uri.amt.toDouble()) 
+    return QString() + "Payment Request\n" + "Pay: " + uri.addr + "\nAmount: " + gethushDisplayFormat(uri.amt.toDouble()) 
         + "\nMemo:" + QUrl::fromPercentEncoding(uri.memo.toUtf8());
 }
 
