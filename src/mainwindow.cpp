@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // File a bug
     QObject::connect(ui->actionFile_a_bug, &QAction::triggered, [=]() {
-        QDesktopServices::openUrl(QUrl("https://github.com/zcashfoundation/silentdragon/issues/new"));
+        QDesktopServices::openUrl(QUrl("https://github.com/hushfoundation/silentdragon/issues/new"));
     });
 
     // Set up check for updates action
@@ -69,14 +69,14 @@ MainWindow::MainWindow(QWidget *parent) :
         Recurring::getInstance()->showRecurringDialog(this);
     });
 
-    // Request zcash
-    QObject::connect(ui->actionRequest_zcash, &QAction::triggered, [=]() {
-        RequestDialog::showRequestZcash(this);
+    // Request hush
+    QObject::connect(ui->actionRequest_hush, &QAction::triggered, [=]() {
+        RequestDialog::showRequesthush(this);
     });
 
-    // Pay Zcash URI
+    // Pay hush URI
     QObject::connect(ui->actionPay_URI, &QAction::triggered, [=] () {
-        payZcashURI();
+        payhushURI();
     });
 
     // Export All Private Keys
@@ -116,15 +116,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabWidget->setCurrentIndex(0);
 
 
-    // The zcashd tab is hidden by default, and only later added in if the embedded zcashd is started
-    zcashdtab = ui->tabWidget->widget(4);
+    // The hushd tab is hidden by default, and only later added in if the embedded hushd is started
+    hushdtab = ui->tabWidget->widget(4);
     ui->tabWidget->removeTab(4);
 
     setupSendTab();
     setupTransactionsTab();
     setupReceiveTab();
     setupBalancesTab();
-    setupZcashdTab();
+    setuphushdTab();
 
     rpc = new Controller(this);
 
@@ -198,7 +198,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     s.sync();
 
     // Let the RPC know to shut down any running service.
-    rpc->shutdownZcashd();
+    rpc->shutdownhushd();
 
     // Bubble up
     if (event)
@@ -296,17 +296,17 @@ void MainWindow::setupSettingsModal() {
         QIntValidator validator(0, 65535);
         settings.port->setValidator(&validator);
 
-        // If values are coming from zcash.conf, then disable all the fields
-        auto zcashConfLocation = Settings::getInstance()->getZcashdConfLocation();
-        if (!zcashConfLocation.isEmpty()) {
-            settings.confMsg->setText("Settings are being read from \n" + zcashConfLocation);
+        // If values are coming from hush.conf, then disable all the fields
+        auto hushConfLocation = Settings::getInstance()->gethushdConfLocation();
+        if (!hushConfLocation.isEmpty()) {
+            settings.confMsg->setText("Settings are being read from \n" + hushConfLocation);
             settings.hostname->setEnabled(false);
             settings.port->setEnabled(false);
             settings.rpcuser->setEnabled(false);
             settings.rpcpassword->setEnabled(false);
         }
         else {
-            settings.confMsg->setText("No local zcash.conf found. Please configure connection manually.");
+            settings.confMsg->setText("No local hush.conf found. Please configure connection manually.");
             settings.hostname->setEnabled(true);
             settings.port->setEnabled(true);
             settings.rpcuser->setEnabled(true);
@@ -323,13 +323,13 @@ void MainWindow::setupSettingsModal() {
         // Connection tab by default
         settings.tabWidget->setCurrentIndex(0);
 
-        // Enable the troubleshooting options only if using embedded zcashd
+        // Enable the troubleshooting options only if using embedded hushd
         if (!rpc->isEmbedded()) {
             settings.chkRescan->setEnabled(false);
-            settings.chkRescan->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -rescan"));
+            settings.chkRescan->setToolTip(tr("You're using an external hushd. Please restart hushd with -rescan"));
 
             settings.chkReindex->setEnabled(false);
-            settings.chkReindex->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -reindex"));
+            settings.chkReindex->setToolTip(tr("You're using an external hushd. Please restart hushd with -reindex"));
         }
 
         if (settingsDialog.exec() == QDialog::Accepted) {
@@ -351,7 +351,7 @@ void MainWindow::setupSettingsModal() {
 
             if (!isUsingTor && settings.chkTor->isChecked()) {
                 // If "use tor" was previously unchecked and now checked
-                Settings::addToZcashConf(zcashConfLocation, "proxy=127.0.0.1:9050");
+                Settings::addTohushConf(hushConfLocation, "proxy=127.0.0.1:9050");
                 rpc->getConnection()->config->proxy = "proxy=127.0.0.1:9050";
 
                 QMessageBox::information(this, tr("Enable Tor"), 
@@ -361,7 +361,7 @@ void MainWindow::setupSettingsModal() {
 
             if (isUsingTor && !settings.chkTor->isChecked()) {
                 // If "use tor" was previously checked and now is unchecked
-                Settings::removeFromZcashConf(zcashConfLocation, "proxy");
+                Settings::removeFromhushConf(hushConfLocation, "proxy");
                 rpc->getConnection()->config->proxy.clear();
 
                 QMessageBox::information(this, tr("Disable Tor"),
@@ -369,7 +369,7 @@ void MainWindow::setupSettingsModal() {
                     QMessageBox::Ok);
             }
 
-            if (zcashConfLocation.isEmpty()) {
+            if (hushConfLocation.isEmpty()) {
                 // Save settings
                 Settings::getInstance()->saveSettings(
                     settings.hostname->text(),
@@ -384,12 +384,12 @@ void MainWindow::setupSettingsModal() {
             // Check to see if rescan or reindex have been enabled
             bool showRestartInfo = false;
             if (settings.chkRescan->isChecked()) {
-                Settings::addToZcashConf(zcashConfLocation, "rescan=1");
+                Settings::addTohushConf(hushConfLocation, "rescan=1");
                 showRestartInfo = true;
             }
 
             if (settings.chkReindex->isChecked()) {
-                Settings::addToZcashConf(zcashConfLocation, "reindex=1");
+                Settings::addTohushConf(hushConfLocation, "reindex=1");
                 showRestartInfo = true;
             }
 
@@ -472,8 +472,8 @@ void MainWindow::balancesReady() {
     // There is a pending URI payment (from the command line, or from a secondary instance),
     // process it.
     if (!pendingURIPayment.isEmpty()) {
-        qDebug() << "Paying zcash URI";
-        payZcashURI(pendingURIPayment);
+        qDebug() << "Paying hush URI";
+        payhushURI(pendingURIPayment);
         pendingURIPayment = "";
     }
 
@@ -486,7 +486,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event) {
     if (event->type() == QEvent::FileOpen) {
         QFileOpenEvent *fileEvent = static_cast<QFileOpenEvent*>(event);
         if (!fileEvent->url().isEmpty())
-            payZcashURI(fileEvent->url().toString());
+            payhushURI(fileEvent->url().toString());
 
         return true;
     }
@@ -495,10 +495,10 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event) {
 }
 
 
-// Pay the Zcash URI by showing a confirmation window. If the URI parameter is empty, the UI
+// Pay the hush URI by showing a confirmation window. If the URI parameter is empty, the UI
 // will prompt for one. If the myAddr is empty, then the default from address is used to send
 // the transaction.
-void MainWindow::payZcashURI(QString uri, QString myAddr) {
+void MainWindow::payhushURI(QString uri, QString myAddr) {
     // If the Payments UI is not ready (i.e, all balances have not loaded), defer the payment URI
     if (!isPaymentsReady()) {
         qDebug() << "Payment UI not ready, waiting for UI to pay URI";
@@ -508,8 +508,8 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
 
     // If there was no URI passed, ask the user for one.
     if (uri.isEmpty()) {
-        uri = QInputDialog::getText(this, tr("Paste Zcash URI"),
-            "Zcash URI" + QString(" ").repeated(180));
+        uri = QInputDialog::getText(this, tr("Paste hush URI"),
+            "hush URI" + QString(" ").repeated(180));
     }
 
     // If there's no URI, just exit
@@ -520,8 +520,8 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
     qDebug() << "Received URI " << uri;
     PaymentURI paymentInfo = Settings::parseURI(uri);
     if (!paymentInfo.error.isEmpty()) {
-        QMessageBox::critical(this, tr("Error paying zcash URI"), 
-                tr("URI should be of the form 'zcash:<addr>?amt=x&memo=y") + "\n" + paymentInfo.error);
+        QMessageBox::critical(this, tr("Error paying hush URI"), 
+                tr("URI should be of the form 'hush:<addr>?amt=x&memo=y") + "\n" + paymentInfo.error);
         return;
     }
 
@@ -558,7 +558,7 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
 //     pui.buttonBox->button(QDialogButtonBox::Save)->setVisible(false);
 //     pui.helpLbl->setText(QString() %
 //                         tr("Please paste your private keys (z-Addr or t-Addr) here, one per line") % ".\n" %
-//                         tr("The keys will be imported into your connected zcashd node"));  
+//                         tr("The keys will be imported into your connected hushd node"));  
 
 //     if (d.exec() == QDialog::Accepted && !pui.privKeyTxt->toPlainText().trimmed().isEmpty()) {
 //         auto rawkeys = pui.privKeyTxt->toPlainText().trimmed().split("\n");
@@ -599,7 +599,7 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
  */
 void MainWindow::exportTransactions() {
     // First, get the export file name
-    QString exportName = "zcash-transactions-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".csv";
+    QString exportName = "hush-transactions-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".csv";
 
     QUrl csvName = QFileDialog::getSaveFileUrl(this, 
             tr("Export transactions"), exportName, "CSV file (*.csv)");
@@ -615,24 +615,24 @@ void MainWindow::exportTransactions() {
 
 /**
  * Backup the wallet.dat file. This is kind of a hack, since it has to read from the filesystem rather than an RPC call
- * This might fail for various reasons - Remote zcashd, non-standard locations, custom params passed to zcashd, many others
+ * This might fail for various reasons - Remote hushd, non-standard locations, custom params passed to hushd, many others
 */
 void MainWindow::backupWalletDat() {
     if (!rpc->getConnection())
         return;
 
-    // QDir zcashdir(rpc->getConnection()->config->zcashDir);
-    // QString backupDefaultName = "zcash-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
+    // QDir hushdir(rpc->getConnection()->config->hushDir);
+    // QString backupDefaultName = "hush-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
 
     // if (Settings::getInstance()->isTestnet()) {
-    //     zcashdir.cd("testnet3");
+    //     hushdir.cd("testnet3");
     //     backupDefaultName = "testnet-" + backupDefaultName;
     // }
     
-    // QFile wallet(zcashdir.filePath("wallet.dat"));
+    // QFile wallet(hushdir.filePath("wallet.dat"));
     // if (!wallet.exists()) {
     //     QMessageBox::critical(this, tr("No wallet.dat"), tr("Couldn't find the wallet.dat on this computer") + "\n" +
-    //         tr("You need to back it up from the machine zcashd is running on"), QMessageBox::Ok);
+    //         tr("You need to back it up from the machine hushd is running on"), QMessageBox::Ok);
     //     return;
     // }
     
@@ -680,7 +680,7 @@ void MainWindow::exportKeys(QString addr) {
     // Wire up save button
     QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                           allKeys ? "zcash-all-privatekeys.txt" : "zcash-privatekey.txt");
+                           allKeys ? "hush-all-privatekeys.txt" : "hush-privatekey.txt");
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
             QMessageBox::information(this, tr("Unable to open file"), file.errorString());
@@ -807,8 +807,8 @@ void MainWindow::setupBalancesTab() {
     });
 }
 
-void MainWindow::setupZcashdTab() {    
-    ui->zcashdlogo->setBasePixmap(QPixmap(":/img/res/zcashdlogo.gif"));
+void MainWindow::setuphushdTab() {    
+    ui->hushdlogo->setBasePixmap(QPixmap(":/img/res/hushdlogo.gif"));
 }
 
 void MainWindow::setupTransactionsTab() {
@@ -857,7 +857,7 @@ void MainWindow::setupTransactionsTab() {
         });
 
         // Payment Request
-        if (!memo.isEmpty() && memo.startsWith("zcash:")) {
+        if (!memo.isEmpty() && memo.startsWith("hush:")) {
             menu.addAction(tr("View Payment Request"), [=] () {
                 RequestDialog::showPaymentConfirmation(this, memo);
             });

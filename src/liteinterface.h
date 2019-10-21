@@ -1,5 +1,5 @@
-#ifndef ZCASHDRPC_H
-#define ZCASHDRPC_H
+#ifndef hushDRPC_H
+#define hushDRPC_H
 
 #include "precompiled.h"
 
@@ -61,4 +61,4 @@ private:
     Connection*  conn                        = nullptr;
 };
 
-#endif // ZCASHDRPC_H
+#endif // hushDRPC_H

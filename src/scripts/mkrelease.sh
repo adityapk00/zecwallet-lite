@@ -7,37 +7,37 @@ fi
 if [ -z $APP_VERSION ]; then echo "APP_VERSION is not set"; exit 1; fi
 if [ -z $PREV_VERSION ]; then echo "PREV_VERSION is not set"; exit 1; fi
 
-if [ -z $ZCASH_DIR ]; then
-    echo "ZCASH_DIR is not set. Please set it to the base directory of a Zcash project with built Zcash binaries."
+if [ -z $hush_DIR ]; then
+    echo "hush_DIR is not set. Please set it to the base directory of a hush project with built hush binaries."
     exit 1;
 fi
 
-if [ ! -f $ZCASH_DIR/artifacts/zcashd ]; then
-    echo "Couldn't find zcashd in $ZCASH_DIR/artifacts/. Please build zcashd."
+if [ ! -f $hush_DIR/artifacts/hushd ]; then
+    echo "Couldn't find hushd in $hush_DIR/artifacts/. Please build hushd."
     exit 1;
 fi
 
-if [ ! -f $ZCASH_DIR/artifacts/zcash-cli ]; then
-    echo "Couldn't find zcash-cli in $ZCASH_DIR/artifacts/. Please build zcashd."
+if [ ! -f $hush_DIR/artifacts/hush-cli ]; then
+    echo "Couldn't find hush-cli in $hush_DIR/artifacts/. Please build hushd."
     exit 1;
 fi
 
-# Ensure that zcashd is the right build
-echo -n "zcashd version........."
-if grep -q "zqwMagicBean" $ZCASH_DIR/artifacts/zcashd && ! readelf -s $ZCASH_DIR/artifacts/zcashd | grep -q "GLIBC_2\.25"; then 
+# Ensure that hushd is the right build
+echo -n "hushd version........."
+if grep -q "zqwMagicBean" $hush_DIR/artifacts/hushd && ! readelf -s $hush_DIR/artifacts/hushd | grep -q "GLIBC_2\.25"; then 
     echo "[OK]"
 else
     echo "[ERROR]"
-    echo "zcashd doesn't seem to be a zqwMagicBean build or zcashd is built with libc 2.25"
+    echo "hushd doesn't seem to be a zqwMagicBean build or hushd is built with libc 2.25"
     exit 1
 fi
 
-echo -n "zcashd.exe version....."
-if grep -q "zqwMagicBean" $ZCASH_DIR/artifacts/zcashd.exe; then 
+echo -n "hushd.exe version....."
+if grep -q "zqwMagicBean" $hush_DIR/artifacts/hushd.exe; then 
     echo "[OK]"
 else
     echo "[ERROR]"
-    echo "zcashd doesn't seem to be a zqwMagicBean build"
+    echo "hushd doesn't seem to be a zqwMagicBean build"
     exit 1
 fi
 
@@ -86,8 +86,8 @@ mkdir bin/silentdragon-v$APP_VERSION > /dev/null
 strip silentdragon
 
 cp silentdragon                  bin/silentdragon-v$APP_VERSION > /dev/null
-cp $ZCASH_DIR/artifacts/zcashd    bin/silentdragon-v$APP_VERSION > /dev/null
-cp $ZCASH_DIR/artifacts/zcash-cli bin/silentdragon-v$APP_VERSION > /dev/null
+cp $hush_DIR/artifacts/hushd    bin/silentdragon-v$APP_VERSION > /dev/null
+cp $hush_DIR/artifacts/hush-cli bin/silentdragon-v$APP_VERSION > /dev/null
 cp README.md                      bin/silentdragon-v$APP_VERSION > /dev/null
 cp LICENSE                        bin/silentdragon-v$APP_VERSION > /dev/null
 
@@ -122,7 +122,7 @@ mkdir -p $debdir/usr/local/bin
 cat src/scripts/control | sed "s/RELEASE_VERSION/$APP_VERSION/g" > $debdir/DEBIAN/control
 
 cp silentdragon                   $debdir/usr/local/bin/
-cp $ZCASH_DIR/artifacts/zcashd $debdir/usr/local/bin/zqw-zcashd
+cp $hush_DIR/artifacts/hushd $debdir/usr/local/bin/zqw-hushd
 
 mkdir -p $debdir/usr/share/pixmaps/
 cp res/silentdragon.xpm           $debdir/usr/share/pixmaps/
@@ -145,14 +145,14 @@ if [ -z $MXE_PATH ]; then
     exit 0; 
 fi
 
-if [ ! -f $ZCASH_DIR/artifacts/zcashd.exe ]; then
-    echo "Couldn't find zcashd.exe in $ZCASH_DIR/artifacts/. Please build zcashd.exe"
+if [ ! -f $hush_DIR/artifacts/hushd.exe ]; then
+    echo "Couldn't find hushd.exe in $hush_DIR/artifacts/. Please build hushd.exe"
     exit 1;
 fi
 
 
-if [ ! -f $ZCASH_DIR/artifacts/zcash-cli.exe ]; then
-    echo "Couldn't find zcash-cli.exe in $ZCASH_DIR/artifacts/. Please build zcashd.exe"
+if [ ! -f $hush_DIR/artifacts/hush-cli.exe ]; then
+    echo "Couldn't find hush-cli.exe in $hush_DIR/artifacts/. Please build hushd.exe"
     exit 1;
 fi
 
@@ -176,8 +176,8 @@ echo "[OK]"
 echo -n "Packaging.............."
 mkdir release/silentdragon-v$APP_VERSION  
 cp release/silentdragon.exe          release/silentdragon-v$APP_VERSION 
-cp $ZCASH_DIR/artifacts/zcashd.exe    release/silentdragon-v$APP_VERSION > /dev/null
-cp $ZCASH_DIR/artifacts/zcash-cli.exe release/silentdragon-v$APP_VERSION > /dev/null
+cp $hush_DIR/artifacts/hushd.exe    release/silentdragon-v$APP_VERSION > /dev/null
+cp $hush_DIR/artifacts/hush-cli.exe release/silentdragon-v$APP_VERSION > /dev/null
 cp README.md                          release/silentdragon-v$APP_VERSION 
 cp LICENSE                            release/silentdragon-v$APP_VERSION 
 cd release && zip -r Windows-binaries-silentdragon-v$APP_VERSION.zip silentdragon-v$APP_VERSION/ > /dev/null

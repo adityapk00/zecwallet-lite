@@ -42,8 +42,8 @@ public:
     bool    isSyncing();
     void    setSyncing(bool syncing);
 
-    int     getZcashdVersion();
-    void    setZcashdVersion(int version);
+    int     gethushdVersion();
+    void    sethushdVersion(int version);
     
     void    setUseEmbedded(bool r) { _useEmbedded = r; }
     bool    useEmbedded() { return _useEmbedded; }
@@ -74,8 +74,8 @@ public:
 
     bool    isSaplingActive();
 
-    void    setUsingZcashConf(QString confLocation);
-    const   QString& getZcashdConfLocation() { return _confLocation; }
+    void    setUsinghushConf(QString confLocation);
+    const   QString& gethushdConfLocation() { return _confLocation; }
 
     void    sethushPrice(double p) { hushPrice = p; }
     double  gethushPrice();
@@ -116,8 +116,8 @@ public:
     
     static bool    isValidAddress(QString addr);
 
-    static bool    addToZcashConf(QString confLocation, QString line);
-    static bool    removeFromZcashConf(QString confLocation, QString option);
+    static bool    addTohushConf(QString confLocation, QString line);
+    static bool    removeFromhushConf(QString confLocation, QString option);
 
     static const QString labelRegExp;
 
@@ -137,7 +137,7 @@ private:
     bool    _isTestnet        = false;
     bool    _isSyncing        = false;
     int     _blockNumber      = 0;
-    int     _zcashdVersion    = 0;
+    int     _hushdVersion    = 0;
     bool    _useEmbedded      = false;
     bool    _headless         = false;
     int     _peerConnections  = 0;

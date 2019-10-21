@@ -12,8 +12,8 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -z|--zcash_path)
-    ZCASH_DIR="$2"
+    -z|--hush_path)
+    hush_DIR="$2"
     shift # past argument
     shift # past value
     ;;
@@ -35,8 +35,8 @@ if [ -z $QT_PATH ]; then
     exit 1; 
 fi
 
-if [ -z $ZCASH_DIR ]; then
-    echo "ZCASH_DIR is not set. Please set it to the base directory of a compiled zcashd";
+if [ -z $hush_DIR ]; then
+    echo "hush_DIR is not set. Please set it to the base directory of a compiled hushd";
     exit 1;
 fi
 
@@ -45,8 +45,8 @@ if [ -z $APP_VERSION ]; then
     exit 1;
 fi
 
-if [ ! -f $ZCASH_DIR/src/zcashd ]; then
-    echo "Could not find compiled zcashd in $ZCASH_DIR/src/.";
+if [ ! -f $hush_DIR/src/hushd ]; then
+    echo "Could not find compiled hushd in $hush_DIR/src/.";
     exit 1;
 fi
 
@@ -80,8 +80,8 @@ echo -n "Deploying.............."
 mkdir artifacts >/dev/null 2>&1
 rm -f artifcats/silentdragon.dmg >/dev/null 2>&1
 rm -f artifacts/rw* >/dev/null 2>&1
-cp $ZCASH_DIR/src/zcashd silentdragon.app/Contents/MacOS/
-cp $ZCASH_DIR/src/zcash-cli silentdragon.app/Contents/MacOS/
+cp $hush_DIR/src/hushd silentdragon.app/Contents/MacOS/
+cp $hush_DIR/src/hush-cli silentdragon.app/Contents/MacOS/
 $QT_PATH/bin/macdeployqt silentdragon.app 
 echo "[OK]"
 

@@ -42,7 +42,7 @@ Controller::Controller(MainWindow* main) {
     // Create the data model
     model = new DataModel();
 
-    // Crate the ZcashdRPC 
+    // Crate the hushdRPC 
     zrpc = new LiteInterface();
 }
 
@@ -58,7 +58,7 @@ Controller::~Controller() {
 }
 
 
-// Called when a connection to zcashd is available. 
+// Called when a connection to hushd is available. 
 void Controller::setConnection(Connection* c) {
     if (c == nullptr) return;
 
@@ -66,10 +66,10 @@ void Controller::setConnection(Connection* c) {
 
     ui->statusBar->showMessage("Ready!");
 
-    // See if we need to remove the reindex/rescan flags from the zcash.conf file
-    auto zcashConfLocation = Settings::getInstance()->getZcashdConfLocation();
-    Settings::removeFromZcashConf(zcashConfLocation, "rescan");
-    Settings::removeFromZcashConf(zcashConfLocation, "reindex");
+    // See if we need to remove the reindex/rescan flags from the hush.conf file
+    auto hushConfLocation = Settings::getInstance()->gethushdConfLocation();
+    Settings::removeFromhushConf(hushConfLocation, "rescan");
+    Settings::removeFromhushConf(hushConfLocation, "reindex");
 
     // If we're allowed to get the hush Price, get the prices
     if (Settings::getInstance()->getAllowFetchPrices())
@@ -141,7 +141,7 @@ void Controller::noConnection() {
     ui->inputsCombo->clear();
 }
 
-/// This will refresh all the balance data from zcashd
+/// This will refresh all the balance data from hushd
 void Controller::refresh(bool force) {
     if (!zrpc->haveConnection()) 
         return noConnection();
@@ -178,7 +178,7 @@ void Controller::getInfoThenRefresh(bool force) {
         model->setLatestBlock(curBlock);
         //int version = reply["version"].get<json::string_t>();
         int version = 1;
-        Settings::getInstance()->setZcashdVersion(version);
+        Settings::getInstance()->sethushdVersion(version);
 
         // See if recurring payments needs anything
         Recurring::getInstance()->processPending(main);
@@ -192,14 +192,14 @@ void Controller::getInfoThenRefresh(bool force) {
             refreshTransactions();
         }
     }, [=](QString err) {
-        // zcashd has probably disappeared.
+        // hushd has probably disappeared.
         this->noConnection();
 
         // Prevent multiple dialog boxes, because these are called async
         static bool shown = false;
         if (!shown && prevCallSucceeded) { // show error only first time
             shown = true;
-            QMessageBox::critical(main, QObject::tr("Connection Error"), QObject::tr("There was an error connecting to zcashd. The error was") + ": \n\n"
+            QMessageBox::critical(main, QObject::tr("Connection Error"), QObject::tr("There was an error connecting to hushd. The error was") + ": \n\n"
                 + err, QMessageBox::StandardButton::Ok);
             shown = false;
         }
@@ -434,7 +434,7 @@ void Controller::checkForUpdate(bool silent) {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
-    QUrl cmcURL("https://api.github.com/repos/ZcashFoundation/silentdragon/releases");
+    QUrl cmcURL("https://api.github.com/repos/hushFoundation/silentdragon/releases");
 
     QNetworkRequest req;
     req.setUrl(cmcURL);
@@ -482,7 +482,7 @@ void Controller::checkForUpdate(bool silent) {
                             .arg(currentVersion.toString()),
                         QMessageBox::Yes, QMessageBox::Cancel);
                     if (ans == QMessageBox::Yes) {
-                        QDesktopServices::openUrl(QUrl("https://github.com/ZcashFoundation/silentdragon/releases"));
+                        QDesktopServices::openUrl(QUrl("https://github.com/hushFoundation/silentdragon/releases"));
                     } else {
                         // If the user selects cancel, don't bother them again for this version
                         s.setValue("update/lastversion", maxVersion.toString());
@@ -559,10 +559,10 @@ void Controller::refreshhushPrice() {
     });
 }
 
-void Controller::shutdownZcashd() {
-    // Shutdown embedded zcashd if it was started
-    if (ezcashd == nullptr || ezcashd->processId() == 0 || !zrpc->haveConnection()) {
-        // No zcashd running internally, just return
+void Controller::shutdownhushd() {
+    // Shutdown embedded hushd if it was started
+    if (ehushd == nullptr || ehushd->processId() == 0 || !zrpc->haveConnection()) {
+        // No hushd running internally, just return
         return;
     }
 
@@ -580,7 +580,7 @@ void Controller::shutdownZcashd() {
     // connD.setupUi(&d);
     // connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
     // connD.status->setText(QObject::tr("Please wait for silentdragon to exit"));
-    // connD.statusDetail->setText(QObject::tr("Waiting for zcashd to exit"));
+    // connD.statusDetail->setText(QObject::tr("Waiting for hushd to exit"));
 
     // QTimer waiter(main);
 
@@ -590,9 +590,9 @@ void Controller::shutdownZcashd() {
     // QObject::connect(&waiter, &QTimer::timeout, [&] () {
     //     waitCount++;
 
-    //     if ((ezcashd->atEnd() && ezcashd->processId() == 0) ||
+    //     if ((ehushd->atEnd() && ehushd->processId() == 0) ||
     //         waitCount > 30 || 
-    //         getConnection()->config->zcashDaemon)  {   // If zcashd is daemon, then we don't have to do anything else
+    //         getConnection()->config->hushDaemon)  {   // If hushd is daemon, then we don't have to do anything else
     //         qDebug() << "Ended";
     //         waiter.stop();
     //         QTimer::singleShot(1000, [&]() { d.accept(); });
@@ -602,7 +602,7 @@ void Controller::shutdownZcashd() {
     // });
     // waiter.start(1000);
 
-    // // Wait for the zcash process to exit.
+    // // Wait for the hush process to exit.
     // if (!Settings::getInstance()->isHeadless()) {
     //     d.exec(); 
     // } else {

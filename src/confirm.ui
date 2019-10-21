@@ -180,7 +180,7 @@
       <string notr="true">color: red;</string>
      </property>
      <property name="text">
-      <string>zcashd doesn't seem to have any peers. You might not be connected to the internet, so this transaction might not work.</string>
+      <string>hushd doesn't seem to have any peers. You might not be connected to the internet, so this transaction might not work.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

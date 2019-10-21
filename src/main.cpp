@@ -147,20 +147,20 @@ public:
 
         // Command line parser
         QCommandLineParser parser;
-        parser.setApplicationDescription("Shielded desktop light wallet for Zcash");
+        parser.setApplicationDescription("Shielded desktop light wallet for hush");
         parser.addHelpOption();
 
         // Add an option to specify the conf file
-            QCommandLineOption confOption(QStringList() << "conf", "Use the zcash.conf specified instead of looking for the default one.",
+            QCommandLineOption confOption(QStringList() << "conf", "Use the hush.conf specified instead of looking for the default one.",
                                           "confFile");
         parser.addOption(confOption);
 
-        // Positional argument will specify a zcash payment URI
-        parser.addPositionalArgument("zcashURI", "An optional zcash URI to pay");
+        // Positional argument will specify a hush payment URI
+        parser.addPositionalArgument("hushURI", "An optional hush URI to pay");
 
         parser.process(a);
 
-        // Check for a positional argument indicating a zcash payment URI
+        // Check for a positional argument indicating a hush payment URI
         if (a.isSecondary()) {
             if (parser.positionalArguments().length() > 0) {
                 a.sendMessage(parser.positionalArguments()[0].toUtf8());    
@@ -210,7 +210,7 @@ public:
         
         // Check to see if a conf location was specified
         if (parser.isSet(confOption)) {
-            Settings::getInstance()->setUsingZcashConf(parser.value(confOption));
+            Settings::getInstance()->setUsinghushConf(parser.value(confOption));
         }
 
         w = new MainWindow();
@@ -218,15 +218,15 @@ public:
 
         // If there was a payment URI on the command line, pay it
         if (parser.positionalArguments().length() > 0) {
-            w->payZcashURI(parser.positionalArguments()[0]);
+            w->payhushURI(parser.positionalArguments()[0]);
         }
 
-        // Listen for any secondary instances telling us about a zcash payment URI
+        // Listen for any secondary instances telling us about a hush payment URI
         QObject::connect(&a, &SingleApplication::receivedMessage, [=] (quint32, QByteArray msg) {
             QString uri(msg);
 
             // We need to execute this async, otherwise the app seems to crash for some reason.
-            QTimer::singleShot(1, [=]() { w->payZcashURI(uri); });            
+            QTimer::singleShot(1, [=]() { w->payhushURI(uri); });            
         });   
 
         // For MacOS, we have an event filter

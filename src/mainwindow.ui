@@ -905,13 +905,13 @@
       </widget>
       <widget class="QWidget" name="tab_5">
        <attribute name="title">
-        <string>zcashd</string>
+        <string>hushd</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_14">
           <item>
-           <widget class="FilledIconLabel" name="zcashdlogo">
+           <widget class="FilledIconLabel" name="hushdlogo">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1059,7 +1059,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionRequest_zcash"/>
+    <addaction name="actionRequest_hush"/>
     <addaction name="actionPay_URI"/>
     <addaction name="separator"/>
     <addaction name="actionExport_All_Private_Keys"/>
@@ -1151,7 +1151,7 @@
   </action>
   <action name="actionPay_URI">
    <property name="text">
-    <string>Pay zcash &amp;URI...</string>
+    <string>Pay hush &amp;URI...</string>
    </property>
   </action>
   <action name="actionConnect_Mobile_App">
@@ -1167,9 +1167,9 @@
     <string>&amp;Recurring Payments</string>
    </property>
   </action>
-  <action name="actionRequest_zcash">
+  <action name="actionRequest_hush">
    <property name="text">
-    <string>Request zcash...</string>
+    <string>Request hush...</string>
    </property>
   </action>
   <action name="actionFile_a_bug">

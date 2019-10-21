@@ -1,4 +1,4 @@
-silentdragon-lite is z-Addr first, Sapling compatible wallet lightwallet for Zcash
+silentdragon-lite is z-Addr first, Sapling compatible wallet lightwallet for hush
 
 ## Compiling from source
 * silentdragon is written in C++ 14, and can be compiled with g++/clang++/visual c++. 

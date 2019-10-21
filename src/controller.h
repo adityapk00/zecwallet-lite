@@ -21,7 +21,7 @@ struct WatchedTx {
 };
 
 struct MigrationStatus {
-    bool            available;     // Whether the underlying zcashd supports migration?
+    bool            available;     // Whether the underlying hushd supports migration?
     bool            enabled;
     QString         saplingAddress;
     double          unmigrated;
@@ -57,9 +57,9 @@ public:
     
     const TxTableModel*               getTransactionsModel() { return transactionsTableModel; }
 
-    void shutdownZcashd();
+    void shutdownhushd();
     void noConnection();
-    bool isEmbedded() { return ezcashd != nullptr; }
+    bool isEmbedded() { return ehushd != nullptr; }
 
     void createNewZaddr(bool sapling, const std::function<void(json)>& cb) { zrpc->createNewZaddr(sapling, cb); }
     void createNewTaddr(const std::function<void(json)>& cb) { zrpc->createNewTaddr(cb); }
@@ -83,7 +83,7 @@ private:
 
     void getInfoThenRefresh(bool force);
     
-    QProcess*                   ezcashd                     = nullptr;
+    QProcess*                   ehushd                     = nullptr;
 
     TxTableModel*               transactionsTableModel      = nullptr;
     BalancesTableModel*         balancesTableModel          = nullptr;

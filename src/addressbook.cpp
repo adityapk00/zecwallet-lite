@@ -132,7 +132,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target) {
         // Test if address is valid.
         if (!Settings::isValidAddress(addr)) {
             QMessageBox::critical(parent, QObject::tr("Address Format Error"), 
-                QObject::tr("%1 doesn't seem to be a valid Zcash address.")
+                QObject::tr("%1 doesn't seem to be a valid hush address.")
                     .arg(addr), 
                 QMessageBox::Ok);
             return;

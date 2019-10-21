@@ -249,7 +249,7 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="908"/>
-        <source>zcashd</source>
+        <source>hushd</source>
         <translation>节点</translation>
     </message>
     <message>
@@ -392,8 +392,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="1172"/>
-        <source>Pay zcash &amp;URI...</source>
-        <translation>支付zcash &amp;URI ...</translation>
+        <source>Pay hush &amp;URI...</source>
+        <translation>支付hush &amp;URI ...</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="1177"/>
@@ -412,8 +412,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="1190"/>
-        <source>Request zcash...</source>
-        <translation>请求 zcash...</translation>
+        <source>Request hush...</source>
+        <translation>请求 hush...</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="1195"/>
@@ -427,8 +427,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="290"/>
-        <source>zcashd is not yet ready. Please wait for the UI to load</source>
-        <translation>zcashd尚未准备好。 请等待UI加载</translation>
+        <source>hushd is not yet ready. Please wait for the UI to load</source>
+        <translation>hushd尚未准备好。 请等待UI加载</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="444"/>
@@ -442,18 +442,18 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="511"/>
-        <source>Tor configuration is available only when running an embedded zcashd.</source>
-        <translation>Tor配置仅在运行嵌入的zcashd时可用。</translation>
+        <source>Tor configuration is available only when running an embedded hushd.</source>
+        <translation>Tor配置仅在运行嵌入的hushd时可用。</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="550"/>
-        <source>You&apos;re using an external zcashd. Please restart zcashd with -rescan</source>
-        <translation>你正在使用外部zcashd。 请使用-rescan参数重新启动zcashd</translation>
+        <source>You&apos;re using an external hushd. Please restart hushd with -rescan</source>
+        <translation>你正在使用外部hushd。 请使用-rescan参数重新启动hushd</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="553"/>
-        <source>You&apos;re using an external zcashd. Please restart zcashd with -reindex</source>
-        <translation>你正在使用外部zcashd。 请使用-reindex重新启动zcashd</translation>
+        <source>You&apos;re using an external hushd. Please restart hushd with -reindex</source>
+        <translation>你正在使用外部hushd。 请使用-reindex重新启动hushd</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="578"/>
@@ -532,18 +532,18 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="878"/>
-        <source>Paste Zcash URI</source>
-        <translation>粘贴Zcash URI</translation>
+        <source>Paste hush URI</source>
+        <translation>粘贴hush URI</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="890"/>
-        <source>Error paying zcash URI</source>
-        <translation>支付zcash URI时出错</translation>
+        <source>Error paying hush URI</source>
+        <translation>支付hush URI时出错</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="891"/>
-        <source>URI should be of the form &apos;zcash:&lt;addr&gt;?amt=x&amp;memo=y</source>
-        <translation>URI的格式应为 &apos;zcash:&lt;addr&gt;?amt=x&amp;memo=y&apos;</translation>
+        <source>URI should be of the form &apos;hush:&lt;addr&gt;?amt=x&amp;memo=y</source>
+        <translation>URI的格式应为 &apos;hush:&lt;addr&gt;?amt=x&amp;memo=y&apos;</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="927"/>
@@ -552,8 +552,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="928"/>
-        <source>The keys will be imported into your connected zcashd node</source>
-        <translation>密钥将导入已连接的zcashd节点</translation>
+        <source>The keys will be imported into your connected hushd node</source>
+        <translation>密钥将导入已连接的hushd节点</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="959"/>
@@ -582,8 +582,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1002"/>
-        <source>You need to back it up from the machine zcashd is running on</source>
-        <translation>你需要从运行zcashd的机器备份它</translation>
+        <source>You need to back it up from the machine hushd is running on</source>
+        <translation>你需要从运行hushd的机器备份它</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="1006"/>
@@ -840,8 +840,8 @@ doesn&apos;t look like a z-address</source>
     </message>
     <message>
         <location filename="../src/migration.ui" line="81"/>
-        <source>If enabled, zcashd will slowly migrate your Sprout shielded funds to your Sapling address. </source>
-        <translation>如果启用，zcashd将慢慢将您的Sprout屏蔽资金迁移到您的Sapling地址。 </translation>
+        <source>If enabled, hushd will slowly migrate your Sprout shielded funds to your Sapling address. </source>
+        <translation>如果启用，hushd将慢慢将您的Sprout屏蔽资金迁移到您的Sapling地址。 </translation>
     </message>
 </context>
 <context>
@@ -942,8 +942,8 @@ doesn&apos;t look like a z-address</source>
     </message>
     <message>
         <location filename="../src/addressbook.cpp" line="135"/>
-        <source>%1 doesn&apos;t seem to be a valid Zcash address.</source>
-        <translation>%1 似乎不是有效的Zcash地址。</translation>
+        <source>%1 doesn&apos;t seem to be a valid hush address.</source>
+        <translation>%1 似乎不是有效的hush地址。</translation>
     </message>
     <message>
         <location filename="../src/addressbook.cpp" line="143"/>
@@ -997,46 +997,46 @@ doesn&apos;t look like a z-address</source>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="52"/>
-        <source>Starting embedded zcashd</source>
-        <translation>启动内嵌的zcashd</translation>
+        <source>Starting embedded hushd</source>
+        <translation>启动内嵌的hushd</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="62"/>
-        <source>zcashd is set to run as daemon</source>
-        <translation>zcashd设置为作为守护进程运行</translation>
+        <source>hushd is set to run as daemon</source>
+        <translation>hushd设置为作为守护进程运行</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="62"/>
-        <source>Waiting for zcashd</source>
-        <translation>等待zcashd</translation>
+        <source>Waiting for hushd</source>
+        <translation>等待hushd</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="77"/>
-        <source>You have zcashd set to start as a daemon, which can cause problems with silentdragon
+        <source>You have hushd set to start as a daemon, which can cause problems with silentdragon
 
-.Please remove the following line from your zcash.conf and restart silentdragon
+.Please remove the following line from your hush.conf and restart silentdragon
 daemon=1</source>
-        <translation>你已经将zcashd设置为守护进程启动，这可能会导致silentdragon出现问题
+        <translation>你已经将hushd设置为守护进程启动，这可能会导致silentdragon出现问题
 
-。请从zcash.conf中删除以下行并重新启动silentdragon
+。请从hush.conf中删除以下行并重新启动silentdragon
 daemon=1</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="82"/>
-        <source>Couldn&apos;t start the embedded zcashd.
+        <source>Couldn&apos;t start the embedded hushd.
 
 Please try restarting.
 
-If you previously started zcashd with custom arguments, you might need to reset zcash.conf.
+If you previously started hushd with custom arguments, you might need to reset hush.conf.
 
-If all else fails, please run zcashd manually.</source>
-        <translation>无法启动内嵌的zcashd。
+If all else fails, please run hushd manually.</source>
+        <translation>无法启动内嵌的hushd。
 
 请尝试重新启动。
 
-如果您之前使用自定义参数启动了zcashd，则可能需要重置zcash.conf。
+如果您之前使用自定义参数启动了hushd，则可能需要重置hush.conf。
 
-如果所有其他方法都失败了，请手动运行zcashd。</translation>
+如果所有其他方法都失败了，请手动运行hushd。</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="85"/>
@@ -1045,12 +1045,12 @@ If all else fails, please run zcashd manually.</source>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="93"/>
-        <source>Couldn&apos;t connect to zcashd configured in zcash.conf.
+        <source>Couldn&apos;t connect to hushd configured in hush.conf.
 
-Not starting embedded zcashd because --no-embedded was passed</source>
-        <translation>无法连接到zcash.conf中配置的zcashd。
+Not starting embedded hushd because --no-embedded was passed</source>
+        <translation>无法连接到hush.conf中配置的hushd。
 
-没有启动内嵌的zcashd，因为已经传了--no-embedded参数</translation>
+没有启动内嵌的hushd，因为已经传了--no-embedded参数</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="146"/>
@@ -1105,8 +1105,8 @@ Not starting embedded zcashd because --no-embedded was passed</source>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="332"/>
-        <source>zcashd error</source>
-        <translation>zcashd 出错</translation>
+        <source>hushd error</source>
+        <translation>hushd 出错</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="399"/>
@@ -1119,22 +1119,22 @@ Please set the host/port and user/password in the Edit-&gt;Settings menu.</sourc
     </message>
     <message>
         <location filename="../src/connection.cpp" line="411"/>
-        <source>Could not connect to zcashd configured in settings.
+        <source>Could not connect to hushd configured in settings.
 
 Please set the host/port and user/password in the Edit-&gt;Settings menu.</source>
-        <translation>无法连接到设置中配置的zcashd。
+        <translation>无法连接到设置中配置的hushd。
 
 请在编辑 - &gt;设置菜单中设置主机/端口和用户/密码。</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="472"/>
-        <source>Authentication failed. The username / password you specified was not accepted by zcashd. Try changing it in the Edit-&gt;Settings menu</source>
-        <translation>验证失败。 zcashd不接受您指定的用户名/密码。 请在编辑 - &gt;设置菜单中更改它</translation>
+        <source>Authentication failed. The username / password you specified was not accepted by hushd. Try changing it in the Edit-&gt;Settings menu</source>
+        <translation>验证失败。 hushd不接受您指定的用户名/密码。 请在编辑 - &gt;设置菜单中更改它</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="487"/>
-        <source>Your zcashd is starting up. Please wait.</source>
-        <translation>你的zcashd正在启动。 请耐心等待。</translation>
+        <source>Your hushd is starting up. Please wait.</source>
+        <translation>你的hushd正在启动。 请耐心等待。</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="504"/>
@@ -1260,18 +1260,18 @@ Please set the host/port and user/password in the Edit-&gt;Settings menu.</sourc
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="684"/>
-        <source>Connected to zcashd</source>
-        <translation>连接到zcashd</translation>
+        <source>Connected to hushd</source>
+        <translation>连接到hushd</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="687"/>
-        <source>zcashd has no peer connections</source>
-        <translation>zcashd没有节点可连接</translation>
+        <source>hushd has no peer connections</source>
+        <translation>hushd没有节点可连接</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="706"/>
-        <source>There was an error connecting to zcashd. The error was</source>
-        <translation>连接到zcashd时出错。 错误是</translation>
+        <source>There was an error connecting to hushd. The error was</source>
+        <translation>连接到hushd时出错。 错误是</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1066"/>
@@ -1309,8 +1309,8 @@ Would you like to visit the releases page?</source>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1217"/>
-        <source>Waiting for zcashd to exit</source>
-        <translation>等待zcashd退出</translation>
+        <source>Waiting for hushd to exit</source>
+        <translation>等待hushd退出</translation>
     </message>
     <message>
         <location filename="../src/settings.cpp" line="244"/>
@@ -1616,18 +1616,18 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/requestdialog.ui" line="219"/>
-        <source>Request payment from a Sapling address. You&apos;ll send a hush 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
-        <translation>要求从树苗地址付款。 您将使用zcash支付URI将hush 0.0001交易发送到该地址。 当地址付款时，备注将包含在交易中。</translation>
+        <source>Request payment from a Sapling address. You&apos;ll send a hush 0.0001 transaction to the address with a hush payment URI. The memo will be included in the transaction when the address pays you.</source>
+        <translation>要求从树苗地址付款。 您将使用hush支付URI将hush 0.0001交易发送到该地址。 当地址付款时，备注将包含在交易中。</translation>
     </message>
     <message>
         <location filename="../src/requestdialog.cpp" line="50"/>
-        <source>Error paying zcash URI</source>
-        <translation>支付zcash URI时出错</translation>
+        <source>Error paying hush URI</source>
+        <translation>支付hush URI时出错</translation>
     </message>
     <message>
         <location filename="../src/requestdialog.cpp" line="51"/>
-        <source>URI should be of the form &apos;zcash:&lt;addr&gt;?amt=x&amp;memo=y</source>
-        <translation>URI的格式应为&apos;zcash:&lt;addr&gt;?amt=x&amp;memo=y‘</translation>
+        <source>URI should be of the form &apos;hush:&lt;addr&gt;?amt=x&amp;memo=y</source>
+        <translation>URI的格式应为&apos;hush:&lt;addr&gt;?amt=x&amp;memo=y‘</translation>
     </message>
     <message>
         <location filename="../src/requestdialog.cpp" line="65"/>
@@ -1659,8 +1659,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/settings.ui" line="33"/>
-        <source>zcashd connection</source>
-        <translation>zcashd连接</translation>
+        <source>hushd connection</source>
+        <translation>hushd连接</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="62"/>
@@ -1982,8 +1982,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/confirm.ui" line="183"/>
-        <source>zcashd doesn&apos;t seem to have any peers. You might not be connected to the internet, so this transaction might not work.</source>
-        <translation>zcashd似乎没有任何可连接的节点。 您可能没有连接到互联网，因此此交易可能无效。</translation>
+        <source>hushd doesn&apos;t seem to have any peers. You might not be connected to the internet, so this transaction might not work.</source>
+        <translation>hushd似乎没有任何可连接的节点。 您可能没有连接到互联网，因此此交易可能无效。</translation>
     </message>
     <message>
         <location filename="../src/confirm.ui" line="196"/>
@@ -1997,64 +1997,64 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
 </context>
 <context>
-    <name>createZcashConf</name>
+    <name>createhushConf</name>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="14"/>
-        <source>Configure zcash.conf</source>
-        <translation>配置 zcash.conf</translation>
+        <location filename="../src/createhushconfdialog.ui" line="14"/>
+        <source>Configure hush.conf</source>
+        <translation>配置 hush.conf</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="20"/>
-        <source>Your zcash node will be configured for you automatically</source>
-        <translation>您的zcash节点将自动为您配置</translation>
+        <location filename="../src/createhushconfdialog.ui" line="20"/>
+        <source>Your hush node will be configured for you automatically</source>
+        <translation>您的hush节点将自动为您配置</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="30"/>
+        <location filename="../src/createhushconfdialog.ui" line="30"/>
         <source>Enable Fast Sync</source>
         <translation>启用快速同步</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="42"/>
+        <location filename="../src/createhushconfdialog.ui" line="42"/>
         <source>Show Advanced Configuration</source>
         <translation>显示高级配置</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="112"/>
+        <location filename="../src/createhushconfdialog.ui" line="112"/>
         <source>Allow connections to the internet to check for updates, get hush/USD prices etc...</source>
         <translation>允许连接到互联网检查更新，获得hush/USD价格等…</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="119"/>
+        <location filename="../src/createhushconfdialog.ui" line="119"/>
         <source>Use custom datadir</source>
         <translation>使用自定义datadir</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="128"/>
+        <location filename="../src/createhushconfdialog.ui" line="128"/>
         <source>Choose directory</source>
         <translation>选择目录</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="157"/>
+        <location filename="../src/createhushconfdialog.ui" line="157"/>
         <source>Please note that you&apos;ll need to already have a Tor service configured on port 9050</source>
         <translation>请注意，您需要在端口9050上已经配置了Tor服务</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="164"/>
+        <location filename="../src/createhushconfdialog.ui" line="164"/>
         <source>Connect to the internet for updates and price feeds</source>
         <translation>连接到internet获取更新和价格数据</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="174"/>
+        <location filename="../src/createhushconfdialog.ui" line="174"/>
         <source>Please choose a directory to store your wallet.dat and blockchain</source>
         <translation>请选择一个目录来存储您的wallet.dat和区块链数据</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="181"/>
+        <location filename="../src/createhushconfdialog.ui" line="181"/>
         <source>Connect over Tor</source>
         <translation>连接到Tor</translation>
     </message>
     <message>
-        <location filename="../src/createzcashconfdialog.ui" line="205"/>
+        <location filename="../src/createhushconfdialog.ui" line="205"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;在初始块下载期间跳过了最费时的检查。 &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;了解更多&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -2141,8 +2141,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/zboard.ui" line="85"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard: Fully anonymous and untraceable chat messages based on the ZCash blockchain. &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard：基于ZCash区块链的完全匿名且无法追踪的聊天消息。 &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard: Fully anonymous and untraceable chat messages based on the hush blockchain. &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard：基于hush区块链的完全匿名且无法追踪的聊天消息。 &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../src/zboard.ui" line="107"/>

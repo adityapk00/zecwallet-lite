@@ -40,7 +40,7 @@ void Settings::saveSettings(const QString& host, const QString& port, const QStr
     init();
 }
 
-void Settings::setUsingZcashConf(QString confLocation) {
+void Settings::setUsinghushConf(QString confLocation) {
     if (!confLocation.isEmpty())
         _confLocation = confLocation;
 }
@@ -82,12 +82,12 @@ bool Settings::isTAddress(QString addr) {
     return addr.startsWith("t");
 }
 
-int Settings::getZcashdVersion() {
-    return _zcashdVersion;
+int Settings::gethushdVersion() {
+    return _hushdVersion;
 }
 
-void Settings::setZcashdVersion(int version) {
-    _zcashdVersion = version;
+void Settings::sethushdVersion(int version) {
+    _hushdVersion = version;
 }
 
 bool Settings::isSyncing() {
@@ -268,7 +268,7 @@ QString Settings::getDonationAddr() {
 
 }
 
-bool Settings::addToZcashConf(QString confLocation, QString line) {
+bool Settings::addTohushConf(QString confLocation, QString line) {
     QFile file(confLocation);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Append))
         return false;
@@ -281,7 +281,7 @@ bool Settings::addToZcashConf(QString confLocation, QString line) {
     return true;
 }
 
-bool Settings::removeFromZcashConf(QString confLocation, QString option) {
+bool Settings::removeFromhushConf(QString confLocation, QString option) {
     if (confLocation.isEmpty())
         return false;
 
@@ -362,12 +362,12 @@ QString Settings::paymentURIPretty(PaymentURI uri) {
 PaymentURI Settings::parseURI(QString uri) {
     PaymentURI ans;
 
-    if (!uri.startsWith("zcash:")) {
-        ans.error = "Not a zcash payment URI";
+    if (!uri.startsWith("hush:")) {
+        ans.error = "Not a HUSH payment URI";
         return ans;
     }
 
-    uri = uri.right(uri.length() - QString("zcash:").length());
+    uri = uri.right(uri.length() - QString("hush:").length());
     
     QRegExp re("([a-zA-Z0-9]+)");
     int pos;

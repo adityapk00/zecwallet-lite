@@ -1,7 +1,7 @@
 [package]
 name = "qtlib"
 version = "0.1.0"
-authors = ["silentdragon"]
+authors = ["zecwallet"]
 edition = "2018"
 
 [lib]
@@ -11,4 +11,4 @@ crate-type = ["staticlib"]
 [dependencies]
 libc = "0.2.58"
 lazy_static = "1.4.0"
-silentdragonlitelib = { git = "https://github.com/DenioD/silentdragonlite-cli", rev = "813ba56b8e963a1a1b53c4d66ff392e721b616ec" }
+silentdragonlitelib = { git = "https://github.com/DenioD/silentdragonlite-cli", rev = "1011ff7c7c6d5fe7de078194538ae5a2a0e5e461" }

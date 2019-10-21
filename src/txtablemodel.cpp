@@ -120,7 +120,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
                     // If there are multiple memos, then mark them as such
                     if (dat.items.length() == 1) {
                         auto memo = dat.items[0].memo;
-                        if (memo.startsWith("zcash:")) {
+                        if (memo.startsWith("hush:")) {
                             return Settings::paymentURIPretty(Settings::parseURI(memo));
                         } else {
                             return modeldata->at(index.row()).type + 
@@ -159,7 +159,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         }
 
         // If the memo is a Payment URI, then show a payment request icon
-        if (dat.items.length() == 1 && dat.items[0].memo.startsWith("zcash:")) {
+        if (dat.items.length() == 1 && dat.items[0].memo.startsWith("hush:")) {
             QIcon icon(":/icons/res/paymentreq.gif");
             return QVariant(icon.pixmap(16, 16));
         } else if (hasMemo) {

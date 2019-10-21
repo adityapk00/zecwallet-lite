@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "ui_connection.h"
-#include "ui_createzcashconfdialog.h"
+#include "ui_createhushconfdialog.h"
 #include "controller.h"
 
 #include "../lib/silentdragonlitelib.h"
@@ -38,7 +38,7 @@ void ConnectionLoader::doAutoConnect() {
 
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
     config->dangerous = true;
-    config->server = QString("https://127.0.0.1:9069");
+    config->server = QString("127.0.0.1:9069");
 
     // Initialize the library
     main->logger->write(QObject::tr("Attempting to initialize"));

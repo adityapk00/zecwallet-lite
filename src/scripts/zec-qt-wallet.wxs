@@ -61,13 +61,13 @@
                     </Shortcut>
                 </File>
                 <File Source="LICENSE" />
-                <File Source="zcashd.exe" />
-                <File Source="zcash-cli.exe" />
+                <File Source="hushd.exe" />
+                <File Source="hush-cli.exe" />
                 <File Source="README.md" />
 
-                <RegistryKey Root="HKCR" Key="zcash">
+                <RegistryKey Root="HKCR" Key="hush">
                     <RegistryValue Type="string" Name="URL Protocol" Value=""/>
-                    <RegistryValue Type="string" Value="URL:zcash URI protocol"/>
+                    <RegistryValue Type="string" Value="URL:hush URI protocol"/>
                     <RegistryKey Key="DefaultIcon">
                     <RegistryValue Type="string" Value="silentdragon.exe" />
                     </RegistryKey>
