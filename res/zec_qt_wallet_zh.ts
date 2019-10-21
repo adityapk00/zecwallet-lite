@@ -31,8 +31,8 @@
     <name>ConnectionDialog</name>
     <message>
         <location filename="../src/connection.ui" line="17"/>
-        <source>ZecWallet</source>
-        <translation>ZEC钱包</translation>
+        <source>silentdragon</source>
+        <translation>hush钱包</translation>
     </message>
     <message>
         <location filename="../src/connection.ui" line="58"/>
@@ -44,8 +44,8 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.ui" line="14"/>
-        <source>ZecWallet</source>
-        <translation>ZEC钱包</translation>
+        <source>silentdragon</source>
+        <translation>hush钱包</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="29"/>
@@ -462,8 +462,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="579"/>
-        <source>Connection over Tor has been enabled. To use this feature, you need to restart ZecWallet.</source>
-        <translation>已启用Tor上的连接。 要使用此功能，您需要重新启动ZecWallet。</translation>
+        <source>Connection over Tor has been enabled. To use this feature, you need to restart silentdragon.</source>
+        <translation>已启用Tor上的连接。 要使用此功能，您需要重新启动silentdragon。</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="588"/>
@@ -472,23 +472,23 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="589"/>
-        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart ZecWallet.</source>
-        <translation>Tor上的连接已被禁用。 要完全断开与Tor的连接，您需要重新启动ZecWallet。</translation>
+        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart silentdragon.</source>
+        <translation>Tor上的连接已被禁用。 要完全断开与Tor的连接，您需要重新启动silentdragon。</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="618"/>
-        <source>ZecWallet needs to restart to rescan/reindex. ZecWallet will now close, please restart ZecWallet to continue</source>
-        <translation>ZecWallet需要重新启动才能重新扫描/重新索引。 ZecWallet现在关闭，请重启ZecWallet以继续</translation>
+        <source>silentdragon needs to restart to rescan/reindex. silentdragon will now close, please restart silentdragon to continue</source>
+        <translation>silentdragon需要重新启动才能重新扫描/重新索引。 silentdragon现在关闭，请重启silentdragon以继续</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="620"/>
-        <source>Restart ZecWallet</source>
-        <translation>重启ZecWallet</translation>
+        <source>Restart silentdragon</source>
+        <translation>重启silentdragon</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="649"/>
-        <source>Thanks for supporting ZecWallet!</source>
-        <translation>感谢您支持ZecWallet！</translation>
+        <source>Thanks for supporting silentdragon!</source>
+        <translation>感谢您支持silentdragon！</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="651"/>
@@ -497,8 +497,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="651"/>
-        <source> to support ZecWallet</source>
-        <translation> 支持ZecWallet</translation>
+        <source> to support silentdragon</source>
+        <translation> 支持silentdragon</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="667"/>
@@ -861,8 +861,8 @@ doesn&apos;t look like a z-address</source>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="36"/>
-        <source>Scan this QRCode from your ZecWallet companion app to connect your phone</source>
-        <translation>从您的ZecWallet配套应用程序扫描此二维码以连接您的手机</translation>
+        <source>Scan this QRCode from your silentdragon companion app to connect your phone</source>
+        <translation>从您的silentdragon配套应用程序扫描此二维码以连接您的手机</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="43"/>
@@ -876,13 +876,13 @@ doesn&apos;t look like a z-address</source>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="84"/>
-        <source>Allow connections over the internet via ZecWallet wormhole</source>
-        <translation>允许通过ZecWallet虫洞连接互联网</translation>
+        <source>Allow connections over the internet via silentdragon wormhole</source>
+        <translation>允许通过silentdragon虫洞连接互联网</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="94"/>
-        <source>ZecWallet Companion App</source>
-        <translation>ZecWallet配套App</translation>
+        <source>silentdragon Companion App</source>
+        <translation>silentdragon配套App</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="106"/>
@@ -1012,13 +1012,13 @@ doesn&apos;t look like a z-address</source>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="77"/>
-        <source>You have zcashd set to start as a daemon, which can cause problems with ZecWallet
+        <source>You have zcashd set to start as a daemon, which can cause problems with silentdragon
 
-.Please remove the following line from your zcash.conf and restart ZecWallet
+.Please remove the following line from your zcash.conf and restart silentdragon
 daemon=1</source>
-        <translation>你已经将zcashd设置为守护进程启动，这可能会导致ZecWallet出现问题
+        <translation>你已经将zcashd设置为守护进程启动，这可能会导致silentdragon出现问题
 
-。请从zcash.conf中删除以下行并重新启动ZecWallet
+。请从zcash.conf中删除以下行并重新启动silentdragon
 daemon=1</translation>
     </message>
     <message>
@@ -1192,8 +1192,8 @@ Please set the host/port and user/password in the Edit-&gt;Settings menu.</sourc
     </message>
     <message>
         <location filename="../src/recurring.cpp" line="469"/>
-        <source>No ZEC price was available to convert from USD</source>
-        <translation>ZEC的美元价格无法获取</translation>
+        <source>No hush price was available to convert from USD</source>
+        <translation>hush的美元价格无法获取</translation>
     </message>
     <message>
         <location filename="../src/recurring.cpp" line="518"/>
@@ -1304,8 +1304,8 @@ Would you like to visit the releases page?</source>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1216"/>
-        <source>Please wait for ZecWallet to exit</source>
-        <translation>请等待ZecWallet退出</translation>
+        <source>Please wait for silentdragon to exit</source>
+        <translation>请等待silentdragon退出</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1217"/>
@@ -1367,8 +1367,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/websockets.cpp" line="359"/>
-        <source>Connected over the internet via ZecWallet wormhole service</source>
-        <translation>通过ZecWallet虫洞服务连接互联网</translation>
+        <source>Connected over the internet via silentdragon wormhole service</source>
+        <translation>通过silentdragon虫洞服务连接互联网</translation>
     </message>
     <message>
         <location filename="../src/websockets.cpp" line="652"/>
@@ -1513,8 +1513,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/recurringmultiple.ui" line="44"/>
-        <source>How should ZecWallet proceed?</source>
-        <translation>ZecWallet应该如何处理？</translation>
+        <source>How should silentdragon proceed?</source>
+        <translation>silentdragon应该如何处理？</translation>
     </message>
     <message>
         <location filename="../src/recurringmultiple.ui" line="51"/>
@@ -1616,8 +1616,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/requestdialog.ui" line="219"/>
-        <source>Request payment from a Sapling address. You&apos;ll send a ZEC 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
-        <translation>要求从树苗地址付款。 您将使用zcash支付URI将ZEC 0.0001交易发送到该地址。 当地址付款时，备注将包含在交易中。</translation>
+        <source>Request payment from a Sapling address. You&apos;ll send a hush 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
+        <translation>要求从树苗地址付款。 您将使用zcash支付URI将hush 0.0001交易发送到该地址。 当地址付款时，备注将包含在交易中。</translation>
     </message>
     <message>
         <location filename="../src/requestdialog.cpp" line="50"/>
@@ -1744,13 +1744,13 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/settings.ui" line="273"/>
-        <source>Connect to the internet to fetch ZEC prices</source>
-        <translation>连接到互联网以获取ZEC价格</translation>
+        <source>Connect to the internet to fetch hush prices</source>
+        <translation>连接到互联网以获取hush价格</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="280"/>
-        <source>Fetch ZEC / USD prices</source>
-        <translation>获取 ZEC/USD 价格</translation>
+        <source>Fetch hush / USD prices</source>
+        <translation>获取 hush/USD 价格</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="288"/>
@@ -1764,8 +1764,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/settings.ui" line="301"/>
-        <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart ZecWallet for this to take effect</source>
-        <translation>重新扫描区块链以查找任何丢失的钱包交易并更正您的钱包余额。 这可能需要几个小时。 您需要重新启动ZecWallet才能使其生效</translation>
+        <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart silentdragon for this to take effect</source>
+        <translation>重新扫描区块链以查找任何丢失的钱包交易并更正您的钱包余额。 这可能需要几个小时。 您需要重新启动silentdragon才能使其生效</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="311"/>
@@ -1774,8 +1774,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/settings.ui" line="345"/>
-        <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart ZecWallet for this to take effect</source>
-        <translation>通过重新扫描所有区块文件，从创世块重建整个区块链。 这可能需要几个小时到几天，具体取决于您的硬件环境。 您需要重新启动ZecWallet才能使其生效</translation>
+        <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart silentdragon for this to take effect</source>
+        <translation>通过重新扫描所有区块文件，从创世块重建整个区块链。 这可能需要几个小时到几天，具体取决于您的硬件环境。 您需要重新启动silentdragon才能使其生效</translation>
     </message>
 </context>
 <context>
@@ -2020,8 +2020,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="112"/>
-        <source>Allow connections to the internet to check for updates, get ZEC/USD prices etc...</source>
-        <translation>允许连接到互联网检查更新，获得ZEC/USD价格等…</translation>
+        <source>Allow connections to the internet to check for updates, get hush/USD prices etc...</source>
+        <translation>允许连接到互联网检查更新，获得hush/USD价格等…</translation>
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="119"/>
@@ -2055,8 +2055,8 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="205"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.zecwallet.co/using-zecwallet/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;在初始块下载期间跳过了最费时的检查。 &lt;a href=&quot;https://docs.zecwallet.co/using-zecwallet/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;了解更多&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;在初始块下载期间跳过了最费时的检查。 &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;了解更多&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>

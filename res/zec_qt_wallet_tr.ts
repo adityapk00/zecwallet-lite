@@ -30,13 +30,13 @@
 <context>
     <name>ConnectionDialog</name>
     <message>
-        <source>zec-qt-wallet</source>
-        <translation type="vanished">ZecWallet</translation>
+        <source>hush-qt-wallet</source>
+        <translation type="vanished">silentdragon</translation>
     </message>
     <message>
         <location filename="../src/connection.ui" line="17"/>
-        <source>ZecWallet</source>
-        <translation>ZecWallet</translation>
+        <source>silentdragon</source>
+        <translation>silentdragon</translation>
     </message>
     <message>
         <location filename="../src/connection.ui" line="58"/>
@@ -47,8 +47,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>zec-qt-wallet</source>
-        <translation type="vanished">ZecWallet</translation>
+        <source>hush-qt-wallet</source>
+        <translation type="vanished">silentdragon</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="29"/>
@@ -193,8 +193,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="14"/>
-        <source>ZecWallet</source>
-        <translation>ZecWallet</translation>
+        <source>silentdragon</source>
+        <translation>silentdragon</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="170"/>
@@ -437,8 +437,8 @@
         <translation>wallet.dat dosyasını yedekle</translation>
     </message>
     <message>
-        <source>Thanks for supporting zec-qt-wallet!</source>
-        <translation type="vanished">ZecWallet&apos;i desteklediğiniz için teşekkür ederiz!</translation>
+        <source>Thanks for supporting hush-qt-wallet!</source>
+        <translation type="vanished">silentdragon&apos;i desteklediğiniz için teşekkür ederiz!</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="651"/>
@@ -446,9 +446,9 @@
         <translation>0.01 Bağış yap </translation>
     </message>
     <message>
-        <source> to support zec-qt-wallet</source>
+        <source> to support hush-qt-wallet</source>
         <translatorcomment>0.01 Bağış yap yazısının devamı</translatorcomment>
-        <translation type="vanished">ve ZecWallet&apos;i destekle</translation>
+        <translation type="vanished">ve silentdragon&apos;i destekle</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="730"/>
@@ -517,8 +517,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="579"/>
-        <source>Connection over Tor has been enabled. To use this feature, you need to restart ZecWallet.</source>
-        <translation>Tor üzerinden bağlantı etkin. Bu özelliği kullanmak için, ZecWallet&apos;i yeniden başlatmanız gerekir.</translation>
+        <source>Connection over Tor has been enabled. To use this feature, you need to restart silentdragon.</source>
+        <translation>Tor üzerinden bağlantı etkin. Bu özelliği kullanmak için, silentdragon&apos;i yeniden başlatmanız gerekir.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="588"/>
@@ -527,28 +527,28 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="589"/>
-        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart ZecWallet.</source>
-        <translation>Tor üzerinden bağlantı devre dışı bırakıldı. Tor ile bağlantıyı tamamen kesmek için ZecWallet&apos;i yeniden başlatmanız gerekir.</translation>
+        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart silentdragon.</source>
+        <translation>Tor üzerinden bağlantı devre dışı bırakıldı. Tor ile bağlantıyı tamamen kesmek için silentdragon&apos;i yeniden başlatmanız gerekir.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="618"/>
-        <source>ZecWallet needs to restart to rescan/reindex. ZecWallet will now close, please restart ZecWallet to continue</source>
-        <translation>ZecWallet yeniden tarama/yeniden indeksleme için yeniden başlatılması gerekiyor. ZecWallet şimdi kapanacak, lütfen devam etmek için ZecWallet&apos;i yeniden başlatın</translation>
+        <source>silentdragon needs to restart to rescan/reindex. silentdragon will now close, please restart silentdragon to continue</source>
+        <translation>silentdragon yeniden tarama/yeniden indeksleme için yeniden başlatılması gerekiyor. silentdragon şimdi kapanacak, lütfen devam etmek için silentdragon&apos;i yeniden başlatın</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="620"/>
-        <source>Restart ZecWallet</source>
-        <translation>ZecWallet&apos;i yeniden başlat</translation>
+        <source>Restart silentdragon</source>
+        <translation>silentdragon&apos;i yeniden başlat</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="649"/>
-        <source>Thanks for supporting ZecWallet!</source>
-        <translation>ZecWallet&apos;i desteklediğiniz için teşekkür ederiz!</translation>
+        <source>Thanks for supporting silentdragon!</source>
+        <translation>silentdragon&apos;i desteklediğiniz için teşekkür ederiz!</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="651"/>
-        <source> to support ZecWallet</source>
-        <translation> ZecWallet&apos;i desteklemek için</translation>
+        <source> to support silentdragon</source>
+        <translation> silentdragon&apos;i desteklemek için</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="667"/>
@@ -883,8 +883,8 @@ z-adres&apos;i gibi görünmüyor</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="36"/>
-        <source>Scan this QRCode from your ZecWallet companion app to connect your phone</source>
-        <translation>Telefonunuzu bağlamak için bu QR Kodu&apos;nu ZecWallet dostu uygulamadan tarayın</translation>
+        <source>Scan this QRCode from your silentdragon companion app to connect your phone</source>
+        <translation>Telefonunuzu bağlamak için bu QR Kodu&apos;nu silentdragon dostu uygulamadan tarayın</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="43"/>
@@ -898,13 +898,13 @@ z-adres&apos;i gibi görünmüyor</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="84"/>
-        <source>Allow connections over the internet via ZecWallet wormhole</source>
-        <translation>ZecWallet solucan deliği aracılığıyla internet üzerinden bağlantıya izin ver</translation>
+        <source>Allow connections over the internet via silentdragon wormhole</source>
+        <translation>silentdragon solucan deliği aracılığıyla internet üzerinden bağlantıya izin ver</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="94"/>
-        <source>ZecWallet Companion App</source>
-        <translation>ZecWallet Dostu Uygulama</translation>
+        <source>silentdragon Companion App</source>
+        <translation>silentdragon Dostu Uygulama</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="106"/>
@@ -963,13 +963,13 @@ z-adres&apos;i gibi görünmüyor</translation>
         <translation>zcashd bekleniyor</translation>
     </message>
     <message>
-        <source>You have zcashd set to start as a daemon, which can cause problems with zec-qt-wallet
+        <source>You have zcashd set to start as a daemon, which can cause problems with hush-qt-wallet
 
-.Please remove the following line from your zcash.conf and restart zec-qt-wallet
+.Please remove the following line from your zcash.conf and restart hush-qt-wallet
 daemon=1</source>
-        <translation type="vanished">zcashd, zec-qt-wallet ile sorunlara neden olan bir daemon olarak başlayacak şekilde ayarladınız.
+        <translation type="vanished">zcashd, hush-qt-wallet ile sorunlara neden olan bir daemon olarak başlayacak şekilde ayarladınız.
 
-.Lütfen aşağıdaki satırı zcash.conf dosyanızdan kaldırın ve ZecWallet&apos;i yeniden başlatın
+.Lütfen aşağıdaki satırı zcash.conf dosyanızdan kaldırın ve silentdragon&apos;i yeniden başlatın
 daemon=1</translation>
     </message>
     <message>
@@ -1015,13 +1015,13 @@ Not starting embedded zcashd because --no-embedded was passed</source>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="77"/>
-        <source>You have zcashd set to start as a daemon, which can cause problems with ZecWallet
+        <source>You have zcashd set to start as a daemon, which can cause problems with silentdragon
 
-.Please remove the following line from your zcash.conf and restart ZecWallet
+.Please remove the following line from your zcash.conf and restart silentdragon
 daemon=1</source>
-        <translation>zcashd&apos;yi, zec-qt-wallet ile sorunlara neden olabilecek bir daemon olacak şekilde ayarladınız.
+        <translation>zcashd&apos;yi, hush-qt-wallet ile sorunlara neden olabilecek bir daemon olacak şekilde ayarladınız.
 
-.Lütfen aşağıdaki satırı zcash.conf dosyanızdan kaldırın ve ZecWallet&apos;i yeniden başlatın
+.Lütfen aşağıdaki satırı zcash.conf dosyanızdan kaldırın ve silentdragon&apos;i yeniden başlatın
 daemon=1</translation>
     </message>
     <message>
@@ -1140,13 +1140,13 @@ Yayınlanan sürümler sayfasını ziyaret etmek ister misiniz?</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1216"/>
-        <source>Please wait for ZecWallet to exit</source>
-        <translation>Lütfen çıkmak için ZecWallet&apos;i bekleyin</translation>
+        <source>Please wait for silentdragon to exit</source>
+        <translation>Lütfen çıkmak için silentdragon&apos;i bekleyin</translation>
     </message>
     <message>
         <location filename="../src/recurring.cpp" line="469"/>
-        <source>No ZEC price was available to convert from USD</source>
-        <translation>USD&apos;den dönüştürülebilecek ZEC fiyatı yok</translation>
+        <source>No hush price was available to convert from USD</source>
+        <translation>USD&apos;den dönüştürülebilecek hush fiyatı yok</translation>
     </message>
     <message>
         <location filename="../src/recurring.cpp" line="518"/>
@@ -1202,8 +1202,8 @@ Yayınlanan sürümler sayfasını ziyaret etmek ister misiniz?</translation>
         <translation> tx hesaplanıyor. Bu birkaç dakika sürebilir.</translation>
     </message>
     <message>
-        <source>Please wait for zec-qt-wallet to exit</source>
-        <translation type="vanished">Lütfen çıkmak için ZecWallet&apos;i bekleyin</translation>
+        <source>Please wait for hush-qt-wallet to exit</source>
+        <translation type="vanished">Lütfen çıkmak için silentdragon&apos;i bekleyin</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1217"/>
@@ -1407,8 +1407,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/websockets.cpp" line="359"/>
-        <source>Connected over the internet via ZecWallet wormhole service</source>
-        <translation>ZecWallet&apos;in solucan deliği servisi aracılığıyla internet üzerinden bağlandı</translation>
+        <source>Connected over the internet via silentdragon wormhole service</source>
+        <translation>silentdragon&apos;in solucan deliği servisi aracılığıyla internet üzerinden bağlandı</translation>
     </message>
     <message>
         <location filename="../src/websockets.cpp" line="652"/>
@@ -1553,8 +1553,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/recurringmultiple.ui" line="44"/>
-        <source>How should ZecWallet proceed?</source>
-        <translation>ZecWallet nasıl ilerlemeli?</translation>
+        <source>How should silentdragon proceed?</source>
+        <translation>silentdragon nasıl ilerlemeli?</translation>
     </message>
     <message>
         <location filename="../src/recurringmultiple.ui" line="51"/>
@@ -1656,8 +1656,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/requestdialog.ui" line="219"/>
-        <source>Request payment from a Sapling address. You&apos;ll send a ZEC 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
-        <translation>Bir Sapling adresinden ödeme talep edin. Bir zcash ödeme URI&apos;si olan bir adrese ZEC 0.0001 işlemi gönderirsiniz. Adres size ödeme yaptığında Memo işleme dahil edilecektir.</translation>
+        <source>Request payment from a Sapling address. You&apos;ll send a hush 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
+        <translation>Bir Sapling adresinden ödeme talep edin. Bir zcash ödeme URI&apos;si olan bir adrese hush 0.0001 işlemi gönderirsiniz. Adres size ödeme yaptığında Memo işleme dahil edilecektir.</translation>
     </message>
     <message>
         <location filename="../src/requestdialog.cpp" line="50"/>
@@ -1754,13 +1754,13 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/settings.ui" line="273"/>
-        <source>Connect to the internet to fetch ZEC prices</source>
-        <translation>ZEC fiyatlarını çekmek için internete bağlanır</translation>
+        <source>Connect to the internet to fetch hush prices</source>
+        <translation>hush fiyatlarını çekmek için internete bağlanır</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="280"/>
-        <source>Fetch ZEC / USD prices</source>
-        <translation>ZEC / USD fiyatlarını çek</translation>
+        <source>Fetch hush / USD prices</source>
+        <translation>hush / USD fiyatlarını çek</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="288"/>
@@ -1774,8 +1774,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/settings.ui" line="301"/>
-        <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart ZecWallet for this to take effect</source>
-        <translation>Eksik cüzdan işlemleri ve cüzdan bakiyenizi düzeltmek için blok zincirini yeniden tarayın. Bu birkaç saat sürebilir. Bunun gerçekleşmesi için ZecWallet&apos;i yeniden başlatmanız gerekir</translation>
+        <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart silentdragon for this to take effect</source>
+        <translation>Eksik cüzdan işlemleri ve cüzdan bakiyenizi düzeltmek için blok zincirini yeniden tarayın. Bu birkaç saat sürebilir. Bunun gerçekleşmesi için silentdragon&apos;i yeniden başlatmanız gerekir</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="311"/>
@@ -1784,8 +1784,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/settings.ui" line="345"/>
-        <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart ZecWallet for this to take effect</source>
-        <translation>Tüm blok dosyalarını yeniden tarayarak blok zincirini genesis bloğundan yeniden oluşturun. Bu, donanımınıza bağlı olarak birkaç saat ila günler sürebilir. Bunun gerçekleşmesi için ZecWallet’i yeniden başlatmanız gerekir</translation>
+        <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart silentdragon for this to take effect</source>
+        <translation>Tüm blok dosyalarını yeniden tarayarak blok zincirini genesis bloğundan yeniden oluşturun. Bu, donanımınıza bağlı olarak birkaç saat ila günler sürebilir. Bunun gerçekleşmesi için silentdragon’i yeniden başlatmanız gerekir</translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="225"/>
@@ -2060,8 +2060,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="112"/>
-        <source>Allow connections to the internet to check for updates, get ZEC/USD prices etc...</source>
-        <translation>ZEC/USD fiyatlarını çekme, güncellemeleri denetleme vb. işlemler için internete bağlanmaya izin ver</translation>
+        <source>Allow connections to the internet to check for updates, get hush/USD prices etc...</source>
+        <translation>hush/USD fiyatlarını çekme, güncellemeleri denetleme vb. işlemler için internete bağlanmaya izin ver</translation>
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="119"/>
@@ -2095,8 +2095,8 @@ Onaylanmamış fonunuz var veya otomatik geçiş için bakiye çok düşük.</tr
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="205"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.zecwallet.co/using-zecwallet/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Blok indirme işlemi sırasında en uzun süren kontrolleri atlar. &lt;a href=&quot;https://docs.zecwallet.co/using-zecwallet/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Daha fazla bilgi edin&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Blok indirme işlemi sırasında en uzun süren kontrolleri atlar. &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Daha fazla bilgi edin&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>

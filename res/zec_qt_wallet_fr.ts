@@ -31,8 +31,8 @@
     <name>ConnectionDialog</name>
     <message>
         <location filename="../src/connection.ui" line="17"/>
-        <source>ZecWallet</source>
-        <translation>ZecWallet</translation>
+        <source>silentdragon</source>
+        <translation>silentdragon</translation>
     </message>
     <message>
         <location filename="../src/connection.ui" line="58"/>
@@ -44,8 +44,8 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.ui" line="14"/>
-        <source>ZecWallet</source>
-        <translation>ZecWallet</translation>
+        <source>silentdragon</source>
+        <translation>silentdragon</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="29"/>
@@ -455,8 +455,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="579"/>
-        <source>Connection over Tor has been enabled. To use this feature, you need to restart ZecWallet.</source>
-        <translation>La connection via Tor est activée. Afin d&apos;utiliser cette fonctionnalité, veuillez redémarer ZecWallet.</translation>
+        <source>Connection over Tor has been enabled. To use this feature, you need to restart silentdragon.</source>
+        <translation>La connection via Tor est activée. Afin d&apos;utiliser cette fonctionnalité, veuillez redémarer silentdragon.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="588"/>
@@ -465,13 +465,13 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="589"/>
-        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart ZecWallet.</source>
-        <translation>La connection via Tor a été désactivée. Afin de complètement se déconnecter de Tor, vous devez redémarrer ZecWallet.</translation>
+        <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart silentdragon.</source>
+        <translation>La connection via Tor a été désactivée. Afin de complètement se déconnecter de Tor, vous devez redémarrer silentdragon.</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="649"/>
-        <source>Thanks for supporting ZecWallet!</source>
-        <translation>Merci de supporter ZecWallet !</translation>
+        <source>Thanks for supporting silentdragon!</source>
+        <translation>Merci de supporter silentdragon !</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="651"/>
@@ -480,8 +480,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="651"/>
-        <source> to support ZecWallet</source>
-        <translation> pour supporter ZecWallet</translation>
+        <source> to support silentdragon</source>
+        <translation> pour supporter silentdragon</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="667"/>
@@ -540,12 +540,12 @@
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="618"/>
-        <source>ZecWallet needs to restart to rescan/reindex. ZecWallet will now close, please restart ZecWallet to continue</source>
+        <source>silentdragon needs to restart to rescan/reindex. silentdragon will now close, please restart silentdragon to continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="620"/>
-        <source>Restart ZecWallet</source>
+        <source>Restart silentdragon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -896,17 +896,17 @@ Cette adresse ne semble pas être de type adresse-z</translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="84"/>
-        <source>Allow connections over the internet via ZecWallet wormhole</source>
+        <source>Allow connections over the internet via silentdragon wormhole</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="36"/>
-        <source>Scan this QRCode from your ZecWallet companion app to connect your phone</source>
+        <source>Scan this QRCode from your silentdragon companion app to connect your phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mobileappconnector.ui" line="94"/>
-        <source>ZecWallet Companion App</source>
+        <source>silentdragon Companion App</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -967,13 +967,13 @@ Cette adresse ne semble pas être de type adresse-z</translation>
     </message>
     <message>
         <location filename="../src/connection.cpp" line="77"/>
-        <source>You have zcashd set to start as a daemon, which can cause problems with ZecWallet
+        <source>You have zcashd set to start as a daemon, which can cause problems with silentdragon
 
-.Please remove the following line from your zcash.conf and restart ZecWallet
+.Please remove the following line from your zcash.conf and restart silentdragon
 daemon=1</source>
-        <translation>vous avez zcashd configuré pour démarrer en tant que démon ce qui peut causer des problèmes avec ZecWallet
+        <translation>vous avez zcashd configuré pour démarrer en tant que démon ce qui peut causer des problèmes avec silentdragon
 
- Veuillez enlever la ligne suivante de votre fichier &quot;zcash.conf&quot; et redémarrer ZecWallet:
+ Veuillez enlever la ligne suivante de votre fichier &quot;zcash.conf&quot; et redémarrer silentdragon:
 daemon=1</translation>
     </message>
     <message>
@@ -1150,8 +1150,8 @@ Would you like to visit the releases page?</source>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1216"/>
-        <source>Please wait for ZecWallet to exit</source>
-        <translation>Veuillez patienter. Fermeture de ZecWallet en cours</translation>
+        <source>Please wait for silentdragon to exit</source>
+        <translation>Veuillez patienter. Fermeture de silentdragon en cours</translation>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="1217"/>
@@ -1355,7 +1355,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/websockets.cpp" line="359"/>
-        <source>Connected over the internet via ZecWallet wormhole service</source>
+        <source>Connected over the internet via silentdragon wormhole service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1370,7 +1370,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/recurring.cpp" line="469"/>
-        <source>No ZEC price was available to convert from USD</source>
+        <source>No hush price was available to convert from USD</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1538,7 +1538,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/recurringmultiple.ui" line="44"/>
-        <source>How should ZecWallet proceed?</source>
+        <source>How should silentdragon proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1641,7 +1641,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/requestdialog.ui" line="219"/>
-        <source>Request payment from a Sapling address. You&apos;ll send a ZEC 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
+        <source>Request payment from a Sapling address. You&apos;ll send a hush 0.0001 transaction to the address with a zcash payment URI. The memo will be included in the transaction when the address pays you.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1739,12 +1739,12 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/settings.ui" line="273"/>
-        <source>Connect to the internet to fetch ZEC prices</source>
+        <source>Connect to the internet to fetch hush prices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/settings.ui" line="280"/>
-        <source>Fetch ZEC / USD prices</source>
+        <source>Fetch hush / USD prices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1759,7 +1759,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/settings.ui" line="301"/>
-        <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart ZecWallet for this to take effect</source>
+        <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart silentdragon for this to take effect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1769,7 +1769,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/settings.ui" line="345"/>
-        <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart ZecWallet for this to take effect</source>
+        <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart silentdragon for this to take effect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2049,7 +2049,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="112"/>
-        <source>Allow connections to the internet to check for updates, get ZEC/USD prices etc...</source>
+        <source>Allow connections to the internet to check for updates, get hush/USD prices etc...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2069,7 +2069,7 @@ Vous avez soit des fonds non confirmés soit le solde est trop petit pour une mi
     </message>
     <message>
         <location filename="../src/createzcashconfdialog.ui" line="205"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.zecwallet.co/using-zecwallet/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Skips the most expensive checks during the initial block download. &lt;a href=&quot;https://docs.silentdragon.co/using-silentdragon/#fastsync&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Learn More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
