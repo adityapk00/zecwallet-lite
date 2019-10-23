@@ -17,18 +17,7 @@ lazy_static! {
 }
 
 // Check if there is an existing wallet
-#[no_mangle]
-pub extern fn litelib_wallet_exists(chain_name: *const c_char) -> bool {
-    let chain_name_str = unsafe {
-        assert!(!chain_name.is_null());
 
-        CStr::from_ptr(chain_name).to_string_lossy().into_owned()
-    };
-
-    let config = LightClientConfig::create_unconnected(chain_name_str);
-
-    config.wallet_exists()
-}
 
 // Initialize a new lightclient and store its value
 #[no_mangle]

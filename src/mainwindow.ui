@@ -1074,6 +1074,8 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionDonate"/>
+    <addaction name="actionDiscord"/>
+    <addaction name="actionWebsite"/>
     <addaction name="actionCheck_for_Updates"/>
     <addaction name="actionFile_a_bug"/>
     <addaction name="actionAbout"/>
@@ -1118,9 +1120,19 @@
   </action>
   <action name="actionDonate">
    <property name="text">
-    <string>&amp;Donate</string>
+    <string>&amp;Send Duke Feedback</string>
    </property>
-  </action>
+   </action>
+  <action name="actionDiscord">
+   <property name="text">
+    <string>&amp;Hush Discord</string>
+   </property>
+   </action>
+   <action name="actionWebsite">
+   <property name="text">
+    <string>&amp;Hush Website</string>
+   </property>
+   </action>
   <action name="actionCheck_for_Updates">
    <property name="text">
     <string>Check github.com for &amp;updates</string>

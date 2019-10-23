@@ -50,12 +50,16 @@ MainWindow::MainWindow(QWidget *parent) :
     // Set up exit action
     QObject::connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
 
-    // Set up donate action
+    // Set up Feedback action
     QObject::connect(ui->actionDonate, &QAction::triggered, this, &MainWindow::donate);
+
+    QObject::connect(ui->actionDiscord, &QAction::triggered, this, &MainWindow::discord);
+
+    QObject::connect(ui->actionWebsite, &QAction::triggered, this, &MainWindow::website);
 
     // File a bug
     QObject::connect(ui->actionFile_a_bug, &QAction::triggered, [=]() {
-        QDesktopServices::openUrl(QUrl("https://github.com/hushfoundation/silentdragon/issues/new"));
+        QDesktopServices::openUrl(QUrl("https://github.com/MyHush/silentdragonlite/issues/new"));
     });
 
     // Set up check for updates action
@@ -142,9 +146,9 @@ MainWindow::MainWindow(QWidget *parent) :
 }
  
 void MainWindow::createWebsocket(QString wormholecode) {
-    qDebug() << "Listening for app connections on port 8237";
+    qDebug() << "Listening for app connections on port 8777";
     // Create the websocket server, for listening to direct connections
-    wsserver = new WSServer(8237, false, this);
+    wsserver = new WSServer(8777, false, this);
 
     if (!wormholecode.isEmpty()) {
         // Connect to the wormhole service
@@ -267,7 +271,7 @@ void MainWindow::setupSettingsModal() {
         QObject::connect(settings.comboBoxTheme, &QComboBox::currentTextChanged, [=] (QString theme_name) {
             this->slot_change_theme(theme_name);
             // Tell the user to restart
-            QMessageBox::information(this, tr("Restart"), tr("Please restart silentdragon to have the theme apply"), QMessageBox::Ok);
+            QMessageBox::information(this, tr("Restart"), tr("Please restart Silentdragonlite to have the theme apply"), QMessageBox::Ok);
         });
 
         // Save sent transactions
@@ -306,7 +310,7 @@ void MainWindow::setupSettingsModal() {
             settings.rpcpassword->setEnabled(false);
         }
         else {
-            settings.confMsg->setText("No local hush.conf found. Please configure connection manually.");
+            settings.confMsg->setText("No local HUSH3.conf found. Please configure connection manually.");
             settings.hostname->setEnabled(true);
             settings.port->setEnabled(true);
             settings.rpcuser->setEnabled(true);
@@ -355,7 +359,7 @@ void MainWindow::setupSettingsModal() {
                 rpc->getConnection()->config->proxy = "proxy=127.0.0.1:9050";
 
                 QMessageBox::information(this, tr("Enable Tor"), 
-                    tr("Connection over Tor has been enabled. To use this feature, you need to restart silentdragon."), 
+                    tr("Connection over Tor has been enabled. To use this feature, you need to restart Silentdragonlite."), 
                     QMessageBox::Ok);
             }
 
@@ -417,17 +421,26 @@ void MainWindow::addressBook() {
     AddressBook::open(this);
 }
 
+void MainWindow::discord() {
+    QString url = "https://myhush.org/discord/";
+    QDesktopServices::openUrl(QUrl(url));
+}
+
+void MainWindow::website() {
+    QString url = "https://myhush.org";
+    QDesktopServices::openUrl(QUrl(url));
+}
+
 
 void MainWindow::donate() {
     // Set up a donation to me :)
-    clearSendForm();
 
     ui->Address1->setText(Settings::getDonationAddr());
     ui->Address1->setCursorPosition(0);
-    ui->Amount1->setText("0.01");
-    ui->MemoTxt1->setText(tr("Thanks for supporting silentdragon!"));
+    ui->Amount1->setText("0.00");
+    ui->MemoTxt1->setText(tr("Some feedback about SilentDragonlite or Hush..."));
 
-    ui->statusBar->showMessage(tr("Donate 0.01 ") % Settings::getTokenName() % tr(" to support silentdragon"));
+    ui->statusBar->showMessage(tr("Send Duke some private and shielded feedback about") % Settings::getTokenName() % tr(" or SilentDragonLite"));
 
     // And switch to the send tab.
     ui->tabWidget->setCurrentIndex(1);
@@ -508,8 +521,8 @@ void MainWindow::payhushURI(QString uri, QString myAddr) {
 
     // If there was no URI passed, ask the user for one.
     if (uri.isEmpty()) {
-        uri = QInputDialog::getText(this, tr("Paste hush URI"),
-            "hush URI" + QString(" ").repeated(180));
+        uri = QInputDialog::getText(this, tr("Paste HUSH URI"),
+            "HUSH URI" + QString(" ").repeated(180));
     }
 
     // If there's no URI, just exit
@@ -520,7 +533,7 @@ void MainWindow::payhushURI(QString uri, QString myAddr) {
     qDebug() << "Received URI " << uri;
     PaymentURI paymentInfo = Settings::parseURI(uri);
     if (!paymentInfo.error.isEmpty()) {
-        QMessageBox::critical(this, tr("Error paying hush URI"), 
+        QMessageBox::critical(this, tr("Error paying HUSH URI"), 
                 tr("URI should be of the form 'hush:<addr>?amt=x&memo=y") + "\n" + paymentInfo.error);
         return;
     }
@@ -620,6 +633,7 @@ void MainWindow::exportTransactions() {
 void MainWindow::backupWalletDat() {
     if (!rpc->getConnection())
         return;
+}
 
     // QDir hushdir(rpc->getConnection()->config->hushDir);
     // QString backupDefaultName = "hush-wallet-backup-" + QDateTime::currentDateTime().toString("yyyyMMdd") + ".dat";
@@ -644,7 +658,7 @@ void MainWindow::backupWalletDat() {
     //     QMessageBox::critical(this, tr("Couldn't backup"), tr("Couldn't backup the wallet.dat file.") + 
     //         tr("You need to back it up manually."), QMessageBox::Ok);
     // }
-}
+
 
 void MainWindow::exportAllKeys() {
     exportKeys("");
@@ -664,7 +678,7 @@ void MainWindow::exportKeys(QString addr) {
 
     Settings::saveRestore(&d);
 
-    pui.privKeyTxt->setPlainText(tr("This might take several minutes. Loading..."));
+    pui.privKeyTxt->setPlainText(tr("Loading..."));
     pui.privKeyTxt->setReadOnly(true);
     pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
 

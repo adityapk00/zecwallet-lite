@@ -156,7 +156,7 @@ public:
         parser.addOption(confOption);
 
         // Positional argument will specify a hush payment URI
-        parser.addPositionalArgument("hushURI", "An optional hush URI to pay");
+        parser.addPositionalArgument("HUSHURI", "An optional hush URI to pay");
 
         parser.process(a);
 
@@ -169,8 +169,8 @@ public:
             return 0;            
         } 
 
-        QCoreApplication::setOrganizationName("silentdragon-org");
-        QCoreApplication::setApplicationName("silentdragon");
+        QCoreApplication::setOrganizationName("myhush.org");
+        QCoreApplication::setApplicationName("SilentDragonLite");
 
         QString locale = QLocale::system().name();
         locale.truncate(locale.lastIndexOf('_'));   // Get the language code
@@ -214,7 +214,7 @@ public:
         }
 
         w = new MainWindow();
-        w->setWindowTitle("silentdragon v" + QString(APP_VERSION));
+        w->setWindowTitle("SilentDragonLite v" + QString(APP_VERSION));
 
         // If there was a payment URI on the command line, pay it
         if (parser.positionalArguments().length() > 0) {

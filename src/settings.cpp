@@ -58,7 +58,7 @@ bool Settings::isSaplingAddress(QString addr) {
         return false;
 
     return ( isTestnet() && addr.startsWith("ztestsapling")) ||
-           (!isTestnet() && addr.startsWith("zs"));
+           (!isTestnet() && addr.startsWith("zs1"));
 }
 
 bool Settings::isSproutAddress(QString addr) {
@@ -79,7 +79,7 @@ bool Settings::isTAddress(QString addr) {
     if (!isValidAddress(addr))
         return false;
         
-    return addr.startsWith("t");
+    return addr.startsWith("R");
 }
 
 int Settings::gethushdVersion() {
@@ -107,8 +107,8 @@ void Settings::setBlockNumber(int number) {
 }
 
 bool Settings::isSaplingActive() {
-    return  (isTestnet() && getBlockNumber() > 280000) ||
-           (!isTestnet() && getBlockNumber() > 419200);
+    return  (isTestnet() && getBlockNumber() > 1) ||
+           (!isTestnet() && getBlockNumber() > 1);
 }
 
 double Settings::gethushPrice() { 
@@ -199,7 +199,7 @@ void Settings::openAddressInExplorer(QString address) {
     if (Settings::getInstance()->isTestnet()) {
         url = "https://chain.so/address/hushTEST/" + address;
     } else {
-        url = "https://chain.so/address/hush/" + address;
+        url = "https://explorer.myhush.org/address/" + address;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
@@ -210,7 +210,7 @@ void Settings::openTxInExplorer(QString txid) {
         url = "https://chain.so/tx/hushTEST/" + txid;
     }
     else {
-        url = "https://chain.so/tx/hush/" + txid;
+        url = "https://explorer.myhush.org/tx/" + txid;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
@@ -254,7 +254,7 @@ const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (r
 
 QString Settings::getTokenName() {
     if (Settings::getInstance()->isTestnet()) {
-        return "TAZ";
+        return "HUSHT";
     } else {
         return "HUSH";
     }
@@ -262,9 +262,9 @@ QString Settings::getTokenName() {
 
 QString Settings::getDonationAddr() {
     if (Settings::getInstance()->isTestnet()) 
-            return "ztestsapling1wn6889vznyu42wzmkakl2effhllhpe4azhu696edg2x6me4kfsnmqwpglaxzs7tmqsq7kudemp5";
+            return "ztestsaplingXXX";
     else 
-            return "zs1gv64eu0v2wx7raxqxlmj354y9ycznwaau9kduljzczxztvs4qcl00kn2sjxtejvrxnkucw5xx9u";
+            return "zs1aq4xnrkjlnxx0zesqye7jz3dfrf3rjh7q5z6u8l6mwyqqaam3gx3j2fkqakp33v93yavq46j83q";
 
 }
 
@@ -343,13 +343,11 @@ bool Settings::isValidSaplingPrivateKey(QString pk) {
 }
 
 bool Settings::isValidAddress(QString addr) {
-    QRegExp zcexp("^z[a-z0-9]{94}$",  Qt::CaseInsensitive);
-    QRegExp zsexp("^z[a-z0-9]{77}$",  Qt::CaseInsensitive);
+    QRegExp zsexp("^zs1[a-z0-9]{75}$",  Qt::CaseInsensitive);
     QRegExp ztsexp("^ztestsapling[a-z0-9]{76}", Qt::CaseInsensitive);
-    QRegExp texp("^t[a-z0-9]{34}$", Qt::CaseInsensitive);
+    QRegExp texp("^R[a-z0-9]{33}$", Qt::CaseInsensitive);
 
-    return  zcexp.exactMatch(addr)  || texp.exactMatch(addr) || 
-            ztsexp.exactMatch(addr) || zsexp.exactMatch(addr);
+    return  texp.exactMatch(addr) || ztsexp.exactMatch(addr) || zsexp.exactMatch(addr);
 }
 
 // Get a pretty string representation of this Payment URI

@@ -116,6 +116,8 @@ private:
     void setMemoEnabled(int number, bool enabled);
     
     void donate();
+    void discord();
+    void website();
     void addressBook();
     void importPrivKey();
     void exportAllKeys();

@@ -187,11 +187,11 @@ void MainWindow::setDefaultPayFrom() {
     };
 
     // By default, select the z-address with the most balance from the inputs combo
-    auto maxZ = findMax("z");
+    auto maxZ = findMax("zs1");
     if (maxZ >= 0) {
         ui->inputsCombo->setCurrentIndex(maxZ);                
     } else {
-        auto maxT = findMax("t");
+        auto maxT = findMax("R");
         maxT  = maxT >= 0 ? maxT : 0;
         ui->inputsCombo->setCurrentIndex(maxT);
     }
