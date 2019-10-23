@@ -1,5 +1,4 @@
-silentdragon-lite is z-Addr first, Sapling compatible wallet lightwallet for hush still in very experimental status! Use it on your own Risk!
-
+SilenDragonLite is z-Addr first, Sapling compatible wallet lightwallet for hush still in very experimental status! Use it on your own Risk!
 
 ## Compiling from source
 * silentdragon is written in C++ 14, and can be compiled with g++/clang++/visual c++. 
@@ -9,7 +8,7 @@ silentdragon-lite is z-Addr first, Sapling compatible wallet lightwallet for hus
 ### Building on Linux
 
 ```
-git clone https://github.com/adityapk/silentdragon-lite.git
+git clone https://github.com/DenioD/SilenDragonLite.git
 cd silentdragon
 /path/to/qt5/bin/qmake silentdragon-lite.pro CONFIG+=debug
 make -j$(nproc)
