@@ -70,6 +70,13 @@ void LiteInterface::fetchTransactions(const std::function<void(json)>& cb) {
     conn->doRPCWithDefaultErrorHandling("list", "", cb);
 }
 
+void LiteInterface::saveWallet(const std::function<void(json)>& cb) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPCWithDefaultErrorHandling("save", "", cb);
+}
+
 void LiteInterface::sendTransaction(QString params, const std::function<void(json)>& cb, 
     const std::function<void(QString)>& err) {
     if (conn == nullptr)
