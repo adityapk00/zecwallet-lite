@@ -67,7 +67,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
 NewSeedPage::NewSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) {
     this->parent = parent;
-    
+
     setTitle("Your new wallet");
 
     QWidget* pageWidget = new QWidget();
@@ -102,7 +102,7 @@ bool NewSeedPage::validatePage() {
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
     if (parsed.is_discarded() || parsed.is_null() || parsed.find("result") == parsed.end()) {
         QMessageBox::warning(this, tr("Failed to save wallet"), 
-            tr("Couldn't save the wallet. Error") + "\n" + reply,
+            tr("Couldn't save the wallet") + "\n" + reply,
             QMessageBox::Ok);
         return false;
     } else {
@@ -112,6 +112,8 @@ bool NewSeedPage::validatePage() {
 
 
 RestoreSeedPage::RestoreSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) {
+    this->parent = parent;
+
     setTitle("Restore wallet from seed");
 
     QWidget* pageWidget = new QWidget();
@@ -125,11 +127,25 @@ RestoreSeedPage::RestoreSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) 
 
 bool RestoreSeedPage::validatePage() {
     // 1. Validate that we do have 24 words
-    QString seed = form.txtSeed->toPlainText();
-    if (seed.trimmed().split(QRegExp("[ \n\r]+")).length() != 24) {
+    QString seed = form.txtSeed->toPlainText().replace(QRegExp("[ \n\r]+"), " ");
+    if (seed.trimmed().split(" ").length() != 24) {
         QMessageBox::warning(this, tr("Failed to restore wallet"), 
             tr("Zecwallet needs 24 words to restore wallet"),
             QMessageBox::Ok);
         return false;
     }
+
+    // 2. Attempt to restore wallet with the seed phrase
+    char* resp = litelib_initialize_new_from_phrase(parent->dangerous, parent->server.toStdString().c_str(),
+            seed.toStdString().c_str(), 0);
+    QString reply = litelib_process_response(resp);
+
+    if (reply.toUpper().trimmed() != "OK") {
+        QMessageBox::warning(this, tr("Failed to restore wallet"), 
+            tr("Couldn't restore the wallet") + "\n" + reply,
+            QMessageBox::Ok);
+        return false;
+    } else {
+        return true;
+    }            
 }

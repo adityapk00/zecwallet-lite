@@ -52,9 +52,12 @@ private:
 class RestoreSeedPage: public QWizardPage {
 public:
     RestoreSeedPage(FirstTimeWizard* parent);
+
 protected:
     bool validatePage();
+
 private:
+    FirstTimeWizard* parent;
     Ui_RestoreSeedForm form;
 };
 

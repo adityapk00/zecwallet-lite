@@ -72,6 +72,53 @@ pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> 
     return s_str.into_raw();
 }
 
+/// Restore a wallet from the seed phrase
+#[no_mangle]
+pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const c_char, 
+            seed: *const c_char, birthday: u64) -> *mut c_char {
+    let server_str = unsafe {
+        assert!(!server.is_null());
+
+        CStr::from_ptr(server).to_string_lossy().into_owned()
+    };
+
+    let seed_str = unsafe {
+        assert!(!seed.is_null());
+
+        CStr::from_ptr(seed).to_string_lossy().into_owned()
+    };
+
+    let server = LightClientConfig::get_server_or_default(Some(server_str));
+    let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
+        Ok((c, h)) => (c, h),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday) {
+        Ok(l) => l,
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let seed = match lightclient.do_seed_phrase() {
+        Ok(s) => s.dump(),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+ 
+    let c_str = CString::new("OK").unwrap();
+    return c_str.into_raw();
+}
+
 // Initialize a new lightclient and store its value
 #[no_mangle]
 pub extern fn litelib_initialize_existing(dangerous: bool, server: *const c_char) -> *mut c_char {
