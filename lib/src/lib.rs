@@ -27,16 +27,18 @@ pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char)
 
         CStr::from_ptr(server).to_string_lossy().into_owned()
     };
-
+    
     let server = LightClientConfig::get_server_or_default(Some(server_str));
     let (config, latest_block_height) = match LightClientConfig::create(server, dangerous) {
         Ok((c, h)) => (c, h),
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();
             return e_str.into_raw();
-        }
+       }
+    
     };
 
+    
     let lightclient = match LightClient::read_from_disk(&config) {
         Ok(l) => l,
         Err(e) => {

@@ -121,8 +121,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // The hushd tab is hidden by default, and only later added in if the embedded hushd is started
-    hushdtab = ui->tabWidget->widget(4);
-    ui->tabWidget->removeTab(4);
+    //hushdtab = ui->tabWidget->widget(4);
+    //ui->tabWidget->removeTab(4);
 
     setupSendTab();
     setupTransactionsTab();

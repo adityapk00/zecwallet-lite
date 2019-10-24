@@ -434,7 +434,7 @@ void Controller::checkForUpdate(bool silent) {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
-    QUrl cmcURL("https://api.github.com/repos/hushFoundation/silentdragon/releases");
+    QUrl cmcURL("https://api.github.com/repos/MyHush/silentdragon/releases");
 
     QNetworkRequest req;
     req.setUrl(cmcURL);
@@ -482,7 +482,7 @@ void Controller::checkForUpdate(bool silent) {
                             .arg(currentVersion.toString()),
                         QMessageBox::Yes, QMessageBox::Cancel);
                     if (ans == QMessageBox::Yes) {
-                        QDesktopServices::openUrl(QUrl("https://github.com/hushFoundation/silentdragon/releases"));
+                        QDesktopServices::openUrl(QUrl("https://github.com/MyHush/SilentDragonLite/releases"));
                     } else {
                         // If the user selects cancel, don't bother them again for this version
                         s.setValue("update/lastversion", maxVersion.toString());
@@ -508,7 +508,7 @@ void Controller::refreshhushPrice() {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
-    QUrl cmcURL("https://api.coinmarketcap.com/v1/ticker/");
+    QUrl cmcURL("https://api.coingecko.com/api/v3/simple/price?ids=hush&vs_currencies=btc%2Cusd%2Ceur&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true");
 
     QNetworkRequest req;
     req.setUrl(cmcURL);

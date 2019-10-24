@@ -575,7 +575,7 @@ void Recurring::showRecurringDialog(MainWindow* parent) {
                     if (Settings::getInstance()->isTestnet()) {
                         url = "https://explorer.testnet.z.cash/tx/" + txid;
                     } else {
-                        url = "https://explorer.zcha.in/transactions/" + txid;
+                        url = "https://hush3.komodod.com/transactions/" + txid;
                     }
                     QDesktopServices::openUrl(QUrl(url));
                 });

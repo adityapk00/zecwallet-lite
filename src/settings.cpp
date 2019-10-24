@@ -107,8 +107,7 @@ void Settings::setBlockNumber(int number) {
 }
 
 bool Settings::isSaplingActive() {
-    return  (isTestnet() && getBlockNumber() > 1) ||
-           (!isTestnet() && getBlockNumber() > 1);
+    return  (isTestnet() && getBlockNumber() > 0) || (!isTestnet() && getBlockNumber() > 0);
 }
 
 double Settings::gethushPrice() { 
