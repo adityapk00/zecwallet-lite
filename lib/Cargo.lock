@@ -2308,6 +2308,51 @@ dependencies = [
  "zcash_primitives 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
 ]
 
+[[package]]
+name = "silentdragonlitelib"
+version = "0.1.0"
+source = "git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc#caaee693c47c2ee9ecd1e1546b8fe3c714f342bc"
+dependencies = [
+ "base58 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bellman 0.1.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
+ "byteorder 1.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ff 0.4.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
+ "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "http 0.1.19 (registry+https://github.com/rust-lang/crates.io-index)",
+ "json 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log4rs 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pairing 0.14.2 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
+ "prost 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "protobuf 2.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ring 0.14.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ripemd160 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rust-embed 5.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustls 0.15.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "secp256k1 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sodiumoxide 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tiny-bip39 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio-rustls 0.10.0-alpha.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tower-grpc 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tower-grpc-build 0.1.0 (git+https://github.com/tower-rs/tower-grpc)",
+ "tower-h2 0.1.0 (git+https://github.com/tower-rs/tower-h2?rev=0865040d699697bbaf1c3b77b3f256b72f98cdf4)",
+ "tower-request-modifier 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tower-service 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tower-util 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "webpki 0.19.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "webpki-roots 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "zcash_client_backend 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
+ "zcash_primitives 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
+ "zcash_proofs 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)",
+]
+
 [metadata]
 "checksum adler32 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)" = "5d2e7343e7fc9de883d1b0341e0b13970f764c14101234857d2ddafa1cb1cac2"
 "checksum aes 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "54eb1d8fe354e5fc611daf4f2ea97dd45a765f4f1e4512306ec183ae2e8f20c9"
@@ -2563,3 +2608,4 @@ dependencies = [
 "checksum zcash_client_backend 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)" = "<none>"
 "checksum zcash_primitives 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)" = "<none>"
 "checksum zcash_proofs 0.0.0 (git+https://github.com/DenioD/librustzcash.git?rev=caaee693c47c2ee9ecd1e1546b8fe3c714f342bc)" = "<none>"
+"checksum silentdragonlitelib 0.1.0 (git+https://github.com/DenioD/silentdragonlite-cli?rev=4d9c09433007e71e259b10f15c28ba1c6ac3efae)" = "<none>"

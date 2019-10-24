@@ -568,114 +568,27 @@ void Controller::refreshhushPrice() {
 }
 
 void Controller::shutdownhushd() {
-    // Shutdown embedded hushd if it was started
-    if (ehushd == nullptr || ehushd->processId() == 0 || !zrpc->haveConnection()) {
-        // No hushd running internally, just return
-        return;
+    // Save the wallet and exit the lightclient library cleanly.
+    if (zrpc->haveConnection()) {
+        QDialog d(main);
+        Ui_ConnectionDialog connD;
+        connD.setupUi(&d);
+        connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
+        connD.status->setText(QObject::tr("Please wait for SilentDragonLite to exit"));
+        connD.statusDetail->setText(QObject::tr("Waiting for hushd to exit"));
+
+        bool finished = false;
+
+        zrpc->saveWallet([&] (json) {        
+            if (!finished)
+                d.accept();
+            finished = true;
+        });
+
+        if (!finished)
+            d.exec();
     }
-
-    // json payload = {
-    //     {"jsonrpc", "1.0"},
-    //     {"id", "someid"},
-    //     {"method", "stop"}
-    // };
-    
-    // getConnection()->doRPCWithDefaultErrorHandling(payload, [=](auto) {});
-    // getConnection()->shutdown();
-
-    // QDialog d(main);
-    // Ui_ConnectionDialog connD;
-    // connD.setupUi(&d);
-    // connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
-    // connD.status->setText(QObject::tr("Please wait for silentdragon to exit"));
-    // connD.statusDetail->setText(QObject::tr("Waiting for hushd to exit"));
-
-    // QTimer waiter(main);
-
-    // // We capture by reference all the local variables because of the d.exec() 
-    // // below, which blocks this function until we exit. 
-    // int waitCount = 0;
-    // QObject::connect(&waiter, &QTimer::timeout, [&] () {
-    //     waitCount++;
-
-    //     if ((ehushd->atEnd() && ehushd->processId() == 0) ||
-    //         waitCount > 30 || 
-    //         getConnection()->config->hushDaemon)  {   // If hushd is daemon, then we don't have to do anything else
-    //         qDebug() << "Ended";
-    //         waiter.stop();
-    //         QTimer::singleShot(1000, [&]() { d.accept(); });
-    //     } else {
-    //         qDebug() << "Not ended, continuing to wait...";
-    //     }
-    // });
-    // waiter.start(1000);
-
-    // // Wait for the hush process to exit.
-    // if (!Settings::getInstance()->isHeadless()) {
-    //     d.exec(); 
-    // } else {
-    //     while (waiter.isActive()) {
-    //         QCoreApplication::processEvents();
-
-    //         QThread::sleep(1);
-    //     }
-    // }
 }
-
-
-// // Fetch the Z-board topics list
-// void Controller::getZboardTopics(std::function<void(QMap<QString, QString>)> cb) {
-//     if (!zrpc->haveConnection())
-//         return noConnection();
-
-//     QUrl cmcURL("http://z-board.net/listTopics");
-
-//     QNetworkRequest req;
-//     req.setUrl(cmcURL);
-
-//     QNetworkReply *reply = conn->restclient->get(req);
-
-//     QObject::connect(reply, &QNetworkReply::finished, [=] {
-//         reply->deleteLater();
-
-//         try {
-//             if (reply->error() != QNetworkReply::NoError) {
-//                 auto parsed = json::parse(reply->readAll(), nullptr, false);
-//                 if (!parsed.is_discarded() && !parsed["error"]["message"].is_null()) {
-//                     qDebug() << QString::fromStdString(parsed["error"]["message"]);
-//                 }
-//                 else {
-//                     qDebug() << reply->errorString();
-//                 }
-//                 return;
-//             }
-
-//             auto all = reply->readAll();
-
-//             auto parsed = json::parse(all, nullptr, false);
-//             if (parsed.is_discarded()) {
-//                 return;
-//             }
-
-//             QMap<QString, QString> topics;
-//             for (const json& item : parsed["topics"].get<json::array_t>()) {
-//                 if (item.find("addr") == item.end() || item.find("topicName") == item.end())
-//                     return;
-
-//                 QString addr  = QString::fromStdString(item["addr"].get<json::string_t>());
-//                 QString topic = QString::fromStdString(item["topicName"].get<json::string_t>());
-                
-//                 topics.insert(topic, addr);
-//             }
-
-//             cb(topics);
-//         }
-//         catch (...) {
-//             // If anything at all goes wrong, just set the price to 0 and move on.
-//             qDebug() << QString("Caught something nasty");
-//         }
-//     });
-// }
 
 /** 
  * Get a Sapling address from the user's wallet

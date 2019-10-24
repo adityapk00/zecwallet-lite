@@ -135,17 +135,44 @@ bool RestoreSeedPage::validatePage() {
         return false;
     }
 
-    // 2. Attempt to restore wallet with the seed phrase
-    char* resp = litelib_initialize_new_from_phrase(parent->dangerous, parent->server.toStdString().c_str(),
-            seed.toStdString().c_str(), 0);
-    QString reply = litelib_process_response(resp);
-
-    if (reply.toUpper().trimmed() != "OK") {
-        QMessageBox::warning(this, tr("Failed to restore wallet"), 
-            tr("Couldn't restore the wallet") + "\n" + reply,
+    // 2. Validate birthday
+    QString birthday_str = form.txtBirthday->text();
+    bool ok;
+    qint64 birthday = birthday_str.toUInt(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, tr("Failed to parse wallet birthday"), 
+            tr("Couldn't understand wallet birthday. This should be a block height from where to rescan the wallet. You can leave it as '0' if you don't know what it should be."),
             QMessageBox::Ok);
         return false;
-    } else {
-        return true;
-    }            
+    }
+
+    // 3. Attempt to restore wallet with the seed phrase
+    {
+        char* resp = litelib_initialize_new_from_phrase(parent->dangerous, parent->server.toStdString().c_str(),
+                seed.toStdString().c_str(), birthday);
+        QString reply = litelib_process_response(resp);
+
+        if (reply.toUpper().trimmed() != "OK") {
+            QMessageBox::warning(this, tr("Failed to restore wallet"), 
+                tr("Couldn't restore the wallet") + "\n" + reply,
+                QMessageBox::Ok);
+            return false;
+        } 
+    }
+
+    // 4. Finally attempt to save the wallet
+    {
+        char* resp = litelib_execute("save", "");
+        QString reply = litelib_process_response(resp);
+
+        auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
+        if (parsed.is_discarded() || parsed.is_null() || parsed.find("result") == parsed.end()) {
+            QMessageBox::warning(this, tr("Failed to save wallet"), 
+                tr("Couldn't save the wallet") + "\n" + reply,
+                QMessageBox::Ok);
+            return false;
+        } else {
+            return true;
+        }         
+    }
 }

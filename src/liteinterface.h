@@ -50,7 +50,9 @@ public:
     void createNewTaddr(const std::function<void(json)>& cb);
 
     void fetchPrivKey(QString addr, const std::function<void(json)>& cb);
-     void fetchAllPrivKeys(const std::function<void(json)>);
+    void fetchAllPrivKeys(const std::function<void(json)>);
+
+    void saveWallet(const std::function<void(json)>& cb);
 
     //void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
     //void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb);
