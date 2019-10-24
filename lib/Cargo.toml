@@ -11,4 +11,4 @@ crate-type = ["staticlib"]
 [dependencies]
 libc = "0.2.58"
 lazy_static = "1.4.0"
-silentdragonlitelib = { git = "https://github.com/DenioD/silentdragonlite-cli", rev = "a9d235e117da1fdbe3c576d0713b87cfdf97baf6" }
+silentdragonlitelib = { git = "https://github.com/DenioD/silentdragonlite-cli", rev = "4d9c09433007e71e259b10f15c28ba1c6ac3efae" }

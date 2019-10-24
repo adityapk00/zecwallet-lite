@@ -2,8 +2,10 @@
 #include "mainwindow.h"
 #include "settings.h"
 #include "ui_connection.h"
+#include "firsttimewizard.h"
 #include "ui_createhushconfdialog.h"
 #include "controller.h"
+
 
 #include "../lib/silentdragonlitelib.h"
 
@@ -42,7 +44,15 @@ void ConnectionLoader::doAutoConnect() {
 
     // Initialize the library
     main->logger->write(QObject::tr("Attempting to initialize"));
-    litelib_initialze_existing(config->dangerous, config->server.toStdString().c_str());
+
+    // Check to see if there's an existing wallet
+    if (litelib_wallet_exists(Settings::getChainName().toStdString().c_str())) {
+        main->logger->write(QObject::tr("Using existing wallet."));
+        litelib_initialize_existing(config->dangerous, config->server.toStdString().c_str());
+    } else {
+        main->logger->write(QObject::tr("Create/restore wallet."));
+        createOrRestore(config->dangerous, config->server);
+    }    
     
     auto connection = makeConnection(config);
 
@@ -52,6 +62,16 @@ void ConnectionLoader::doAutoConnect() {
         main->logger->write("Connection is online.");
         this->doRPCSetConnection(connection); 
     }, [=](auto err) {});
+}
+
+void ConnectionLoader::createOrRestore(bool dangerous, QString server) {
+    // Close the startup dialog, since we'll be showing the wizard
+    d->hide();
+
+    // Create a wizard
+    FirstTimeWizard wizard(dangerous, server);    
+
+    wizard.exec();
 }
 
 void ConnectionLoader::doRPCSetConnection(Connection* conn) {
@@ -94,15 +114,7 @@ void ConnectionLoader::showError(QString explanation) {
     d->close();
 }
 
-
-
-/***********************************************************************************
- *  Connection, Executor and Callback Class
- ************************************************************************************/ 
-void Executor::run() {
-    char* resp = litelib_execute(this->cmd.toStdString().c_str(), this->args.toStdString().c_str());
-
-    // Copy the string, since we need to return this back to rust
+QString litelib_process_response(char* resp) {
     char* resp_copy = new char[strlen(resp) + 1];
     strcpy(resp_copy, resp);
     litelib_rust_free_string(resp);
@@ -110,6 +122,17 @@ void Executor::run() {
     QString reply = QString::fromStdString(resp_copy);
     memset(resp_copy, '-', strlen(resp_copy));
     delete[] resp_copy;
+
+    return reply;
+}
+
+/***********************************************************************************
+ *  Connection, Executor and Callback Class
+ ************************************************************************************/ 
+void Executor::run() {
+    char* resp = litelib_execute(this->cmd.toStdString().c_str(), this->args.toStdString().c_str());
+
+    QString reply = litelib_process_response(resp);
 
     qDebug() << "Reply=" << reply;
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
@@ -126,8 +149,6 @@ void Executor::run() {
 
 
 void Callback::processRPCCallback(json resp) {
-    const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
-    qDebug() << "Doing RPC callback: isGUI=" << isGuiThread;
     this->cb(resp);
 
     // Destroy self
@@ -135,8 +156,6 @@ void Callback::processRPCCallback(json resp) {
 }
 
 void Callback::processError(QString resp) {
-    const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
-    qDebug() << "Doing RPC callback: isGUI=" << isGuiThread;
     this->errCb(resp);
 
     // Destroy self
@@ -158,9 +177,7 @@ void Connection::doRPC(const QString cmd, const QString args, const std::functio
         return;
     }
 
-    const bool isGuiThread = 
-        QThread::currentThread() == QCoreApplication::instance()->thread();
-    qDebug() << "Doing RPC: isGUI=" << isGuiThread;
+    qDebug() << "Doing RPC: " << cmd;
 
     // Create a runner.
     auto runner = new Executor(cmd, args);

@@ -17,11 +17,23 @@ lazy_static! {
 }
 
 // Check if there is an existing wallet
-
-
-// Initialize a new lightclient and store its value
 #[no_mangle]
-pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char) -> *mut c_char {
+pub extern fn litelib_wallet_exists(chain_name: *const c_char) -> bool {
+    let chain_name_str = unsafe {
+        assert!(!chain_name.is_null());
+
+        CStr::from_ptr(chain_name).to_string_lossy().into_owned()
+    };
+
+    let config = LightClientConfig::create_unconnected(chain_name_str, None);
+
+    println!("Wallet exists: {}", config.wallet_exists());
+    config.wallet_exists()
+}
+
+/// Create a new wallet and return the seed for the newly created wallet.
+#[no_mangle]
+pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> *mut c_char {
     let server_str = unsafe {
         assert!(!server.is_null());
 
@@ -38,8 +50,95 @@ pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char)
     
     };
 
-    
-     let lightclient = match LightClient::read_from_disk(&config) {
+    let lightclient = match LightClient::new(&config, latest_block_height) {
+        Ok(l) => l,
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let seed = match lightclient.do_seed_phrase() {
+        Ok(s) => s.dump(),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+
+    // Return the wallet's seed
+    let s_str = CString::new(seed).unwrap();
+    return s_str.into_raw();
+}
+
+/// Restore a wallet from the seed phrase
+#[no_mangle]
+pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const c_char, 
+            seed: *const c_char, birthday: u64) -> *mut c_char {
+    let server_str = unsafe {
+        assert!(!server.is_null());
+
+        CStr::from_ptr(server).to_string_lossy().into_owned()
+    };
+
+    let seed_str = unsafe {
+        assert!(!seed.is_null());
+
+        CStr::from_ptr(seed).to_string_lossy().into_owned()
+    };
+
+    let server = LightClientConfig::get_server_or_default(Some(server_str));
+    let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
+        Ok((c, h)) => (c, h),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday) {
+        Ok(l) => l,
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let seed = match lightclient.do_seed_phrase() {
+        Ok(s) => s.dump(),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+ 
+    let c_str = CString::new("OK").unwrap();
+    return c_str.into_raw();
+}
+
+// Initialize a new lightclient and store its value
+#[no_mangle]
+pub extern fn litelib_initialize_existing(dangerous: bool, server: *const c_char) -> *mut c_char {
+    let server_str = unsafe {
+        assert!(!server.is_null());
+
+        CStr::from_ptr(server).to_string_lossy().into_owned()
+    };
+
+    let server = LightClientConfig::get_server_or_default(Some(server_str));
+    let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
+        Ok((c, h)) => (c, h),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let lightclient = match LightClient::read_from_disk(&config) {
         Ok(l) => l,
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();

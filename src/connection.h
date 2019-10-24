@@ -33,6 +33,8 @@ private:
 
     void doAutoConnect();
 
+    void createOrRestore(bool dangerous, QString server);
+
     void showError(QString explanation);
     void showInformation(QString info, QString detail = "");
 
