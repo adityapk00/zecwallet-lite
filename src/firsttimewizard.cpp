@@ -66,17 +66,20 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 }
 
 NewSeedPage::NewSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) {
+    this->parent = parent;
+    
     setTitle("Your new wallet");
 
     QWidget* pageWidget = new QWidget();
-    Ui_NewSeedForm form;
     form.setupUi(pageWidget);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(pageWidget);
     
     setLayout(layout);
+}
 
+void NewSeedPage::initializePage() {
     // Call the library to create a new wallet.
     char* resp = litelib_initialize_new(parent->dangerous, parent->server.toStdString().c_str());
     QString reply = litelib_process_response(resp);
@@ -112,11 +115,21 @@ RestoreSeedPage::RestoreSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) 
     setTitle("Restore wallet from seed");
 
     QWidget* pageWidget = new QWidget();
-    Ui_RestoreSeedForm form;
     form.setupUi(pageWidget);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(pageWidget);
     
     setLayout(layout);
+}
+
+bool RestoreSeedPage::validatePage() {
+    // 1. Validate that we do have 24 words
+    QString seed = form.txtSeed->toPlainText();
+    if (seed.trimmed().split(QRegExp("[ \n\r]+")).length() != 24) {
+        QMessageBox::warning(this, tr("Failed to restore wallet"), 
+            tr("Zecwallet needs 24 words to restore wallet"),
+            QMessageBox::Ok);
+        return false;
+    }
 }

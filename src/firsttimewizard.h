@@ -3,6 +3,9 @@
 
 #include "precompiled.h"
 
+#include "ui_newseed.h"
+#include "ui_restoreseed.h"
+
 class FirstTimeWizard: public QWizard
 {
 public:
@@ -35,14 +38,24 @@ public:
 class NewSeedPage: public QWizardPage {
 public:
     NewSeedPage(FirstTimeWizard* parent);
+
 protected:
-    bool validatePage();    
+    virtual void initializePage();
+    virtual bool validatePage();    
+
+private:
+    FirstTimeWizard* parent;
+    Ui_NewSeedForm form;    
 };
 
 
 class RestoreSeedPage: public QWizardPage {
 public:
     RestoreSeedPage(FirstTimeWizard* parent);
+protected:
+    bool validatePage();
+private:
+    Ui_RestoreSeedForm form;
 };
 
 
