@@ -149,8 +149,6 @@ void Executor::run() {
 
 
 void Callback::processRPCCallback(json resp) {
-    const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
-    qDebug() << "Doing RPC callback: isGUI=" << isGuiThread;
     this->cb(resp);
 
     // Destroy self
@@ -158,8 +156,6 @@ void Callback::processRPCCallback(json resp) {
 }
 
 void Callback::processError(QString resp) {
-    const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
-    qDebug() << "Doing RPC callback: isGUI=" << isGuiThread;
     this->errCb(resp);
 
     // Destroy self
@@ -181,9 +177,7 @@ void Connection::doRPC(const QString cmd, const QString args, const std::functio
         return;
     }
 
-    const bool isGuiThread = 
-        QThread::currentThread() == QCoreApplication::instance()->thread();
-    qDebug() << "Doing RPC: isGUI=" << isGuiThread;
+    qDebug() << "Doing RPC: " << cmd;
 
     // Create a runner.
     auto runner = new Executor(cmd, args);
