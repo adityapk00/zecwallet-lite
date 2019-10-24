@@ -508,11 +508,12 @@ void Controller::refreshhushPrice() {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
+       // TODO: use/render all this data
     QUrl cmcURL("https://api.coingecko.com/api/v3/simple/price?ids=hush&vs_currencies=btc%2Cusd%2Ceur&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true");
-
+   
     QNetworkRequest req;
     req.setUrl(cmcURL);
-    
+
     QNetworkAccessManager *manager = new QNetworkAccessManager(this->main);
     QNetworkReply *reply = manager->get(req);
 
@@ -524,34 +525,41 @@ void Controller::refreshhushPrice() {
             if (reply->error() != QNetworkReply::NoError) {
                 auto parsed = json::parse(reply->readAll(), nullptr, false);
                 if (!parsed.is_discarded() && !parsed["error"]["message"].is_null()) {
-                    qDebug() << QString::fromStdString(parsed["error"]["message"]);    
+                    qDebug() << QString::fromStdString(parsed["error"]["message"]);
                 } else {
                     qDebug() << reply->errorString();
                 }
                 Settings::getInstance()->sethushPrice(0);
                 return;
-            } 
+            }
 
+            qDebug() << "No network errors";
             auto all = reply->readAll();
-            
             auto parsed = json::parse(all, nullptr, false);
             if (parsed.is_discarded()) {
                 Settings::getInstance()->sethushPrice(0);
                 return;
             }
 
-            for (const json& item : parsed.get<json::array_t>()) {
-                if (item["symbol"].get<json::string_t>() == Settings::getTokenName().toStdString()) {
-                    QString price = QString::fromStdString(item["price_usd"].get<json::string_t>());
-                    qDebug() << Settings::getTokenName() << " Price=" << price;
-                    Settings::getInstance()->sethushPrice(price.toDouble());
+            qDebug() << "Parsed JSON";
 
-                    return;
-                }
+            const json& item  = parsed.get<json::object_t>();
+            const json& hush  = item["hush"].get<json::object_t>();
+
+            if (hush["usd"] >= 0) {
+                qDebug() << "Found hush key in price json";
+                // TODO: support BTC/EUR prices as well
+                QString price = QString::fromStdString(hush["usd"].get<json::string_t>());
+                qDebug() << "HUSH = $" << QString::number((double)hush["usd"]);
+                Settings::getInstance()->sethushPrice( hush["usd"] );
+
+                return;
+            } else {
+                qDebug() << "No hush key found in JSON! API might be down or we are rate-limited\n";
             }
-        } catch (...) {
+        } catch (const std::exception& e) {
             // If anything at all goes wrong, just set the price to 0 and move on.
-            qDebug() << QString("Caught something nasty");
+            qDebug() << QString("Caught something nasty: ") << e.what();
         }
 
         // If nothing, then set the price to 0;

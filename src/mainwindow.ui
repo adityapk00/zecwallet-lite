@@ -22,7 +22,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -935,7 +935,7 @@
              <item row="5" column="0" colspan="3">
               <widget class="QLabel" name="label_14">
                <property name="text">
-                <string>You are currently not mining</string>
+                <string>This is a Lightwallet, you cant mine with it!</string>
                </property>
               </widget>
              </item>
@@ -953,7 +953,7 @@
               </spacer>
              </item>
              <item row="2" column="2">
-              <widget class="QLabel" name="numconnections">
+              <widget class="QLabel" name="version">
                <property name="text">
                 <string>Loading...</string>
                </property>
@@ -962,12 +962,12 @@
              <item row="1" column="0">
               <widget class="QLabel" name="heightLabel">
                <property name="text">
-                <string>Block height</string>
+                <string>Blockheight</string>
                </property>
               </widget>
              </item>
              <item row="3" column="2">
-              <widget class="QLabel" name="solrate">
+              <widget class="QLabel" name="Vendor">
                <property name="text">
                 <string>Loading...</string>
                </property>
@@ -976,19 +976,19 @@
              <item row="3" column="0">
               <widget class="QLabel" name="label_12">
                <property name="text">
-                <string>Network solution rate</string>
+                <string>Version hushd light</string>
                </property>
               </widget>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>Connections</string>
+                <string>Vendor</string>
                </property>
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QLabel" name="blockheight">
+              <widget class="QLabel" name="blockHeight">
                <property name="text">
                 <string>Loading...</string>
                </property>
@@ -1122,17 +1122,17 @@
    <property name="text">
     <string>&amp;Send Duke Feedback</string>
    </property>
-   </action>
+  </action>
   <action name="actionDiscord">
    <property name="text">
     <string>&amp;Hush Discord</string>
    </property>
-   </action>
-   <action name="actionWebsite">
+  </action>
+  <action name="actionWebsite">
    <property name="text">
     <string>&amp;Hush Website</string>
    </property>
-   </action>
+  </action>
   <action name="actionCheck_for_Updates">
    <property name="text">
     <string>Check github.com for &amp;updates</string>

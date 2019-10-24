@@ -29,7 +29,7 @@ pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char)
     };
     
     let server = LightClientConfig::get_server_or_default(Some(server_str));
-    let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
+    let (config, latest_block_height) = match LightClientConfig::create(server, dangerous) {
         Ok((c, h)) => (c, h),
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();
@@ -39,7 +39,7 @@ pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char)
     };
 
     
-    let lightclient = match LightClient::read_from_disk(&config) {
+     let lightclient = match LightClient::read_from_disk(&config) {
         Ok(l) => l,
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();

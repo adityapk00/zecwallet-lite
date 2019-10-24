@@ -17,12 +17,12 @@
 <context>
     <name>BalancesTableModel</name>
     <message>
-        <location filename="../src/balancestablemodel.cpp" line="122"/>
+        <location filename="../src/balancestablemodel.cpp" line="123"/>
         <source>Address</source>
         <translation>地址</translation>
     </message>
     <message>
-        <location filename="../src/balancestablemodel.cpp" line="123"/>
+        <location filename="../src/balancestablemodel.cpp" line="124"/>
         <source>Amount</source>
         <translation>金额</translation>
     </message>
@@ -144,8 +144,8 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="459"/>
-        <location filename="../src/mainwindow.cpp" line="1198"/>
-        <location filename="../src/mainwindow.cpp" line="1246"/>
+        <location filename="../src/mainwindow.cpp" line="835"/>
+        <location filename="../src/mainwindow.cpp" line="883"/>
         <location filename="../src/sendtab.cpp" line="302"/>
         <source>Memo</source>
         <translation>备注</translation>
@@ -238,7 +238,7 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="811"/>
-        <location filename="../src/mainwindow.cpp" line="1392"/>
+        <location filename="../src/mainwindow.cpp" line="1027"/>
         <source>Export Private Key</source>
         <translation>导出私钥</translation>
     </message>
@@ -254,29 +254,53 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="938"/>
-        <source>You are currently not mining</source>
-        <translation>您目前没有在挖矿</translation>
+        <source>This is a Lightwallet, you cant mine with it!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="979"/>
+        <source>Version hushd light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="1123"/>
+        <source>&amp;Send Duke Feedback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="1128"/>
+        <source>&amp;Hush Discord</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="1133"/>
+        <source>&amp;Hush Website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is a Lightwallet, you cant mine with it! not mining</source>
+        <translation type="vanished">您目前没有在挖矿</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="958"/>
         <location filename="../src/mainwindow.ui" line="972"/>
         <location filename="../src/mainwindow.ui" line="993"/>
+        <location filename="../src/mainwindow.cpp" line="681"/>
         <source>Loading...</source>
         <translation>加载中...</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="965"/>
-        <source>Block height</source>
+        <source>Blockheight</source>
         <translation>区块高度</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="979"/>
-        <source>Network solution rate</source>
-        <translation>全网算力</translation>
+        <source>Version hushd light rate</source>
+        <translation type="vanished">全网算力</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="986"/>
-        <source>Connections</source>
+        <source>Vendor</source>
         <translation>连接数</translation>
     </message>
     <message>
@@ -292,74 +316,65 @@
         <translation>&amp;文件</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1075"/>
+        <location filename="../src/mainwindow.ui" line="1074"/>
         <source>&amp;Help</source>
         <translation>&amp;帮助</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1084"/>
+        <location filename="../src/mainwindow.ui" line="1085"/>
         <source>&amp;Apps</source>
         <translation>&amp;应用</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1094"/>
+        <location filename="../src/mainwindow.ui" line="1091"/>
         <source>&amp;Edit</source>
         <translation>&amp;编辑</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1108"/>
+        <location filename="../src/mainwindow.ui" line="1105"/>
         <source>E&amp;xit</source>
         <translation>&amp;退出</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1113"/>
+        <location filename="../src/mainwindow.ui" line="1110"/>
         <source>&amp;About</source>
         <translation>&amp;关于</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1118"/>
+        <location filename="../src/mainwindow.ui" line="1115"/>
         <source>&amp;Settings</source>
         <translation>&amp;设置</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1121"/>
+        <location filename="../src/mainwindow.ui" line="1118"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1126"/>
         <source>&amp;Donate</source>
-        <translation>&amp;捐赠</translation>
+        <translation type="vanished">&amp;捐赠</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1131"/>
+        <location filename="../src/mainwindow.ui" line="1138"/>
         <source>Check github.com for &amp;updates</source>
         <translation>检查github.com获取和&amp;更新</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1136"/>
         <source>Sapling &amp;turnstile</source>
-        <translation>树苗&amp;十字旋转门</translation>
+        <translation type="vanished">树苗&amp;十字旋转门</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1139"/>
         <source>Ctrl+A, Ctrl+T</source>
-        <translation>Ctrl+A, Ctrl+T</translation>
+        <translation type="vanished">Ctrl+A, Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1144"/>
         <source>&amp;Import private key</source>
-        <translation>&amp;导入私钥</translation>
+        <translation type="vanished">&amp;导入私钥</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1149"/>
+        <location filename="../src/mainwindow.ui" line="1143"/>
         <source>&amp;Export all private keys</source>
         <translation>&amp;导出所有私钥</translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="1200"/>
-        <source>Validate Address</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;z-board.net</source>
@@ -370,338 +385,344 @@
         <translation type="vanished">Ctrl+A, Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1154"/>
+        <location filename="../src/mainwindow.ui" line="1148"/>
         <source>Address &amp;book</source>
         <translation>&amp;地址簿</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1157"/>
+        <location filename="../src/mainwindow.ui" line="1151"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1162"/>
+        <location filename="../src/mainwindow.ui" line="1156"/>
         <source>&amp;Backup wallet.dat</source>
         <translation>&amp;备份 wallet.dat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1167"/>
-        <location filename="../src/mainwindow.cpp" line="972"/>
+        <location filename="../src/mainwindow.ui" line="1161"/>
+        <location filename="../src/mainwindow.cpp" line="618"/>
         <source>Export transactions</source>
         <translation>导出交易</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1172"/>
+        <location filename="../src/mainwindow.ui" line="1166"/>
         <source>Pay hush &amp;URI...</source>
         <translation>支付hush &amp;URI ...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1177"/>
+        <location filename="../src/mainwindow.ui" line="1171"/>
         <source>Connect mobile &amp;app</source>
         <translation>连接移动&amp;App</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1180"/>
+        <location filename="../src/mainwindow.ui" line="1174"/>
         <source>Ctrl+M</source>
         <translation>Ctrl+M</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1185"/>
+        <location filename="../src/mainwindow.ui" line="1179"/>
         <source>&amp;Recurring Payments</source>
         <translation>&amp;定期付款</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1190"/>
+        <location filename="../src/mainwindow.ui" line="1184"/>
         <source>Request hush...</source>
         <translation>请求 hush...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="1195"/>
+        <location filename="../src/mainwindow.ui" line="1189"/>
         <source>File a bug...</source>
         <translation>提交错误...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="290"/>
         <source>Not yet ready</source>
-        <translation>尚未准备好</translation>
+        <translation type="vanished">尚未准备好</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="290"/>
         <source>hushd is not yet ready. Please wait for the UI to load</source>
-        <translation>hushd尚未准备好。 请等待UI加载</translation>
+        <translation type="vanished">hushd尚未准备好。 请等待UI加载</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="444"/>
+        <location filename="../src/mainwindow.cpp" line="235"/>
         <source>View tx on block explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="449"/>
+        <location filename="../src/mainwindow.cpp" line="240"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="511"/>
         <source>Tor configuration is available only when running an embedded hushd.</source>
-        <translation>Tor配置仅在运行嵌入的hushd时可用。</translation>
+        <translation type="vanished">Tor配置仅在运行嵌入的hushd时可用。</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="550"/>
+        <location filename="../src/mainwindow.cpp" line="333"/>
         <source>You&apos;re using an external hushd. Please restart hushd with -rescan</source>
         <translation>你正在使用外部hushd。 请使用-rescan参数重新启动hushd</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="553"/>
+        <location filename="../src/mainwindow.cpp" line="336"/>
         <source>You&apos;re using an external hushd. Please restart hushd with -reindex</source>
         <translation>你正在使用外部hushd。 请使用-reindex重新启动hushd</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="578"/>
+        <location filename="../src/mainwindow.cpp" line="361"/>
         <source>Enable Tor</source>
         <translation>启用Tor</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="579"/>
         <source>Connection over Tor has been enabled. To use this feature, you need to restart silentdragon.</source>
-        <translation>已启用Tor上的连接。 要使用此功能，您需要重新启动silentdragon。</translation>
+        <translation type="vanished">已启用Tor上的连接。 要使用此功能，您需要重新启动silentdragon。</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="588"/>
+        <location filename="../src/mainwindow.cpp" line="371"/>
         <source>Disable Tor</source>
         <translation>禁用Tor</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="589"/>
+        <location filename="../src/mainwindow.cpp" line="372"/>
         <source>Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart silentdragon.</source>
         <translation>Tor上的连接已被禁用。 要完全断开与Tor的连接，您需要重新启动silentdragon。</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="618"/>
+        <location filename="../src/mainwindow.cpp" line="401"/>
         <source>silentdragon needs to restart to rescan/reindex. silentdragon will now close, please restart silentdragon to continue</source>
         <translation>silentdragon需要重新启动才能重新扫描/重新索引。 silentdragon现在关闭，请重启silentdragon以继续</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="620"/>
+        <location filename="../src/mainwindow.cpp" line="403"/>
         <source>Restart silentdragon</source>
         <translation>重启silentdragon</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="649"/>
         <source>Thanks for supporting silentdragon!</source>
-        <translation>感谢您支持silentdragon！</translation>
+        <translation type="vanished">感谢您支持silentdragon！</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="651"/>
         <source>Donate 0.01 </source>
-        <translation>捐赠0.01 </translation>
+        <translation type="vanished">捐赠0.01 </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="651"/>
         <source> to support silentdragon</source>
-        <translation> 支持silentdragon</translation>
+        <translation type="vanished"> 支持silentdragon</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="667"/>
-        <source>Enter Address to validate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="668"/>
-        <source>Transparent or Shielded Address:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="730"/>
         <source>You are on testnet, your post won&apos;t actually appear on z-board.net</source>
-        <translation>你在testnet上，你的帖子实际上不会出现在z-board.net上</translation>
+        <translation type="vanished">你在testnet上，你的帖子实际上不会出现在z-board.net上</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="786"/>
         <source>You need a sapling address with available balance to post</source>
-        <translation>您需要一个具有可用余额的sapling地址才能发布</translation>
+        <translation type="vanished">您需要一个具有可用余额的sapling地址才能发布</translation>
     </message>
     <message>
-        <location filename="../src/sendtab.cpp" line="774"/>
         <source>Computing Tx: </source>
-        <translation>计算交易： </translation>
+        <translation type="vanished">计算交易： </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="811"/>
         <source>Private key import rescan finished</source>
-        <translation>私钥导入重新扫描完成</translation>
+        <translation type="vanished">私钥导入重新扫描完成</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="878"/>
         <source>Paste hush URI</source>
-        <translation>粘贴hush URI</translation>
+        <translation type="vanished">粘贴hush URI</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="890"/>
         <source>Error paying hush URI</source>
-        <translation>支付hush URI时出错</translation>
+        <translation type="vanished">支付hush URI时出错</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="891"/>
+        <location filename="../src/mainwindow.cpp" line="537"/>
         <source>URI should be of the form &apos;hush:&lt;addr&gt;?amt=x&amp;memo=y</source>
         <translation>URI的格式应为 &apos;hush:&lt;addr&gt;?amt=x&amp;memo=y&apos;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="927"/>
         <source>Please paste your private keys (z-Addr or t-Addr) here, one per line</source>
-        <translation>请在此粘贴您的私钥（z-Addr或t-Addr），每行一个</translation>
+        <translation type="vanished">请在此粘贴您的私钥（z-Addr或t-Addr），每行一个</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="928"/>
         <source>The keys will be imported into your connected hushd node</source>
-        <translation>密钥将导入已连接的hushd节点</translation>
+        <translation type="vanished">密钥将导入已连接的hushd节点</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="959"/>
         <source>The keys were imported. It may take several minutes to rescan the blockchain. Until then, functionality may be limited</source>
-        <translation>钥匙是导入的。 重新扫描区块链可能需要几分钟时间。 在此之前，功能可能会受到限制</translation>
+        <translation type="vanished">钥匙是导入的。 重新扫描区块链可能需要几分钟时间。 在此之前，功能可能会受到限制</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="978"/>
+        <location filename="../src/mainwindow.cpp" line="624"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="979"/>
+        <location filename="../src/mainwindow.cpp" line="625"/>
         <source>Error exporting transactions, file was not saved</source>
         <translation>导出交易时出错，文件未保存</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1001"/>
         <source>No wallet.dat</source>
-        <translation>没有 wallet.dat</translation>
+        <translation type="vanished">没有 wallet.dat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1001"/>
         <source>Couldn&apos;t find the wallet.dat on this computer</source>
-        <translation>在这台电脑上找不到wallet.dat</translation>
+        <translation type="vanished">在这台电脑上找不到wallet.dat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1002"/>
         <source>You need to back it up from the machine hushd is running on</source>
-        <translation>你需要从运行hushd的机器备份它</translation>
+        <translation type="vanished">你需要从运行hushd的机器备份它</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1006"/>
         <source>Backup wallet.dat</source>
-        <translation>备份 wallet.dat</translation>
+        <translation type="vanished">备份 wallet.dat</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1011"/>
         <source>Couldn&apos;t backup</source>
-        <translation>无法备份</translation>
+        <translation type="vanished">无法备份</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1011"/>
         <source>Couldn&apos;t backup the wallet.dat file.</source>
-        <translation>无法备份wallet.dat文件。</translation>
+        <translation type="vanished">无法备份wallet.dat文件。</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1012"/>
         <source>You need to back it up manually.</source>
-        <translation>您需要手动备份它。</translation>
+        <translation type="vanished">您需要手动备份它。</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1034"/>
-        <source>This might take several minutes. Loading...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="1039"/>
+        <location filename="../src/mainwindow.cpp" line="686"/>
         <source>These are all the private keys for all the addresses in your wallet</source>
         <translation>这些都是钱包中所有地址的私钥</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1041"/>
+        <location filename="../src/mainwindow.cpp" line="688"/>
         <source>Private key for </source>
         <translation>私钥 </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1049"/>
+        <location filename="../src/mainwindow.cpp" line="696"/>
         <source>Save File</source>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1053"/>
+        <location filename="../src/mainwindow.cpp" line="700"/>
         <source>Unable to open file</source>
         <translation>无法打开文件</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1150"/>
-        <location filename="../src/mainwindow.cpp" line="1226"/>
+        <location filename="../src/mainwindow.cpp" line="793"/>
+        <location filename="../src/mainwindow.cpp" line="863"/>
         <source>Copy address</source>
         <translation>复制成功</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1153"/>
-        <location filename="../src/mainwindow.cpp" line="1222"/>
-        <location filename="../src/mainwindow.cpp" line="1228"/>
+        <location filename="../src/mainwindow.cpp" line="796"/>
+        <location filename="../src/mainwindow.cpp" line="859"/>
+        <location filename="../src/mainwindow.cpp" line="865"/>
         <source>Copied to clipboard</source>
         <translation>复制到剪贴板</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1156"/>
+        <location filename="../src/mainwindow.cpp" line="799"/>
         <source>Get private key</source>
         <translation>获取私钥</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1167"/>
+        <location filename="../src/mainwindow.cpp" line="810"/>
         <source>Shield balance to Sapling</source>
         <translation>屏蔽余额到Sapling地址</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1172"/>
-        <location filename="../src/mainwindow.cpp" line="1232"/>
+        <location filename="../src/mainwindow.cpp" line="815"/>
+        <location filename="../src/mainwindow.cpp" line="869"/>
         <source>View on block explorer</source>
         <translation>从区块浏览器中查看</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1178"/>
         <source>Migrate to Sapling</source>
-        <translation>迁移到Sapling地址</translation>
+        <translation type="vanished">迁移到Sapling地址</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="441"/>
-        <location filename="../src/mainwindow.cpp" line="1220"/>
+        <location filename="../src/mainwindow.cpp" line="232"/>
+        <location filename="../src/mainwindow.cpp" line="857"/>
         <source>Copy txid</source>
         <translation>复制交易ID</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1238"/>
+        <location filename="../src/mainwindow.cpp" line="274"/>
+        <source>Restart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="274"/>
+        <source>Please restart Silentdragonlite to have the theme apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="362"/>
+        <source>Connection over Tor has been enabled. To use this feature, you need to restart Silentdragonlite.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="441"/>
+        <source>Some feedback about SilentDragonlite or Hush...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="443"/>
+        <source>Send Duke some private and shielded feedback about</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="443"/>
+        <source> or SilentDragonLite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="524"/>
+        <source>Paste HUSH URI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="536"/>
+        <source>Error paying HUSH URI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="715"/>
+        <source>Error loading private keys</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="875"/>
         <source>View Payment Request</source>
         <translation>查看付款申请</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1245"/>
+        <location filename="../src/mainwindow.cpp" line="882"/>
         <source>View Memo</source>
         <translation>查看备注</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1259"/>
+        <location filename="../src/mainwindow.cpp" line="896"/>
         <source>Reply to </source>
         <translation>回复给 </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1348"/>
+        <location filename="../src/mainwindow.cpp" line="983"/>
         <source>Created new t-Addr</source>
         <translation>创建了新的t-Addr</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1398"/>
+        <location filename="../src/mainwindow.cpp" line="1033"/>
         <source>Copy Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1464"/>
+        <location filename="../src/mainwindow.cpp" line="1099"/>
         <source>Address has been previously used</source>
         <translation>该地址以前使用过</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="1466"/>
+        <location filename="../src/mainwindow.cpp" line="1101"/>
         <source>Address is unused</source>
         <translation>地址未使用</translation>
     </message>
@@ -765,22 +786,22 @@ doesn&apos;t look like a z-address</source>
         <translation>交易错误</translation>
     </message>
     <message>
-        <location filename="../src/sendtab.cpp" line="808"/>
+        <location filename="../src/sendtab.cpp" line="803"/>
         <source>From Address is Invalid</source>
         <translation>发送地址无效</translation>
     </message>
     <message>
-        <location filename="../src/sendtab.cpp" line="813"/>
+        <location filename="../src/sendtab.cpp" line="808"/>
         <source>Recipient Address </source>
         <translation>接收地址 </translation>
     </message>
     <message>
-        <location filename="../src/sendtab.cpp" line="813"/>
+        <location filename="../src/sendtab.cpp" line="808"/>
         <source> is Invalid</source>
         <translation> 无效</translation>
     </message>
     <message>
-        <location filename="../src/sendtab.cpp" line="819"/>
+        <location filename="../src/sendtab.cpp" line="814"/>
         <source>Amount for address &apos;%1&apos; is invalid!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -847,9 +868,8 @@ doesn&apos;t look like a z-address</source>
 <context>
     <name>MigrationTxns</name>
     <message>
-        <location filename="../src/turnstile.cpp" line="440"/>
         <source>Migration Txids</source>
-        <translation>迁移交易ID</translation>
+        <translation type="vanished">迁移交易ID</translation>
     </message>
 </context>
 <context>
@@ -991,38 +1011,32 @@ doesn&apos;t look like a z-address</source>
         <translation>删除标签</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="43"/>
         <source>Attempting autoconnect</source>
-        <translation>尝试自动连接</translation>
+        <translation type="vanished">尝试自动连接</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="52"/>
         <source>Starting embedded hushd</source>
-        <translation>启动内嵌的hushd</translation>
+        <translation type="vanished">启动内嵌的hushd</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="62"/>
         <source>hushd is set to run as daemon</source>
-        <translation>hushd设置为作为守护进程运行</translation>
+        <translation type="vanished">hushd设置为作为守护进程运行</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="62"/>
         <source>Waiting for hushd</source>
-        <translation>等待hushd</translation>
+        <translation type="vanished">等待hushd</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="77"/>
         <source>You have hushd set to start as a daemon, which can cause problems with silentdragon
 
 .Please remove the following line from your hush.conf and restart silentdragon
 daemon=1</source>
-        <translation>你已经将hushd设置为守护进程启动，这可能会导致silentdragon出现问题
+        <translation type="vanished">你已经将hushd设置为守护进程启动，这可能会导致silentdragon出现问题
 
 。请从hush.conf中删除以下行并重新启动silentdragon
 daemon=1</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="82"/>
         <source>Couldn&apos;t start the embedded hushd.
 
 Please try restarting.
@@ -1030,7 +1044,7 @@ Please try restarting.
 If you previously started hushd with custom arguments, you might need to reset hush.conf.
 
 If all else fails, please run hushd manually.</source>
-        <translation>无法启动内嵌的hushd。
+        <translation type="vanished">无法启动内嵌的hushd。
 
 请尝试重新启动。
 
@@ -1039,154 +1053,136 @@ If all else fails, please run hushd manually.</source>
 如果所有其他方法都失败了，请手动运行hushd。</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="85"/>
         <source>The process returned</source>
-        <translation>该进程返回</translation>
+        <translation type="vanished">该进程返回</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="93"/>
         <source>Couldn&apos;t connect to hushd configured in hush.conf.
 
 Not starting embedded hushd because --no-embedded was passed</source>
-        <translation>无法连接到hush.conf中配置的hushd。
+        <translation type="vanished">无法连接到hush.conf中配置的hushd。
 
 没有启动内嵌的hushd，因为已经传了--no-embedded参数</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="146"/>
         <source>Hide Advanced Config</source>
-        <translation>隐藏高级配置</translation>
+        <translation type="vanished">隐藏高级配置</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="146"/>
         <source>Show Advanced Config</source>
-        <translation>显示高级配置</translation>
+        <translation type="vanished">显示高级配置</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="159"/>
         <source>Choose data directory</source>
-        <translation>选择数据目录</translation>
+        <translation type="vanished">选择数据目录</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="243"/>
         <source>All Downloads Finished Successfully!</source>
-        <translation>所有下载成功完成！</translation>
+        <translation type="vanished">所有下载成功完成！</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="266"/>
         <source>Couldn&apos;t download params. Please check the help site for more info.</source>
-        <translation>无法下载params。 请查看帮助网站以获取更多信息。</translation>
+        <translation type="vanished">无法下载params。 请查看帮助网站以获取更多信息。</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="292"/>
-        <location filename="../src/connection.cpp" line="308"/>
         <source>Downloading </source>
-        <translation>下载 </translation>
+        <translation type="vanished">下载 </translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="292"/>
         <source> more remaining )</source>
-        <translation> 剩余）</translation>
+        <translation type="vanished"> 剩余）</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="293"/>
         <source>MB of </source>
-        <translation>MB of </translation>
+        <translation type="vanished">MB of </translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="293"/>
         <source>MB at </source>
-        <translation>MB at </translation>
+        <translation type="vanished">MB at </translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="308"/>
         <source> failed. Please check the help site for more info</source>
-        <translation> 失败。 请查看帮助网站以获取更多信息</translation>
+        <translation type="vanished"> 失败。 请查看帮助网站以获取更多信息</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="332"/>
         <source>hushd error</source>
-        <translation>hushd 出错</translation>
+        <translation type="vanished">hushd 出错</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="399"/>
         <source>A manual connection was requested, but the settings are not configured.
 
 Please set the host/port and user/password in the Edit-&gt;Settings menu.</source>
-        <translation>请求了手动连接，但未配置设置。
+        <translation type="vanished">请求了手动连接，但未配置设置。
 
 请在编辑 - &gt;设置菜单中设置主机/端口和用户/密码。</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="411"/>
         <source>Could not connect to hushd configured in settings.
 
 Please set the host/port and user/password in the Edit-&gt;Settings menu.</source>
-        <translation>无法连接到设置中配置的hushd。
+        <translation type="vanished">无法连接到设置中配置的hushd。
 
 请在编辑 - &gt;设置菜单中设置主机/端口和用户/密码。</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="472"/>
         <source>Authentication failed. The username / password you specified was not accepted by hushd. Try changing it in the Edit-&gt;Settings menu</source>
-        <translation>验证失败。 hushd不接受您指定的用户名/密码。 请在编辑 - &gt;设置菜单中更改它</translation>
+        <translation type="vanished">验证失败。 hushd不接受您指定的用户名/密码。 请在编辑 - &gt;设置菜单中更改它</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="487"/>
         <source>Your hushd is starting up. Please wait.</source>
-        <translation>你的hushd正在启动。 请耐心等待。</translation>
+        <translation type="vanished">你的hushd正在启动。 请耐心等待。</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="504"/>
+        <location filename="../src/connection.cpp" line="44"/>
+        <source>Attempting to initialize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/connection.cpp" line="77"/>
         <source>This may take several hours</source>
         <translation>这可能需要几个小时</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="521"/>
-        <location filename="../src/rpc.cpp" line="706"/>
+        <location filename="../src/connection.cpp" line="93"/>
+        <location filename="../src/controller.cpp" line="202"/>
         <source>Connection Error</source>
         <translation>连接错误</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="750"/>
-        <location filename="../src/rpc.cpp" line="983"/>
-        <location filename="../src/sendtab.cpp" line="801"/>
-        <location filename="../src/turnstile.cpp" line="376"/>
+        <location filename="../src/connection.cpp" line="198"/>
+        <location filename="../src/controller.cpp" line="404"/>
+        <location filename="../src/sendtab.cpp" line="796"/>
         <source>Transaction Error</source>
         <translation>交易错误</translation>
     </message>
     <message>
-        <location filename="../src/connection.cpp" line="750"/>
+        <location filename="../src/connection.cpp" line="198"/>
         <source>There was an error sending the transaction. The error was:</source>
         <translation>发送交易时出错。 错误是：</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="525"/>
-        <location filename="../src/rpc.cpp" line="978"/>
-        <location filename="../src/sendtab.cpp" line="789"/>
-        <location filename="../src/turnstile.cpp" line="371"/>
+        <location filename="../src/controller.cpp" line="399"/>
+        <location filename="../src/recurring.cpp" line="523"/>
+        <location filename="../src/sendtab.cpp" line="784"/>
         <source> Tx </source>
         <translation> 交易 </translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="525"/>
-        <location filename="../src/rpc.cpp" line="978"/>
-        <location filename="../src/sendtab.cpp" line="789"/>
-        <location filename="../src/turnstile.cpp" line="371"/>
+        <location filename="../src/controller.cpp" line="399"/>
+        <location filename="../src/recurring.cpp" line="523"/>
+        <location filename="../src/sendtab.cpp" line="784"/>
         <source> failed</source>
         <translation> 失败</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="981"/>
-        <location filename="../src/sendtab.cpp" line="792"/>
-        <location filename="../src/turnstile.cpp" line="374"/>
+        <location filename="../src/controller.cpp" line="402"/>
+        <location filename="../src/sendtab.cpp" line="787"/>
         <source>The transaction with id </source>
         <translation>交易 </translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="981"/>
-        <location filename="../src/sendtab.cpp" line="792"/>
-        <location filename="../src/turnstile.cpp" line="374"/>
+        <location filename="../src/controller.cpp" line="402"/>
+        <location filename="../src/sendtab.cpp" line="787"/>
         <source> failed. The error was</source>
         <translation> 失败。 错误是</translation>
     </message>
@@ -1196,95 +1192,85 @@ Please set the host/port and user/password in the Edit-&gt;Settings menu.</sourc
         <translation>hush的美元价格无法获取</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="518"/>
         <source>Computing Recurring Tx: </source>
-        <translation>计算重复交易： </translation>
+        <translation type="vanished">计算重复交易： </translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="575"/>
-        <location filename="../src/turnstile.cpp" line="409"/>
+        <location filename="../src/recurring.cpp" line="573"/>
         <source>View on block explorer</source>
         <translation>在区块浏览器查看</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="588"/>
+        <location filename="../src/recurring.cpp" line="586"/>
         <source>View Error</source>
         <translation>查看错误</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="589"/>
+        <location filename="../src/recurring.cpp" line="587"/>
         <source>Reported Error</source>
         <translation>报告错误</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="626"/>
-        <location filename="../src/recurring.cpp" line="627"/>
+        <location filename="../src/recurring.cpp" line="624"/>
+        <location filename="../src/recurring.cpp" line="625"/>
         <source>Are you sure you want to delete the recurring payment?</source>
         <translation>您确定要删除定期付款吗？</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="628"/>
+        <location filename="../src/recurring.cpp" line="626"/>
         <source>All future payments will be cancelled.</source>
         <translation>所有未来的付款都将被取消。</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="399"/>
-        <location filename="../src/rpc.cpp" line="401"/>
+        <location filename="../src/controller.cpp" line="118"/>
+        <location filename="../src/controller.cpp" line="120"/>
         <source>No Connection</source>
         <translation>没有连接</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="652"/>
         <source>Downloading blocks</source>
-        <translation>下载区块</translation>
+        <translation type="vanished">下载区块</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="663"/>
-        <source>Block height</source>
-        <translation>区块高度</translation>
+        <source>Blockheight</source>
+        <translation type="vanished">区块高度</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="669"/>
         <source>Syncing</source>
-        <translation>同步中</translation>
+        <translation type="vanished">同步中</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="669"/>
         <source>Connected</source>
-        <translation>已连接</translation>
+        <translation type="vanished">已连接</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="671"/>
         <source>testnet:</source>
-        <translation>testnet:</translation>
+        <translation type="vanished">testnet:</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="684"/>
         <source>Connected to hushd</source>
-        <translation>连接到hushd</translation>
+        <translation type="vanished">连接到hushd</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="687"/>
         <source>hushd has no peer connections</source>
-        <translation>hushd没有节点可连接</translation>
+        <translation type="vanished">hushd没有节点可连接</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="706"/>
+        <location filename="../src/controller.cpp" line="202"/>
         <source>There was an error connecting to hushd. The error was</source>
         <translation>连接到hushd时出错。 错误是</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1066"/>
         <source> tx computing. This can take several minutes.</source>
-        <translation> 交易计算中。 这可能需要几分钟。</translation>
+        <translation type="vanished"> 交易计算中。 这可能需要几分钟。</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1115"/>
+        <location filename="../src/controller.cpp" line="479"/>
         <source>Update Available</source>
         <translation>可用更新</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1116"/>
+        <location filename="../src/controller.cpp" line="480"/>
         <source>A new release v%1 is available! You have v%2.
 
 Would you like to visit the releases page?</source>
@@ -1293,47 +1279,41 @@ Would you like to visit the releases page?</source>
 您想访问发布页面吗？</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1128"/>
+        <location filename="../src/controller.cpp" line="492"/>
         <source>No updates available</source>
         <translation>没有可用的更新</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1129"/>
+        <location filename="../src/controller.cpp" line="493"/>
         <source>You already have the latest release v%1</source>
         <translation>您已拥有最新版本 v%1</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1216"/>
         <source>Please wait for silentdragon to exit</source>
-        <translation>请等待silentdragon退出</translation>
+        <translation type="vanished">请等待silentdragon退出</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="1217"/>
         <source>Waiting for hushd to exit</source>
-        <translation>等待hushd退出</translation>
+        <translation type="vanished">等待hushd退出</translation>
     </message>
     <message>
-        <location filename="../src/settings.cpp" line="244"/>
+        <location filename="../src/settings.cpp" line="252"/>
         <source>Tx submitted (right click to copy) txid:</source>
         <translation>交易提交（右键单击复制）交易ID:</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.cpp" line="121"/>
         <source>Locked funds</source>
-        <translation>锁定资金</translation>
+        <translation type="vanished">锁定资金</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.cpp" line="122"/>
         <source>Could not initiate migration.
 You either have unconfirmed funds or the balance is too low for an automatic migration.</source>
-        <translation>无法启动迁移。
+        <translation type="vanished">无法启动迁移。
 您要么有未经证实的资金，要么余额太低，无法进行自动迁移。</translation>
     </message>
     <message>
-        <location filename="../src/rpc.cpp" line="972"/>
-        <location filename="../src/turnstile.cpp" line="364"/>
         <source>Computing Tx: </source>
-        <translation>计算交易： </translation>
+        <translation type="vanished">计算交易： </translation>
     </message>
     <message>
         <location filename="../src/txtablemodel.cpp" line="7"/>
@@ -1402,37 +1382,37 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
 <context>
     <name>RecurringListViewModel</name>
     <message>
-        <location filename="../src/recurring.cpp" line="650"/>
+        <location filename="../src/recurring.cpp" line="648"/>
         <source>Amount</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="650"/>
+        <location filename="../src/recurring.cpp" line="648"/>
         <source>Schedule</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="650"/>
+        <location filename="../src/recurring.cpp" line="648"/>
         <source>Payments Left</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="651"/>
+        <location filename="../src/recurring.cpp" line="649"/>
         <source>Next Payment</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="651"/>
+        <location filename="../src/recurring.cpp" line="649"/>
         <source>To</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="668"/>
+        <location filename="../src/recurring.cpp" line="666"/>
         <source>Every </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="672"/>
+        <location filename="../src/recurring.cpp" line="670"/>
         <source>None</source>
         <translation></translation>
     </message>
@@ -1448,48 +1428,48 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
 <context>
     <name>RecurringPaymentsListViewModel</name>
     <message>
-        <location filename="../src/recurring.cpp" line="701"/>
+        <location filename="../src/recurring.cpp" line="699"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="701"/>
+        <location filename="../src/recurring.cpp" line="699"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="701"/>
+        <location filename="../src/recurring.cpp" line="699"/>
         <source>Txid</source>
         <translation>交易ID</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="721"/>
+        <location filename="../src/recurring.cpp" line="719"/>
         <source>Not due yet</source>
         <translation>尚未到期</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="722"/>
+        <location filename="../src/recurring.cpp" line="720"/>
         <source>Pending</source>
         <translation>等待中</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="723"/>
+        <location filename="../src/recurring.cpp" line="721"/>
         <source>Skipped</source>
         <translation>跳过</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="724"/>
+        <location filename="../src/recurring.cpp" line="722"/>
         <source>Paid</source>
         <translation>已支付</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="725"/>
+        <location filename="../src/recurring.cpp" line="723"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../src/recurring.cpp" line="726"/>
-        <location filename="../src/recurring.cpp" line="727"/>
+        <location filename="../src/recurring.cpp" line="724"/>
+        <location filename="../src/recurring.cpp" line="725"/>
         <source>Unknown</source>
         <translation>未知状态</translation>
     </message>
@@ -1688,92 +1668,117 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="177"/>
+        <location filename="../src/settings.ui" line="272"/>
         <source>Connect via Tor</source>
         <translation>通过Tor连接</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="184"/>
+        <location filename="../src/settings.ui" line="212"/>
         <source>Check github for updates at startup</source>
         <translation>启动时检查github更新</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="198"/>
+        <location filename="../src/settings.ui" line="175"/>
         <source>Remember shielded transactions</source>
         <translation>记住隐蔽交易</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="205"/>
+        <location filename="../src/settings.ui" line="158"/>
         <source>Normally, change from t-Addresses goes to another t-Address. Checking this option will send the change to your shielded sapling address instead. Check this option to increase your privacy.</source>
         <translation>通常，从t-Addresses发送到另一个t-Address。 选中此选项会将更改发送到屏蔽的树苗地址。 选中此选项可增加隐私。</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="215"/>
+        <location filename="../src/settings.ui" line="202"/>
         <source>Allow overriding the default fees when sending transactions. Enabling this option may compromise your privacy since fees are transparent. </source>
         <translation>允许在发送交易时覆盖默认费用。由于费用是透明的，因此启用此选项可能会损害您的隐私。 </translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="225"/>
+        <location filename="../src/settings.ui" line="168"/>
         <source>Clear History</source>
         <translation>清空历史屏蔽交易</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="232"/>
+        <location filename="../src/settings.ui" line="219"/>
         <source>Shielded transactions are saved locally and shown in the transactions tab.  If you uncheck this, shielded transactions will not appear in the transactions tab.</source>
         <translation>屏蔽交易在本地保存并显示在交易“选项”卡中。 如果取消选中此项，屏蔽的交易将不会显示在“交易”选项卡中。</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="242"/>
+        <location filename="../src/settings.ui" line="279"/>
         <source>Allow custom fees</source>
         <translation>允许自定义费用</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="249"/>
+        <location filename="../src/settings.ui" line="229"/>
         <source>Shield change from t-Addresses to your sapling address</source>
         <translation>屏蔽改变从t-Addresses到您的树苗地址</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="256"/>
+        <location filename="../src/settings.ui" line="249"/>
         <source>Connect to the Tor network via SOCKS proxy running on 127.0.0.1:9050. Please note that you&apos;ll have to install and run the Tor service externally.</source>
         <translation>通过运行在127.0.0.1:9050上的SOCKS代理连接到Tor网络。 请注意，您必须在外部安装和运行Tor服务。</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="266"/>
+        <location filename="../src/settings.ui" line="151"/>
         <source>Connect to github on startup to check for updates</source>
         <translation>在启动时连接到github以检查更新</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="273"/>
+        <location filename="../src/settings.ui" line="182"/>
         <source>Connect to the internet to fetch hush prices</source>
         <translation>连接到互联网以获取hush价格</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="280"/>
+        <location filename="../src/settings.ui" line="286"/>
         <source>Fetch hush / USD prices</source>
         <translation>获取 hush/USD 价格</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="288"/>
+        <location filename="../src/settings.ui" line="299"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.ui" line="316"/>
+        <source>default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.ui" line="321"/>
+        <source>blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.ui" line="326"/>
+        <source>light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.ui" line="331"/>
+        <source>dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/settings.ui" line="340"/>
         <source>Troubleshooting</source>
         <translation>故障排除</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="294"/>
+        <location filename="../src/settings.ui" line="346"/>
         <source>Reindex</source>
         <translation>重建索引</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="301"/>
+        <location filename="../src/settings.ui" line="353"/>
         <source>Rescan the blockchain for any missing wallet transactions and to correct your wallet balance. This may take several hours. You need to restart silentdragon for this to take effect</source>
         <translation>重新扫描区块链以查找任何丢失的钱包交易并更正您的钱包余额。 这可能需要几个小时。 您需要重新启动silentdragon才能使其生效</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="311"/>
+        <location filename="../src/settings.ui" line="363"/>
         <source>Rescan</source>
         <translation>重新扫描</translation>
     </message>
     <message>
-        <location filename="../src/settings.ui" line="345"/>
+        <location filename="../src/settings.ui" line="397"/>
         <source>Rebuild the entire blockchain from the genesis block, by rescanning all the block files. This may take several hours to days, depending on your hardware. You need to restart silentdragon for this to take effect</source>
         <translation>通过重新扫描所有区块文件，从创世块重建整个区块链。 这可能需要几个小时到几天，具体取决于您的硬件环境。 您需要重新启动silentdragon才能使其生效</translation>
     </message>
@@ -1781,109 +1786,70 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
 <context>
     <name>Turnstile</name>
     <message>
-        <location filename="../src/turnstile.ui" line="14"/>
-        <location filename="../src/turnstile.ui" line="20"/>
         <source>Turnstile Migration</source>
-        <translation>十字转门迁移</translation>
+        <translation type="vanished">十字转门迁移</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="44"/>
         <source>Migrate over</source>
-        <translation>中间地址</translation>
+        <translation type="vanished">中间地址</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="57"/>
         <source>From</source>
-        <translation>从</translation>
+        <translation type="vanished">从</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="90"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Funds from Sprout z-Addresses (which start with &amp;quot;zc&amp;quot;) need to be moved to the upgraded Sapling z-Addresses (which start with &amp;quot;zs&amp;quot;). The funds cannot be moved directly, but need to be sent through intermediate &amp;quot;transparent&amp;quot; addresses in privacy-preserving way.&lt;/p&gt;&lt;p&gt;This migration can be done automatically for you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;来自Sprout z-Addresses（以“zc”开头）的资金需要被移动到升级的Sapling z-Addresses（以“zs”开头）。 资金不能直接转移，但需要以隐私保护的方式通过中间透明地址发送。&lt;/p&gt;&lt;p&gt;此迁移可以自动完成。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;来自Sprout z-Addresses（以“zc”开头）的资金需要被移动到升级的Sapling z-Addresses（以“zs”开头）。 资金不能直接转移，但需要以隐私保护的方式通过中间透明地址发送。&lt;/p&gt;&lt;p&gt;此迁移可以自动完成。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="106"/>
         <source>To</source>
-        <translation>迁移到</translation>
+        <translation type="vanished">迁移到</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="123"/>
         <source>Balance</source>
-        <translation>余额</translation>
+        <translation type="vanished">余额</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="149"/>
         <source>Miner Fees</source>
-        <translation>矿工费</translation>
+        <translation type="vanished">矿工费</translation>
     </message>
     <message>
-        <location filename="../src/turnstile.ui" line="172"/>
         <source>Total Balance</source>
-        <translation>总余额</translation>
+        <translation type="vanished">总余额</translation>
     </message>
 </context>
 <context>
     <name>TurnstileProgress</name>
     <message>
-        <location filename="../src/turnstileprogress.ui" line="14"/>
         <source>Turnstile Migration Progress</source>
-        <translation>十字转门迁移进度</translation>
+        <translation type="vanished">十字转门迁移进度</translation>
     </message>
     <message>
-        <location filename="../src/turnstileprogress.ui" line="20"/>
         <source>From</source>
-        <translation>从</translation>
+        <translation type="vanished">从</translation>
     </message>
     <message>
-        <location filename="../src/turnstileprogress.ui" line="27"/>
         <source>To</source>
-        <translation>发送到</translation>
+        <translation type="vanished">发送到</translation>
     </message>
     <message>
-        <location filename="../src/turnstileprogress.ui" line="57"/>
         <source>Please ensure you have your wallet.dat backed up!</source>
-        <translation>请确保你的wallet.dat已经备份！</translation>
+        <translation type="vanished">请确保你的wallet.dat已经备份！</translation>
     </message>
     <message>
-        <location filename="../src/turnstileprogress.ui" line="67"/>
         <source>Next Transaction in 4 hours</source>
-        <translation>4小时后的下一笔交易</translation>
+        <translation type="vanished">4小时后的下一笔交易</translation>
     </message>
     <message>
-        <location filename="../src/turnstileprogress.ui" line="88"/>
         <source>Migration Progress</source>
-        <translation>迁移进度</translation>
+        <translation type="vanished">迁移进度</translation>
     </message>
 </context>
 <context>
     <name>ValidateAddress</name>
     <message>
-        <location filename="../src/validateaddress.ui" line="14"/>
-        <source>Validate Address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/validateaddress.ui" line="20"/>
         <source>TextLabel</source>
-        <translation type="unfinished">TextLabel</translation>
-    </message>
-    <message>
-        <location filename="../src/validateaddress.ui" line="27"/>
-        <source>Address:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ValidateAddressesModel</name>
-    <message>
-        <location filename="../src/validateaddress.cpp" line="6"/>
-        <source>Property</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/validateaddress.cpp" line="6"/>
-        <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">TextLabel</translation>
     </message>
 </context>
 <context>
@@ -2110,49 +2076,40 @@ You either have unconfirmed funds or the balance is too low for an automatic mig
 <context>
     <name>zboard</name>
     <message>
-        <location filename="../src/zboard.ui" line="14"/>
         <source>Post to z-board.net</source>
-        <translation>发布到z-board.net</translation>
+        <translation type="vanished">发布到z-board.net</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="20"/>
         <source>Total Fee</source>
-        <translation>总费用</translation>
+        <translation type="vanished">总费用</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="57"/>
         <source>Memo</source>
-        <translation>备注</translation>
+        <translation type="vanished">备注</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="64"/>
         <source>(optional)</source>
-        <translation>(可选)</translation>
+        <translation type="vanished">(可选)</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="71"/>
         <source>Send From</source>
-        <translation>发送来自</translation>
+        <translation type="vanished">发送来自</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="78"/>
         <source>Post As:</source>
-        <translation>发布为：</translation>
+        <translation type="vanished">发布为：</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="85"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard: Fully anonymous and untraceable chat messages based on the hush blockchain. &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard：基于hush区块链的完全匿名且无法追踪的聊天消息。 &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ZBoard：基于hush区块链的完全匿名且无法追踪的聊天消息。 &lt;a href=&quot;http://www.z-board.net/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.z-board.net/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="107"/>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation type="vanished">警告</translation>
     </message>
     <message>
-        <location filename="../src/zboard.ui" line="124"/>
         <source>Posting to Board</source>
-        <translation>发布到Board</translation>
+        <translation type="vanished">发布到Board</translation>
     </message>
 </context>
 </TS>

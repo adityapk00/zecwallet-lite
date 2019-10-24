@@ -215,7 +215,7 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="864"/>
-        <source>You are currently not mining</source>
+        <source>This is a Lightwallet, you cant mine with it! not mining</source>
         <translation type="unfinished">YOUR_TRANSLATION_HERE</translation>
     </message>
     <message>
@@ -228,17 +228,17 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="891"/>
-        <source>Block height</source>
+        <source>Blockheight</source>
         <translation type="unfinished">YOUR_TRANSLATION_HERE</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="905"/>
-        <source>Network solution rate</source>
+        <source>Version hushd light rate</source>
         <translation type="unfinished">YOUR_TRANSLATION_HERE</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="912"/>
-        <source>Connections</source>
+        <source>Vendor</source>
         <translation type="unfinished">YOUR_TRANSLATION_HERE</translation>
     </message>
     <message>
@@ -659,7 +659,7 @@ Not starting embedded hushd because --no-embedded was passed</source>
     </message>
     <message>
         <location filename="../src/rpc.cpp" line="578"/>
-        <source>Block height</source>
+        <source>Blockheight</source>
         <translation type="unfinished">YOUR_TRANSLATION_HERE</translation>
     </message>
     <message>

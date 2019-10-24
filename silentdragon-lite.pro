@@ -115,6 +115,7 @@ TRANSLATIONS = res/zec_qt_wallet_es.ts \
                res/zec_qt_wallet_it.ts \
                res/zec_qt_wallet_zh.ts \
                res/zec_qt_wallet_tr.ts 
+             
 
 include(singleapplication/singleapplication.pri)
 DEFINES += QAPPLICATION_CLASS=QApplication
