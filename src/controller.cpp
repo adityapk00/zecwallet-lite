@@ -417,7 +417,7 @@ void Controller::executeTransaction(Tx tx,
     std::cout << std::setw(2) << params << std::endl;
 
     zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
-        if (reply["result"].is_null() || reply["result"] != "success") {
+        if (reply.find("txid") == reply.end()) {
             error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
         }
 

@@ -36,6 +36,7 @@ UI_DIR = src
 CONFIG += c++14
 
 SOURCES += \
+    src/firsttimewizard.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/balancestablemodel.cpp \
@@ -62,6 +63,7 @@ SOURCES += \
     src/liteinterface.cpp 
 
 HEADERS += \
+    src/firsttimewizard.h \
     src/mainwindow.h \
     src/precompiled.h \
     src/balancestablemodel.h \
@@ -91,7 +93,10 @@ HEADERS += \
 FORMS += \
     src/mainwindow.ui \
     src/migration.ui \
+    src/newseed.ui \
+    src/newwallet.ui \
     src/recurringpayments.ui \
+    src/restoreseed.ui \
     src/settings.ui \
     src/about.ui \
     src/confirm.ui \

@@ -17,6 +17,8 @@
 #include <QAbstractTableModel>
 #include <QTranslator>
 #include <QClipboard>
+#include <QWizard>
+#include <QWizardPage>
 #include <QStringBuilder>
 #include <QAbstractItemModel>
 #include <QTableView>

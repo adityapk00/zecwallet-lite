@@ -316,7 +316,7 @@ bool Settings::removeFromZcashConf(QString confLocation, QString option) {
 }
 
 double Settings::getMinerFee() {
-    return 0.0001;
+    return 10000;
 }
 
 double Settings::getZboardAmount() {

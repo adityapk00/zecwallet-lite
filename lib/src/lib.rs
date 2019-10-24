@@ -25,14 +25,15 @@ pub extern fn litelib_wallet_exists(chain_name: *const c_char) -> bool {
         CStr::from_ptr(chain_name).to_string_lossy().into_owned()
     };
 
-    let config = LightClientConfig::create_unconnected(chain_name_str);
+    let config = LightClientConfig::create_unconnected(chain_name_str, None);
 
+    println!("Wallet exists: {}", config.wallet_exists());
     config.wallet_exists()
 }
 
-// Initialize a new lightclient and store its value
+/// Create a new wallet and return the seed for the newly created wallet.
 #[no_mangle]
-pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char) -> *mut c_char {
+pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> *mut c_char {
     let server_str = unsafe {
         assert!(!server.is_null());
 
@@ -41,6 +42,47 @@ pub extern fn litelib_initialze_existing(dangerous: bool, server: *const c_char)
 
     let server = LightClientConfig::get_server_or_default(Some(server_str));
     let (config, latest_block_height) = match LightClientConfig::create(server, dangerous) {
+        Ok((c, h)) => (c, h),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let lightclient = match LightClient::new(&config, latest_block_height) {
+        Ok(l) => l,
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    let seed = match lightclient.do_seed_phrase() {
+        Ok(s) => s.dump(),
+        Err(e) => {
+            let e_str = CString::new(format!("Error: {}", e)).unwrap();
+            return e_str.into_raw();
+        }
+    };
+
+    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+
+    // Return the wallet's seed
+    let s_str = CString::new(seed).unwrap();
+    return s_str.into_raw();
+}
+
+// Initialize a new lightclient and store its value
+#[no_mangle]
+pub extern fn litelib_initialize_existing(dangerous: bool, server: *const c_char) -> *mut c_char {
+    let server_str = unsafe {
+        assert!(!server.is_null());
+
+        CStr::from_ptr(server).to_string_lossy().into_owned()
+    };
+
+    let server = LightClientConfig::get_server_or_default(Some(server_str));
+    let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
         Ok((c, h)) => (c, h),
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();
