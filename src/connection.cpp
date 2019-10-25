@@ -55,6 +55,7 @@ void ConnectionLoader::doAutoConnect() {
     } else {
         main->logger->write(QObject::tr("Create/restore wallet."));
         createOrRestore(config->dangerous, config->server);
+        d->show();
     }    
     
     auto connection = makeConnection(config);
