@@ -22,9 +22,12 @@ ConnectionLoader::ConnectionLoader(MainWindow* main, Controller* rpc) {
     connD->setupUi(d);
     QPixmap logo(":/img/res/logobig.gif");
     connD->topIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    isSyncing = new QAtomicInteger<bool>();
 }
 
-ConnectionLoader::~ConnectionLoader() {    
+ConnectionLoader::~ConnectionLoader() {
+    delete isSyncing;
     delete connD;
     delete d;
 }
@@ -52,16 +55,55 @@ void ConnectionLoader::doAutoConnect() {
     } else {
         main->logger->write(QObject::tr("Create/restore wallet."));
         litelib_initialize_existing(config->dangerous, config->server.toStdString().c_str());
+        d->show();
     }    
     
     auto connection = makeConnection(config);
 
     // After the lib is initialized, try to do get info
     connection->doRPC("info", "", [=](auto reply) {
-       // If success, set the connection
+        // If success, set the connection
         main->logger->write("Connection is online.");
-        this->doRPCSetConnection(connection); 
-    }, [=](auto err) {});
+
+        isSyncing = new QAtomicInteger<bool>();
+        isSyncing->store(true);
+
+        // Do a sync at startup
+        syncTimer = new QTimer(main);
+        connection->doRPCWithDefaultErrorHandling("sync", "", [=](auto) {
+            isSyncing->store(false);
+
+            // Cancel the timer
+            syncTimer->deleteLater();
+
+            // When sync is done, set the connection
+            this->doRPCSetConnection(connection);
+        });
+        
+        // While it is syncing, we'll show the status updates while it is alive.
+        QObject::connect(syncTimer, &QTimer::timeout, [=]() {
+            // Check the sync status
+            if (isSyncing != nullptr && isSyncing->load()) {
+                // Get the sync status
+                connection->doRPC("syncstatus", "", [=](json reply) {
+                    if (isSyncing != nullptr && reply.find("synced_blocks") != reply.end()) {
+                        qint64 synced = reply["synced_blocks"].get<json::number_unsigned_t>();
+                        qint64 total = reply["total_blocks"].get<json::number_unsigned_t>();
+                        showInformation("Synced " + QString::number(synced) + " / " + QString::number(total));
+                    }
+                },
+                [=](QString err) {
+                    qDebug() << "Sync error" << err;
+                });
+            }
+        });   
+        
+        syncTimer->setInterval(1* 1000);
+        syncTimer->start();
+
+    }, [=](QString err) {
+        showError(err);
+    });
 }
 
 void ConnectionLoader::createOrRestore(bool dangerous, QString server) {
@@ -75,6 +117,7 @@ void ConnectionLoader::createOrRestore(bool dangerous, QString server) {
 }
 
 void ConnectionLoader::doRPCSetConnection(Connection* conn) {
+    qDebug() << "Connectionloader finished, setting connection";
     rpc->setConnection(conn);
     
     d->accept();
@@ -88,20 +131,9 @@ Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> c
 
 // Update the UI with the status
 void ConnectionLoader::showInformation(QString info, QString detail) {
-    static int rescanCount = 0;
-    if (detail.toLower().startsWith("rescan")) {
-        rescanCount++;
-    }
-    
-    if (rescanCount > 10) {
-        detail = detail + "\n" + QObject::tr("This may take several hours");
-    }
-
+    qDebug() << "Showing info " << info << ":" << detail;
     connD->status->setText(info);
     connD->statusDetail->setText(detail);
-
-    if (rescanCount < 10)
-        main->logger->write(info + ":" + detail);
 }
 
 /**

@@ -161,21 +161,25 @@ void Controller::getInfoThenRefresh(bool force) {
         prevCallSucceeded = true;
 
         // Testnet?
+        QString chainName;
         if (!reply["chain_name"].is_null()) {
-            Settings::getInstance()->setTestnet(reply["chain_name"].get<json::string_t>() == "test");
+            chainName = QString::fromStdString(reply["chain_name"].get<json::string_t>());
+            Settings::getInstance()->setTestnet(chainName == "test");
         };
 
         // Recurring pamynets are testnet only
         if (!Settings::getInstance()->isTestnet())
             main->disableRecurring();
 
-        // Connected, so display checkmark.
-        QIcon i(":/icons/res/connected.gif");
-        main->statusIcon->setPixmap(i.pixmap(16, 16));
-
         static int    lastBlock = 0;
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
         model->setLatestBlock(curBlock);
+
+        // Connected, so display checkmark.
+        QIcon i(":/icons/res/connected.gif");
+        main->statusLabel->setText(chainName + "(" + QString::number(curBlock) + ")");
+        main->statusIcon->setPixmap(i.pixmap(16, 16));
+
         //int version = reply["version"].get<json::string_t>();
         int version = 1;
         Settings::getInstance()->sethushdVersion(version);

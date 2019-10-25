@@ -127,7 +127,7 @@ RestoreSeedPage::RestoreSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) 
 
 bool RestoreSeedPage::validatePage() {
     // 1. Validate that we do have 24 words
-    QString seed = form.txtSeed->toPlainText().replace(QRegExp("[ \n\r]+"), " ");
+    QString seed = form.txtSeed->toPlainText().replace(QRegExp("[ \n\r\t]+"), " ");
     if (seed.trimmed().split(" ").length() != 24) {
         QMessageBox::warning(this, tr("Failed to restore wallet"), 
             tr("SilentDragonLite needs 24 words to restore wallet"),
