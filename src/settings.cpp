@@ -214,15 +214,15 @@ void Settings::openTxInExplorer(QString txid) {
     QDesktopServices::openUrl(QUrl(url));
 }
 
-QString Settings::getUSDFormat(double bal) {
-    return "$" + QLocale(QLocale::English).toString(bal, 'f', 2);
-}
 
 
 QString Settings::getUSDFromhushAmount(double bal) {
     return getUSDFormat(bal * Settings::getInstance()->gethushPrice());
 }
 
+QString Settings::getUSDFormat(double bal) {
+    return "$" + QLocale(QLocale::English).toString(bal * Settings::getInstance()->gethushPrice(), 'f', 2);
+}
 
 QString Settings::getDecimalString(double amt) {
     QString f = QString::number(amt, 'f', 8);
@@ -242,12 +242,13 @@ QString Settings::gethushDisplayFormat(double bal) {
 }
 
 QString Settings::gethushUSDDisplayFormat(double bal) {
-    auto usdFormat = getUSDFromhushAmount(bal);
+    auto usdFormat = getUSDFormat(bal);
     if (!usdFormat.isEmpty())
-        return gethushDisplayFormat(bal) % " (" % usdFormat % ")";
+        return gethushDisplayFormat(bal) % " (" % getUSDFormat(bal) % ")";
     else
         return gethushDisplayFormat(bal);
 }
+
 
 const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (right click to copy) txid:"));
 
