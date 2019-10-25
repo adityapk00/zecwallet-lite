@@ -40,6 +40,8 @@ private:
 
     void doRPCSetConnection(Connection* conn);
 
+    QTimer*                 syncTimer;
+
     QDialog*                d;
     Ui_ConnectionDialog*    connD;
 

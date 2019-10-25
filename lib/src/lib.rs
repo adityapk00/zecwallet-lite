@@ -4,7 +4,7 @@ extern crate lazy_static;
 use libc::{c_char};
 
 use std::ffi::{CStr, CString};
-use std::sync::{Mutex};
+use std::sync::{Mutex, Arc};
 use std::cell::RefCell;
 
 use zecwalletlitelib::{commands, lightclient::{LightClient, LightClientConfig}};
@@ -13,7 +13,7 @@ use zecwalletlitelib::{commands, lightclient::{LightClient, LightClientConfig}};
 // so we don't have to keep creating it. We need to store it here, in rust
 // because we can't return such a complex structure back to C++
 lazy_static! {
-    static ref LIGHTCLIENT: Mutex<RefCell<Option<LightClient>>> = Mutex::new(RefCell::new(None));
+    static ref LIGHTCLIENT: Mutex<RefCell<Option<Arc<LightClient>>>> = Mutex::new(RefCell::new(None));
 }
 
 // Check if there is an existing wallet
@@ -65,7 +65,7 @@ pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> 
         }
     };
 
-    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+    LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
 
     // Return the wallet's seed
     let s_str = CString::new(seed).unwrap();
@@ -113,7 +113,7 @@ pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const
         }
     };
 
-    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+    LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
  
     let c_str = CString::new("OK").unwrap();
     return c_str.into_raw();
@@ -145,7 +145,7 @@ pub extern fn litelib_initialize_existing(dangerous: bool, server: *const c_char
         }
     };
 
-    LIGHTCLIENT.lock().unwrap().replace(Some(lightclient));
+    LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
 
     let c_str = CString::new("OK").unwrap();
     return c_str.into_raw();
@@ -167,16 +167,21 @@ pub extern fn litelib_execute(cmd: *const c_char, args: *const c_char) -> *mut c
 
     let resp: String;
     {
-        let lc = LIGHTCLIENT.lock().unwrap();
+        let lightclient: Arc<LightClient>;
+        {
+            let lc = LIGHTCLIENT.lock().unwrap();
 
-        if lc.borrow().is_none() {
-            let e_str = CString::new("Error: Light Client is not initialized").unwrap();
-            return e_str.into_raw();
-        }
+            if lc.borrow().is_none() {
+                let e_str = CString::new("Error: Light Client is not initialized").unwrap();
+                return e_str.into_raw();
+            }
+
+            lightclient = lc.borrow().as_ref().unwrap().clone();
+        };
 
         let args = if arg_str.is_empty() { vec![] } else { vec![arg_str.as_ref()] };
 
-        resp = commands::do_user_command(&cmd_str, &args, lc.borrow().as_ref().unwrap()).clone();
+        resp = commands::do_user_command(&cmd_str, &args, lightclient.as_ref()).clone();
     };
 
     let c_str = CString::new(resp.as_bytes()).unwrap();
