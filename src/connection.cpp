@@ -22,9 +22,12 @@ ConnectionLoader::ConnectionLoader(MainWindow* main, Controller* rpc) {
     connD->setupUi(d);
     QPixmap logo(":/img/res/logobig.gif");
     connD->topIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    isSyncing = new QAtomicInteger<bool>();
 }
 
-ConnectionLoader::~ConnectionLoader() {    
+ConnectionLoader::~ConnectionLoader() {
+    delete isSyncing;
     delete connD;
     delete d;
 }
@@ -61,7 +64,7 @@ void ConnectionLoader::doAutoConnect() {
         // If success, set the connection
         main->logger->write("Connection is online.");
 
-        QAtomicInteger<bool>* isSyncing = new QAtomicInteger<bool>();
+        isSyncing = new QAtomicInteger<bool>();
         isSyncing->store(true);
 
         // Do a sync at startup
@@ -78,14 +81,11 @@ void ConnectionLoader::doAutoConnect() {
         
         // While it is syncing, we'll show the status updates while it is alive.
         QObject::connect(syncTimer, &QTimer::timeout, [=]() {
-            qDebug() << "Sync timer" << isSyncing->load();
             // Check the sync status
-            if (isSyncing->load()) {
+            if (isSyncing != nullptr && isSyncing->load()) {
                 // Get the sync status
                 connection->doRPC("syncstatus", "", [=](json reply) {
-                    qDebug() << QString::fromStdString("Sync statys = ") << QString::fromStdString(reply.dump());
-
-                    if (isSyncing->load() && reply.find("synced_blocks") != reply.end()) {
+                    if (isSyncing != nullptr && reply.find("synced_blocks") != reply.end()) {
                         qint64 synced = reply["synced_blocks"].get<json::number_unsigned_t>();
                         qint64 total = reply["total_blocks"].get<json::number_unsigned_t>();
                         showInformation("Synced " + QString::number(synced) + " / " + QString::number(total));
@@ -94,13 +94,11 @@ void ConnectionLoader::doAutoConnect() {
                 [=](QString err) {
                     qDebug() << "Sync error" << err;
                 });
-            } else {
-                delete isSyncing;
             }
         });   
         
         syncTimer->setInterval(1* 1000);
-        syncTimer->start(1000);
+        syncTimer->start();
 
     }, [=](QString err) {
         showError(err);
