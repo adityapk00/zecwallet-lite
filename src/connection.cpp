@@ -51,7 +51,7 @@ void ConnectionLoader::doAutoConnect() {
         litelib_initialize_existing(config->dangerous, config->server.toStdString().c_str());
     } else {
         main->logger->write(QObject::tr("Create/restore wallet."));
-        createOrRestore(config->dangerous, config->server);
+        litelib_initialize_existing(config->dangerous, config->server.toStdString().c_str());
     }    
     
     auto connection = makeConnection(config);

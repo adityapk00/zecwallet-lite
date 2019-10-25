@@ -2,12 +2,11 @@
 #include "addressbook.h"
 #include "settings.h"
 
-
 BalancesTableModel::BalancesTableModel(QObject *parent)
     : QAbstractTableModel(parent) {    
 }
 
-void BalancesTableModel::setNewData(const QMap<QString, qint64> balances, 
+void BalancesTableModel::setNewData(const QMap<QString, double> balances, 
     const QList<UnspentOutput> outputs)
 {    
     loading = false;
@@ -22,7 +21,7 @@ void BalancesTableModel::setNewData(const QMap<QString, qint64> balances,
 
     // Process the address balances into a list
     delete modeldata;
-    modeldata = new QList<std::tuple<QString, qint64>>();
+    modeldata = new QList<std::tuple<QString, double>>();
     std::for_each(balances.keyBegin(), balances.keyEnd(), [=] (auto keyIt) {
         if (balances.value(keyIt) > 0)
             modeldata->push_back(std::make_tuple(keyIt, balances.value(keyIt)));
@@ -95,7 +94,7 @@ QVariant BalancesTableModel::data(const QModelIndex &index, int role) const
     if(role == Qt::ToolTipRole) {
         switch (index.column()) {
         case 0: return AddressBook::addLabelToAddress(std::get<0>(modeldata->at(index.row())));
-        case 1: return Settings::getUSDFromhushAmount(std::get<1>(modeldata->at(index.row())));
+        case 1: return Settings::getUSDFormat(std::get<1>(modeldata->at(index.row())));
         }
     }
     

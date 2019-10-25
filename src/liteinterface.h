@@ -11,7 +11,7 @@ using json = nlohmann::json;
 // into a struct with address, amount, memo
 struct TransactionItemDetail {
     QString         address;
-    qint64          amount;
+    double          amount;
     QString         memo;
 };
 
@@ -45,6 +45,7 @@ public:
                     const std::function<void(QString)>& err);
     
     void fetchBalance(const std::function<void(json)>& cb);
+    
 
     void createNewZaddr(bool sapling, const std::function<void(json)>& cb);
     void createNewTaddr(const std::function<void(json)>& cb);

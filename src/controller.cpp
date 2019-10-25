@@ -64,7 +64,7 @@ void Controller::setConnection(Connection* c) {
 
     this->zrpc->setConnection(c);
 
-    ui->statusBar->showMessage("Ready!");
+    ui->statusBar->showMessage("Your hushd is connected");
 
     // See if we need to remove the reindex/rescan flags from the hush.conf file
     auto hushConfLocation = Settings::getInstance()->gethushdConfLocation();
@@ -96,7 +96,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx) {
         // Construct the JSON params
         json rec = json::object();
         rec["address"]      = toAddr.addr.toStdString();
-        rec["amount"]       = toAddr.amount;
+        rec["amount"]       = toAddr.amount * 10000000;
         if (Settings::isZAddress(toAddr.addr) && !toAddr.memo.trimmed().isEmpty())
             rec["memo"]     = toAddr.memo.toStdString();
 
@@ -120,7 +120,7 @@ void Controller::noConnection() {
     main->ui->statusBar->showMessage(QObject::tr("No Connection"), 1000);
 
     // Clear balances table.
-    QMap<QString, qint64> emptyBalances;
+    QMap<QString, double> emptyBalances;
     QList<UnspentOutput>  emptyOutputs;
     balancesTableModel->setNewData(emptyBalances, emptyOutputs);
 
@@ -251,7 +251,7 @@ void Controller::updateUI(bool anyUnconfirmed) {
 };
 
 // Function to process reply of the listunspent and z_listunspent API calls, used below.
-bool Controller::processUnspent(const json& reply, QMap<QString, qint64>* balancesMap, QList<UnspentOutput>* newUtxos) {
+bool Controller::processUnspent(const json& reply, QMap<QString, double>* balancesMap, QList<UnspentOutput>* newUtxos) {
     bool anyUnconfirmed = false;
 
     auto processFn = [=](const json& array) {
@@ -259,11 +259,11 @@ bool Controller::processUnspent(const json& reply, QMap<QString, qint64>* balanc
             QString qsAddr  = QString::fromStdString(it["address"]);
             int block       = it["created_in_block"].get<json::number_unsigned_t>();
             QString txid    = QString::fromStdString(it["created_in_txid"]);
-            QString amount  = Settings::getDecimalString(it["value"].get<json::number_unsigned_t>());
+            QString amount  = Settings::getDecimalString(it["value"].get<json::number_float_t>());
 
             newUtxos->push_back(UnspentOutput{ qsAddr, txid, amount, block, true });
 
-            (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] + it["value"].get<json::number_unsigned_t>();
+            (*balancesMap)[qsAddr] = ((*balancesMap)[qsAddr] + it["value"].get<json::number_float_t>()) /10000000;
         }    
     };
 
@@ -279,26 +279,28 @@ void Controller::refreshBalances() {
 
     // 1. Get the Balances
     zrpc->fetchBalance([=] (json reply) {    
-        auto balT      = reply["tbalance"].get<json::number_unsigned_t>();
-        auto balZ      = reply["zbalance"].get<json::number_unsigned_t>();
+        auto balT      = reply["tbalance"].get<json::number_float_t>();
+        auto balZ      = reply["zbalance"].get<json::number_float_t>();
         auto balTotal  = balT + balZ;
 
         AppDataModel::getInstance()->setBalances(balT, balZ);
 
-        ui->balSheilded   ->setText(Settings::gethushDisplayFormat(balZ));
-        ui->balTransparent->setText(Settings::gethushDisplayFormat(balT));
-        ui->balTotal      ->setText(Settings::gethushDisplayFormat(balTotal));
+        ui->balSheilded   ->setText(Settings::gethushDisplayFormat(balZ /10000000));
+        ui->balTransparent->setText(Settings::gethushDisplayFormat(balT /10000000));
+        ui->balTotal      ->setText(Settings::gethushDisplayFormat(balTotal /10000000));
 
 
-        ui->balSheilded   ->setToolTip(Settings::gethushDisplayFormat(balZ));
-        ui->balTransparent->setToolTip(Settings::gethushDisplayFormat(balT));
-        ui->balTotal      ->setToolTip(Settings::gethushDisplayFormat(balTotal));
+        ui->balSheilded   ->setToolTip(Settings::gethushDisplayFormat(balZ /10000000));
+        ui->balTransparent->setToolTip(Settings::gethushDisplayFormat(balT /10000000));
+        ui->balTotal      ->setToolTip(Settings::gethushDisplayFormat(balTotal /10000000));
+
+      
     });
 
     // 2. Get the UTXOs
     // First, create a new UTXO list. It will be replacing the existing list when everything is processed.
     auto newUtxos = new QList<UnspentOutput>();
-    auto newBalances = new QMap<QString, qint64>();
+    auto newBalances = new QMap<QString, double>();
 
     // Call the Transparent and Z unspent APIs serially and then, once they're done, update the UI
     zrpc->fetchUnspent([=] (json reply) {
@@ -323,7 +325,7 @@ void Controller::refreshTransactions() {
 
         for (auto& it : reply.get<json::array_t>()) {  
             QString address;
-            qint64 total_amount;
+            double total_amount;
             QList<TransactionItemDetail> items;
 
             // First, check if there's outgoing metadata
@@ -331,7 +333,7 @@ void Controller::refreshTransactions() {
             
                 for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
                     QString address = QString::fromStdString(o["address"]);
-                    qint64 amount = -1 * o["value"].get<json::number_integer_t>(); // Sent items are -ve
+                    double amount = -1 * o["value"].get<json::number_float_t>() /10000000;// Sent items are -ve
                     
                     QString memo;
                     if (!o["memo"].is_null()) {
@@ -353,7 +355,7 @@ void Controller::refreshTransactions() {
                    it["datetime"].get<json::number_unsigned_t>(),
                    address,
                    QString::fromStdString(it["txid"]),
-                   model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
+                   model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(), 
                    items
                 });
             } else {
@@ -363,7 +365,7 @@ void Controller::refreshTransactions() {
 
                 items.push_back(TransactionItemDetail{
                     address,
-                    it["amount"].get<json::number_integer_t>(),
+                    it["amount"].get<json::number_float_t>(),
                     ""
                 });
 
@@ -509,7 +511,7 @@ void Controller::refreshhushPrice() {
         return noConnection();
 
        // TODO: use/render all this data
-    QUrl cmcURL("https://api.coingecko.com/api/v3/simple/price?ids=hush&vs_currencies=btc%2Cusd%2Ceur&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true");
+    QUrl cmcURL("ncies=btc%2Cusd%2Ceur&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true");
    
     QNetworkRequest req;
     req.setUrl(cmcURL);
@@ -544,7 +546,7 @@ void Controller::refreshhushPrice() {
             qDebug() << "Parsed JSON";
 
             const json& item  = parsed.get<json::object_t>();
-            const json& hush  = item["hush"].get<json::object_t>();
+            const json& hush  = item["Hush"].get<json::object_t>();
 
             if (hush["usd"] >= 0) {
                 qDebug() << "Found hush key in price json";

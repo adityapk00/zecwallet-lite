@@ -7,7 +7,7 @@ DataModel::DataModel() {
     QWriteLocker locker(lock);
 
     utxos = new QList<UnspentOutput>();
-    balances = new QMap<QString, qint64>();
+    balances = new QMap<QString, double>();
     usedAddresses = new QMap<QString, bool>();
     zaddresses = new QList<QString>();
     taddresses = new QList<QString>();
@@ -44,7 +44,7 @@ void DataModel::replaceTaddresses(QList<QString>* newT) {
     taddresses = newT;
 }
 
-void DataModel::replaceBalances(QMap<QString, qint64>* newBalances) {
+void DataModel::replaceBalances(QMap<QString, double>* newBalances) {
     QWriteLocker locker(lock);
     Q_ASSERT(newBalances);
 

@@ -18,7 +18,7 @@ class DataModel {
 public:
     void replaceZaddresses(QList<QString>* newZ);
     void replaceTaddresses(QList<QString>* newZ);
-    void replaceBalances(QMap<QString, qint64>* newBalances);
+    void replaceBalances(QMap<QString, double>* newBalances);
     void replaceUTXOs(QList<UnspentOutput>* utxos);
 
     void markAddressUsed(QString address);
@@ -29,8 +29,8 @@ public:
     const QList<QString>             getAllZAddresses()     { QReadLocker locker(lock); return *zaddresses; }
     const QList<QString>             getAllTAddresses()     { QReadLocker locker(lock); return *taddresses; }
     const QList<UnspentOutput>       getUTXOs()             { QReadLocker locker(lock); return *utxos; }
-    const QMap<QString, qint64>      getAllBalances()       { QReadLocker locker(lock); return *balances; }
-    const QMap<QString, bool>        getUsedAddresses()     { QReadLocker locker(lock); return *usedAddresses; }
+    const QMap<QString, double>     getAllBalances()       { QReadLocker locker(lock); return *balances; }
+    const QMap<QString, bool>       getUsedAddresses()     { QReadLocker locker(lock); return *usedAddresses; }
 
 
     DataModel();
@@ -39,7 +39,7 @@ private:
     int latestBlock;
 
     QList<UnspentOutput>*   utxos           = nullptr;
-    QMap<QString, qint64>*  balances        = nullptr;
+    QMap<QString, double>*  balances        = nullptr;
     QMap<QString, bool>*    usedAddresses   = nullptr;
     QList<QString>*         zaddresses      = nullptr;
     QList<QString>*         taddresses      = nullptr;

@@ -315,7 +315,7 @@ bool Settings::removeFromhushConf(QString confLocation, QString option) {
 }
 
 double Settings::getMinerFee() {
-    return 10000;
+    return 0.01;
 }
 
 double Settings::getZboardAmount() {

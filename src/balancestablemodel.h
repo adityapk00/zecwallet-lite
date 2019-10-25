@@ -4,13 +4,14 @@
 #include "precompiled.h"
 #include "datamodel.h"
 
+
 class BalancesTableModel : public QAbstractTableModel
 {
 public:
     BalancesTableModel(QObject* parent);
     ~BalancesTableModel();
 
-    void setNewData(const QMap<QString, qint64> balances, const QList<UnspentOutput> outputs);
+    void setNewData(const QMap<QString, double> balances, const QList<UnspentOutput> outputs);
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
@@ -18,7 +19,7 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-    QList<std::tuple<QString, qint64>>*    modeldata   = nullptr;    
+    QList<std::tuple<QString, double>>*     modeldata   = nullptr;    
     QList<UnspentOutput>*                  utxos       = nullptr;  
 
     bool loading = true;

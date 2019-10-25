@@ -78,7 +78,7 @@ private:
 
     void refreshTransactions();    
 
-    bool processUnspent     (const json& reply, QMap<QString, qint64>* newBalances, QList<UnspentOutput>* newUtxos);
+    bool processUnspent     (const json& reply, QMap<QString, double>* newBalances, QList<UnspentOutput>* newUtxos);
     void updateUI           (bool anyUnconfirmed);
 
     void getInfoThenRefresh(bool force);
