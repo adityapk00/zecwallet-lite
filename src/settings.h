@@ -56,10 +56,7 @@ public:
             
     bool    getSaveZtxs();
     void    setSaveZtxs(bool save);
-
-    bool    getAutoShield();
-    void    setAutoShield(bool allow);
-
+    
     bool    getAllowCustomFees();
     void    setAllowCustomFees(bool allow);
 
@@ -98,12 +95,14 @@ public:
     static bool    isZAddress(QString addr);
     static bool    isTAddress(QString addr);
 
-    static QString getDecimalString(double amt);
+    static QString getDecimalString(qint64 zecamt);
     static QString getUSDFormat(double usdAmt);
 
-    static QString getUSDFromZecAmount(double bal);
-    static QString getZECDisplayFormat(double bal);
-    static QString getZECUSDDisplayFormat(double bal);
+    static QString getUSDFromZecAmount(qint64 zecamt);
+    static QString getZECDisplayFormat(qint64 zecamt);
+    static QString getZECUSDDisplayFormat(qint64 bal);
+
+    static qint64  getAmountFromUserDecimalStr(QString amt);
 
     static QString getTokenName();
     static QString getDonationAddr();
@@ -113,6 +112,8 @@ public:
     static QString getZboardAddr();
 
     static int     getMaxMobileAppTxns() { return 30; }
+
+    static int     getNumberOfDecimalPlaces() {return 8;}
     
     static bool    isValidAddress(QString addr);
 

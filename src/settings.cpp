@@ -115,15 +115,6 @@ double Settings::getZECPrice() {
     return zecPrice; 
 }
 
-bool Settings::getAutoShield() {
-    // Load from Qt settings
-    return QSettings().value("options/autoshield", false).toBool();
-}
-
-void Settings::setAutoShield(bool allow) {
-    QSettings().setValue("options/autoshield", allow);
-}
-
 bool Settings::getCheckForUpdates() {
     return QSettings().value("options/allowcheckupdates", true).toBool();
 }
@@ -174,6 +165,7 @@ void Settings::setPeers(int peers) {
 int Settings::getPeers() {
     return _peerConnections;
 }
+
 //=================================
 // Static Stuff
 //=================================
@@ -215,34 +207,56 @@ void Settings::openTxInExplorer(QString txid) {
     QDesktopServices::openUrl(QUrl(url));
 }
 
-QString Settings::getUSDFormat(double bal) {
-    return "$" + QLocale(QLocale::English).toString(bal, 'f', 2);
+
+
+QString Settings::getUSDFormat(double usdAmt) {
+    return "$" + QLocale(QLocale::English).toString(usdAmt, 'f', 2);
 }
 
 
-QString Settings::getUSDFromZecAmount(double bal) {
+QString Settings::getUSDFromZecAmount(qint64 bal) {
     return getUSDFormat(bal * Settings::getInstance()->getZECPrice());
 }
 
+QString Settings::getDecimalString(qint64 amt) {
+    // Zcash has 8 decimal places
+    int places = Settings::getNumberOfDecimalPlaces();
+    qint64 divider = QString("1" + QString("0").repeated(places)).toULongLong();
 
-QString Settings::getDecimalString(double amt) {
-    QString f = QString::number(amt, 'f', 8);
+    int wholePart = amt / divider;
+    int decimalPart = amt % divider;
 
-    while (f.contains(".") && (f.right(1) == "0" || f.right(1) == ".")) {
-        f = f.left(f.length() - 1);
+    QString r = QString::number(wholePart);
+    if (decimalPart > 0) {
+        QString decimalPartStr = QString::number(decimalPart);
+        QString leadingZeros = QString("0").repeated(places - decimalPartStr.length());
+
+        r = r + "." + leadingZeros + decimalPartStr;
     }
-    if (f == "-0")
-        f = "0";
 
-    return f;
+    return r;
 }
 
-QString Settings::getZECDisplayFormat(double bal) {
+qint64 Settings::getAmountFromUserDecimalStr(QString amt) {
+    int places = Settings::getNumberOfDecimalPlaces();
+    qint64 divider = QString("1" + QString("0").repeated(places)).toULongLong();
+
+    auto amtParts = amt.split(".");
+    qint64 r = amtParts[0].toULongLong() * divider;
+    if (amtParts.length() == 2) {
+        auto trailingZeros = QString("0").repeated(places - amtParts[1].length());
+        r += QString(amtParts[1] + trailingZeros).toULongLong();
+    }
+
+    return r;
+}
+
+QString Settings::getZECDisplayFormat(qint64 bal) {
     // This is idiotic. Why doesn't QString have a way to do this?
     return getDecimalString(bal) % " " % Settings::getTokenName();
 }
 
-QString Settings::getZECUSDDisplayFormat(double bal) {
+QString Settings::getZECUSDDisplayFormat(qint64 bal) {
     auto usdFormat = getUSDFromZecAmount(bal);
     if (!usdFormat.isEmpty())
         return getZECDisplayFormat(bal) % " (" % usdFormat % ")";
