@@ -172,9 +172,12 @@ void Controller::getInfoThenRefresh(bool force) {
         model->setLatestBlock(curBlock);
 
         // Connected, so display checkmark.
+        auto tooltip = Settings::getInstance()->getSettings().server + "\n" + QString::fromStdString(reply.dump());
         QIcon i(":/icons/res/connected.gif");
         main->statusLabel->setText(chainName + "(" + QString::number(curBlock) + ")");
+        main->statusLabel->setToolTip(tooltip);
         main->statusIcon->setPixmap(i.pixmap(16, 16));
+        main->statusIcon->setToolTip(tooltip);
 
         //int version = reply["version"].get<json::string_t>();
         int version = 1;
