@@ -278,9 +278,6 @@ void MainWindow::setupSettingsModal() {
         // Custom fees
         settings.chkCustomFees->setChecked(Settings::getInstance()->getAllowCustomFees());
 
-        // Auto shielding
-        settings.chkAutoShield->setChecked(Settings::getInstance()->getAutoShield());
-
         // Check for updates
         settings.chkCheckUpdates->setChecked(Settings::getInstance()->getCheckForUpdates());
 
@@ -341,9 +338,6 @@ void MainWindow::setupSettingsModal() {
             ui->minerFeeAmt->setReadOnly(!customFees);
             if (!customFees)
                 ui->minerFeeAmt->setText(Settings::getDecimalString(Settings::getMinerFee()));
-
-            // Auto shield
-            Settings::getInstance()->setAutoShield(settings.chkAutoShield->isChecked());
 
             // Check for updates
             Settings::getInstance()->setCheckForUpdates(settings.chkCheckUpdates->isChecked());

@@ -495,30 +495,34 @@ void MainWindow::maxAmountChecked(int checked) {
 Tx MainWindow::createTxFromSendPage() {
     Tx tx;
 
-    bool sendChangeToSapling = Settings::getInstance()->getAutoShield();
-
     // Gather the from / to addresses 
     tx.fromAddr = ui->inputsCombo->currentText();
-    sendChangeToSapling = sendChangeToSapling && Settings::isTAddress(tx.fromAddr);
 
     // For each addr/amt in the sendTo tab
     int totalItems = ui->sendToWidgets->children().size() - 2;   // The last one is a spacer, so ignore that        
-    double totalAmt = 0;
+    qint64 totalAmt = 0;
     for (int i=0; i < totalItems; i++) {
         QString addr = ui->sendToWidgets->findChild<QLineEdit*>(QString("Address") % QString::number(i+1))->text().trimmed();
         // Remove label if it exists
         addr = AddressBook::addressFromAddressLabel(addr);
         
-        // If address is sprout, then we can't send change to sapling, because of turnstile.
-        sendChangeToSapling = sendChangeToSapling && !Settings::getInstance()->isSproutAddress(addr);
-
         QString amtStr = ui->sendToWidgets->findChild<QLineEdit*>(QString("Amount")  % QString::number(i+1))->text().trimmed();
         if (amtStr.isEmpty()) {
             amtStr = "-1";; // The user didn't specify an amount
         }        
 
-        double amt = amtStr.toDouble();
-        totalAmt += amt;
+        bool ok;
+        qint64 amt;
+        
+        // Make sure it parses
+        amtStr.toDouble(&ok);
+        if (!ok) {
+            amt = -1;
+        } else {
+            amt = Settings::getAmountFromUserDecimalStr(amtStr);
+            totalAmt += amt;
+        }
+        
         QString memo = ui->sendToWidgets->findChild<QLabel*>(QString("MemoTxt")  % QString::number(i+1))->text().trimmed();
         
         tx.toAddrs.push_back( ToFields{addr, amt, memo} );
@@ -528,31 +532,6 @@ Tx MainWindow::createTxFromSendPage() {
         tx.fee = ui->minerFeeAmt->text().toDouble();
     } else {
         tx.fee = Settings::getMinerFee();
-    }
-
-    if (Settings::getInstance()->getAutoShield() && sendChangeToSapling) {
-        auto saplingAddr = std::find_if(rpc->getModel()->getAllZAddresses().begin(), rpc->getModel()->getAllZAddresses().end(), [=](auto i) -> bool { 
-            // We're finding a sapling address that is not one of the To addresses, because zcash doesn't allow duplicated addresses
-            bool isSapling = Settings::getInstance()->isSaplingAddress(i); 
-            if (!isSapling) return false;
-
-            // Also check all the To addresses
-            for (auto t : tx.toAddrs) {
-                if (t.addr == i)
-                    return false;
-            }
-
-            return true;
-        });
-
-        if (saplingAddr != rpc->getModel()->getAllZAddresses().end()) {
-            double change = rpc->getModel()->getAllBalances().value(tx.fromAddr) - totalAmt - tx.fee;
-
-            if (Settings::getDecimalString(change) != "0") {
-                QString changeMemo = tr("Change from ") + tx.fromAddr;
-                tx.toAddrs.push_back(ToFields{ *saplingAddr, change, changeMemo });
-            }
-        }
     }
     
     return tx;
