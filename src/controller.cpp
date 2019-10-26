@@ -117,7 +117,8 @@ void Controller::noConnection() {
     // Clear balances table.
     QMap<QString, qint64> emptyBalances;
     QList<UnspentOutput>  emptyOutputs;
-    balancesTableModel->setNewData(emptyBalances, emptyOutputs);
+    QList<QString>        emptyAddresses;
+    balancesTableModel->setNewData(emptyAddresses, emptyAddresses, emptyBalances, emptyOutputs);
 
     // Clear Transactions table.
     QList<TransactionItem> emptyTxs;
@@ -243,7 +244,7 @@ void Controller::updateUI(bool anyUnconfirmed) {
     ui->unconfirmedWarning->setVisible(anyUnconfirmed);
 
     // Update balances model data, which will update the table too
-    balancesTableModel->setNewData(model->getAllBalances(), model->getUTXOs());
+    balancesTableModel->setNewData(model->getAllZAddresses(), model->getAllTAddresses(), model->getAllBalances(), model->getUTXOs());
 
     // Update from address
     main->updateFromCombo();

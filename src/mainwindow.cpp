@@ -303,7 +303,6 @@ void MainWindow::setupSettingsModal() {
                 auto cl = new ConnectionLoader(this, rpc);
                 cl->loadConnection();
             }
-
         }
     });
 }

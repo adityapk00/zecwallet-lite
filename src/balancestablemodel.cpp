@@ -7,8 +7,8 @@ BalancesTableModel::BalancesTableModel(QObject *parent)
     : QAbstractTableModel(parent) {    
 }
 
-void BalancesTableModel::setNewData(const QMap<QString, qint64> balances, 
-    const QList<UnspentOutput> outputs)
+void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QString> taddrs,
+    const QMap<QString, qint64> balances, const QList<UnspentOutput> outputs)
 {    
     loading = false;
 
@@ -24,9 +24,21 @@ void BalancesTableModel::setNewData(const QMap<QString, qint64> balances,
     delete modeldata;
     modeldata = new QList<std::tuple<QString, qint64>>();
     std::for_each(balances.keyBegin(), balances.keyEnd(), [=] (auto keyIt) {
-        if (balances.value(keyIt) > 0)
-            modeldata->push_back(std::make_tuple(keyIt, balances.value(keyIt)));
+        modeldata->push_back(std::make_tuple(keyIt, balances.value(keyIt)));
     });
+
+    // Add all addresses that have no balances as well
+    for (auto zaddr: zaddrs) {
+        if (!balances.contains(zaddr)) {
+            modeldata->push_back(std::make_tuple(zaddr, 0));
+        }
+    }
+
+    for (auto taddr: taddrs) {
+        if (!balances.contains(taddr)) {
+            modeldata->push_back(std::make_tuple(taddr, 0));
+        }
+    }
 
     // And then update the data
     dataChanged(index(0, 0), index(modeldata->size()-1, columnCount(index(0,0))-1));
