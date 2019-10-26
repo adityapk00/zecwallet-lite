@@ -18,31 +18,22 @@ Config Settings::getSettings() {
     // Load from the QT Settings. 
     QSettings s;
     
-    auto host        = s.value("connection/host").toString();
-    auto port        = s.value("connection/port").toString();
-    auto username    = s.value("connection/rpcuser").toString();
-    auto password    = s.value("connection/rpcpassword").toString();    
+    auto server        = s.value("connection/server").toString();
+    if (server.trimmed().isEmpty()) {
+        server = Settings::getDefaultServer();
+    }
 
-    return Config{host, port, username, password};
+    return Config{server};
 }
 
-void Settings::saveSettings(const QString& host, const QString& port, const QString& username, const QString& password) {
+void Settings::saveSettings(const QString& server) {
     QSettings s;
 
-    s.setValue("connection/host", host);
-    s.setValue("connection/port", port);
-    s.setValue("connection/rpcuser", username);
-    s.setValue("connection/rpcpassword", password);
-
+    s.setValue("connection/server", server);
     s.sync();
 
     // re-init to load correct settings
     init();
-}
-
-void Settings::setUsingZcashConf(QString confLocation) {
-    if (!confLocation.isEmpty())
-        _confLocation = confLocation;
 }
 
 bool Settings::isTestnet() {
@@ -161,6 +152,10 @@ void Settings::saveRestoreTableHeader(QTableView* table, QDialog* d, QString tab
     });
 }
 
+QString Settings::getDefaultServer() {
+    return "https://lightd-main.zecwallet.co:443/";
+}
+
 void Settings::openAddressInExplorer(QString address) {
     QString url;
     if (Settings::getInstance()->isTestnet()) {
@@ -257,68 +252,8 @@ QString Settings::getDonationAddr() {
 
 }
 
-bool Settings::addToZcashConf(QString confLocation, QString line) {
-    QFile file(confLocation);
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Append))
-        return false;
-    
-
-    QTextStream out(&file);
-    out << line << "\n";
-    file.close();
-
-    return true;
-}
-
-bool Settings::removeFromZcashConf(QString confLocation, QString option) {
-    if (confLocation.isEmpty())
-        return false;
-
-    // To remove an option, we'll create a new file, and copy over everything but the option.
-    QFile file(confLocation);
-    if (!file.open(QIODevice::ReadOnly)) 
-        return false;
-    
-    QList<QString> lines;
-    QTextStream in(&file);
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        auto s = line.indexOf("=");
-        QString name = line.left(s).trimmed().toLower();
-        if (name != option) {
-            lines.append(line);
-        }
-    }    
-    file.close();
-    
-    QFile newfile(confLocation);
-    if (!newfile.open(QIODevice::ReadWrite | QIODevice::Truncate))
-        return false;
-
-    QTextStream out(&newfile);
-    for (QString line : lines) {
-        out << line << endl;
-    }
-    newfile.close();
-
-    return true;
-}
-
 double Settings::getMinerFee() {
     return 10000;
-}
-
-double Settings::getZboardAmount() {
-    return 0.0001;
-}
-
-QString Settings::getZboardAddr() {
-    if (Settings::getInstance()->isTestnet()) {
-        return getDonationAddr();
-    }
-    else {
-        return "zs10m00rvkhfm4f7n23e4sxsx275r7ptnggx39ygl0vy46j9mdll5c97gl6dxgpk0njuptg2mn9w5s";
-    }
 }
 
 bool Settings::isValidSaplingPrivateKey(QString pk) {

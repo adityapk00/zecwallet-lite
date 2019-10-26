@@ -66,11 +66,6 @@ void Controller::setConnection(Connection* c) {
 
     ui->statusBar->showMessage("Ready!");
 
-    // See if we need to remove the reindex/rescan flags from the zcash.conf file
-    auto zcashConfLocation = Settings::getInstance()->getZcashdConfLocation();
-    Settings::removeFromZcashConf(zcashConfLocation, "rescan");
-    Settings::removeFromZcashConf(zcashConfLocation, "reindex");
-
     // If we're allowed to get the Zec Price, get the prices
     if (Settings::getInstance()->getAllowFetchPrices())
         refreshZECPrice();

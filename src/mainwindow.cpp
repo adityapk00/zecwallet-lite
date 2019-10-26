@@ -272,41 +272,10 @@ void MainWindow::setupSettingsModal() {
 
         // Fetch prices
         settings.chkFetchPrices->setChecked(Settings::getInstance()->getAllowFetchPrices());
-
-        // Use Tor
-        bool isUsingTor = false;
-        if (rpc->getConnection() != nullptr) {
-            isUsingTor = !rpc->getConnection()->config->proxy.isEmpty();
-        }
-        settings.chkTor->setChecked(isUsingTor);
         
-        // Connection Settings
-        QIntValidator validator(0, 65535);
-        settings.port->setValidator(&validator);
-
-        // If values are coming from zcash.conf, then disable all the fields
-        auto zcashConfLocation = Settings::getInstance()->getZcashdConfLocation();
-        if (!zcashConfLocation.isEmpty()) {
-            settings.confMsg->setText("Settings are being read from \n" + zcashConfLocation);
-            settings.hostname->setEnabled(false);
-            settings.port->setEnabled(false);
-            settings.rpcuser->setEnabled(false);
-            settings.rpcpassword->setEnabled(false);
-        }
-        else {
-            settings.confMsg->setText("No local zcash.conf found. Please configure connection manually.");
-            settings.hostname->setEnabled(true);
-            settings.port->setEnabled(true);
-            settings.rpcuser->setEnabled(true);
-            settings.rpcpassword->setEnabled(true);
-        }
-
         // Load current values into the dialog        
         auto conf = Settings::getInstance()->getSettings();
-        settings.hostname->setText(conf.host);
-        settings.port->setText(conf.port);
-        settings.rpcuser->setText(conf.rpcuser);
-        settings.rpcpassword->setText(conf.rpcpassword);
+        settings.txtServer->setText(conf.server);
 
         // Connection tab by default
         settings.tabWidget->setCurrentIndex(0);
@@ -315,9 +284,6 @@ void MainWindow::setupSettingsModal() {
         if (!rpc->isEmbedded()) {
             settings.chkRescan->setEnabled(false);
             settings.chkRescan->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -rescan"));
-
-            settings.chkReindex->setEnabled(false);
-            settings.chkReindex->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -reindex"));
         }
 
         if (settingsDialog.exec() == QDialog::Accepted) {
@@ -327,56 +293,17 @@ void MainWindow::setupSettingsModal() {
             // Allow fetching prices
             Settings::getInstance()->setAllowFetchPrices(settings.chkFetchPrices->isChecked());
 
-            if (!isUsingTor && settings.chkTor->isChecked()) {
-                // If "use tor" was previously unchecked and now checked
-                Settings::addToZcashConf(zcashConfLocation, "proxy=127.0.0.1:9050");
-                rpc->getConnection()->config->proxy = "proxy=127.0.0.1:9050";
+            // Save the server
+            Settings::getInstance()->saveSettings(settings.txtServer->text().trimmed());
 
-                QMessageBox::information(this, tr("Enable Tor"), 
-                    tr("Connection over Tor has been enabled. To use this feature, you need to restart ZecWallet."), 
-                    QMessageBox::Ok);
-            }
-
-            if (isUsingTor && !settings.chkTor->isChecked()) {
-                // If "use tor" was previously checked and now is unchecked
-                Settings::removeFromZcashConf(zcashConfLocation, "proxy");
-                rpc->getConnection()->config->proxy.clear();
-
-                QMessageBox::information(this, tr("Disable Tor"),
-                    tr("Connection over Tor has been disabled. To fully disconnect from Tor, you need to restart ZecWallet."),
-                    QMessageBox::Ok);
-            }
-
-            if (zcashConfLocation.isEmpty()) {
+            if (false /* connection needs reloading?*/) {
                 // Save settings
-                Settings::getInstance()->saveSettings(
-                    settings.hostname->text(),
-                    settings.port->text(),
-                    settings.rpcuser->text(),
-                    settings.rpcpassword->text());
+                Settings::getInstance()->saveSettings(settings.txtServer->text());
                 
                 auto cl = new ConnectionLoader(this, rpc);
                 cl->loadConnection();
             }
 
-            // Check to see if rescan or reindex have been enabled
-            bool showRestartInfo = false;
-            if (settings.chkRescan->isChecked()) {
-                Settings::addToZcashConf(zcashConfLocation, "rescan=1");
-                showRestartInfo = true;
-            }
-
-            if (settings.chkReindex->isChecked()) {
-                Settings::addToZcashConf(zcashConfLocation, "reindex=1");
-                showRestartInfo = true;
-            }
-
-            if (showRestartInfo) {
-                auto desc = tr("ZecWallet needs to restart to rescan/reindex. ZecWallet will now close, please restart ZecWallet to continue");
-                
-                QMessageBox::information(this, tr("Restart ZecWallet"), desc, QMessageBox::Ok);
-                QTimer::singleShot(1, [=]() { this->close(); });
-            }
         }
     });
 }

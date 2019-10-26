@@ -43,10 +43,10 @@ void ConnectionLoader::doAutoConnect() {
 
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
     config->dangerous = true;
-    config->server = QString("https://127.0.0.1:9067");
+    config->server = Settings::getInstance()->getSettings().server;
 
     // Initialize the library
-    main->logger->write(QObject::tr("Attempting to initialize"));
+    main->logger->write(QObject::tr("Attempting to initialize library with ") + config->server);
 
     // Check to see if there's an existing wallet
     if (litelib_wallet_exists(Settings::getChainName().toStdString().c_str())) {
@@ -172,15 +172,11 @@ void Executor::run() {
 
     QString reply = litelib_process_response(resp);
 
-    qDebug() << "Reply=" << reply;
+    qDebug() << "RPC Reply=" << reply;
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
     if (parsed.is_discarded() || parsed.is_null()) {
         emit handleError(reply);
     } else {
-        const bool isGuiThread = 
-                QThread::currentThread() == QCoreApplication::instance()->thread();
-        qDebug() << "executing RPC: isGUI=" << isGuiThread;
-
         emit responseReady(parsed);
     }
 }

@@ -4,10 +4,7 @@
 #include "precompiled.h"
 
 struct Config {
-    QString host;
-    QString port;
-    QString rpcuser;
-    QString rpcpassword;
+    QString server;
 };
 
 struct ToFields;
@@ -29,7 +26,7 @@ public:
     static  Settings* getInstance();
 
     Config  getSettings();
-    void    saveSettings(const QString& host, const QString& port, const QString& username, const QString& password);
+    void    saveSettings(const QString& server);
 
     bool    isTestnet();
     void    setTestnet(bool isTestnet);
@@ -65,9 +62,6 @@ public:
 
     bool    isSaplingActive();
 
-    void    setUsingZcashConf(QString confLocation);
-    const   QString& getZcashdConfLocation() { return _confLocation; }
-
     void    setZECPrice(double p) { zecPrice = p; }
     double  getZECPrice();
 
@@ -98,18 +92,14 @@ public:
     static QString getTokenName();
     static QString getDonationAddr();
 
+    static QString getDefaultServer();
     static double  getMinerFee();
-    static double  getZboardAmount();
-    static QString getZboardAddr();
 
     static int     getMaxMobileAppTxns() { return 30; }
 
     static int     getNumberOfDecimalPlaces() {return 8;}
     
     static bool    isValidAddress(QString addr);
-
-    static bool    addToZcashConf(QString confLocation, QString line);
-    static bool    removeFromZcashConf(QString confLocation, QString option);
 
     static QString getChainName() { return QString("test"); }
 
@@ -126,7 +116,6 @@ private:
 
     static Settings* instance;
 
-    QString _confLocation;
     QString _executable;
     bool    _isTestnet        = false;
     bool    _isSyncing        = false;
@@ -134,7 +123,6 @@ private:
     int     _zcashdVersion    = 0;
     bool    _useEmbedded      = false;
     bool    _headless         = false;
-    int     _peerConnections  = 0;
     
     double  zecPrice          = 0.0;
 };
