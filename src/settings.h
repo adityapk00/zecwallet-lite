@@ -56,7 +56,7 @@ public:
             
     bool    getSaveZtxs();
     void    setSaveZtxs(bool save);
-    
+
     bool    getAllowCustomFees();
     void    setAllowCustomFees(bool allow);
 
@@ -77,9 +77,6 @@ public:
     void    setZECPrice(double p) { zecPrice = p; }
     double  getZECPrice();
 
-    void    setPeers(int peers);
-    int     getPeers();
-       
     // Static stuff
     static const QString txidStatusMessage;
     
