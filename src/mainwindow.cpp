@@ -257,11 +257,6 @@ void MainWindow::setupSettingsModal() {
         settings.setupUi(&settingsDialog);
         Settings::saveRestore(&settingsDialog);
 
-        // Setup save sent check box
-        QObject::connect(settings.chkSaveTxs, &QCheckBox::stateChanged, [=](auto checked) {
-            Settings::getInstance()->setSaveZtxs(checked);
-        });
-
         // Setup theme combo
         int theme_index = settings.comboBoxTheme->findText(Settings::getInstance()->get_theme_name(), Qt::MatchExactly);
         settings.comboBoxTheme->setCurrentIndex(theme_index);
@@ -271,12 +266,6 @@ void MainWindow::setupSettingsModal() {
             // Tell the user to restart
             QMessageBox::information(this, tr("Restart"), tr("Please restart ZecWallet to have the theme apply"), QMessageBox::Ok);
         });
-
-        // Save sent transactions
-        settings.chkSaveTxs->setChecked(Settings::getInstance()->getSaveZtxs());
-
-        // Custom fees
-        settings.chkCustomFees->setChecked(Settings::getInstance()->getAllowCustomFees());
 
         // Check for updates
         settings.chkCheckUpdates->setChecked(Settings::getInstance()->getCheckForUpdates());
@@ -332,13 +321,6 @@ void MainWindow::setupSettingsModal() {
         }
 
         if (settingsDialog.exec() == QDialog::Accepted) {
-            // Custom fees
-            bool customFees = settings.chkCustomFees->isChecked();
-            Settings::getInstance()->setAllowCustomFees(customFees);
-            ui->minerFeeAmt->setReadOnly(!customFees);
-            if (!customFees)
-                ui->minerFeeAmt->setText(Settings::getDecimalString(Settings::getMinerFee()));
-
             // Check for updates
             Settings::getInstance()->setCheckForUpdates(settings.chkCheckUpdates->isChecked());
 

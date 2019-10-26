@@ -59,8 +59,7 @@ void MainWindow::setupSendTab() {
     });
 
     // Fee amount changed
-    // Disable custom fees if settings say no
-    ui->minerFeeAmt->setReadOnly(!Settings::getInstance()->getAllowCustomFees());
+    ui->minerFeeAmt->setReadOnly(true);
     QObject::connect(ui->minerFeeAmt, &QLineEdit::textChanged, [=](auto txt) {
         ui->lblMinerFeeUSD->setText(Settings::getUSDFromZecAmount(txt.toDouble()));
     });
@@ -472,13 +471,8 @@ void MainWindow::maxAmountChecked(int checked) {
             sumAllAmounts += amt->text().toDouble();
         }
 
-        if (Settings::getInstance()->getAllowCustomFees()) {
-            sumAllAmounts = ui->minerFeeAmt->text().toDouble();
-        }
-        else {
-            sumAllAmounts += Settings::getMinerFee();
-        }
-
+        sumAllAmounts += Settings::getMinerFee();
+        
         auto addr = ui->inputsCombo->currentText();
 
         auto maxamount  = rpc->getModel()->getAllBalances().value(addr) - sumAllAmounts;
@@ -528,11 +522,7 @@ Tx MainWindow::createTxFromSendPage() {
         tx.toAddrs.push_back( ToFields{addr, amt, memo} );
     }
 
-    if (Settings::getInstance()->getAllowCustomFees()) {
-        tx.fee = ui->minerFeeAmt->text().toDouble();
-    } else {
-        tx.fee = Settings::getMinerFee();
-    }
+    tx.fee = Settings::getMinerFee();
     
     return tx;
 }
@@ -675,13 +665,6 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
         minerFeeUSD->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         confirm.gridLayout->addWidget(minerFeeUSD, row, 2, 1, 1);
         minerFeeUSD->setText(Settings::getUSDFromZecAmount(tx.fee));
-
-        if (Settings::getInstance()->getAllowCustomFees() && tx.fee != Settings::getMinerFee()) {
-            confirm.warningLabel->setVisible(true);            
-        } else {
-            // Default fee
-            confirm.warningLabel->setVisible(false);
-        }
     }
 
     // Recurring payment info, show only if there is exactly one destination address

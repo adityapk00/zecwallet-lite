@@ -54,12 +54,6 @@ public:
     int     getBlockNumber();
     void    setBlockNumber(int number);
             
-    bool    getSaveZtxs();
-    void    setSaveZtxs(bool save);
-
-    bool    getAllowCustomFees();
-    void    setAllowCustomFees(bool allow);
-
     bool    getAllowFetchPrices();
     void    setAllowFetchPrices(bool allow);
 

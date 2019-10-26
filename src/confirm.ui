@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
-    <height>458</height>
+    <width>626</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -175,38 +175,12 @@
     </spacer>
    </item>
    <item>
-    <widget class="QLabel" name="nopeersWarning">
-     <property name="styleSheet">
-      <string notr="true">color: red;</string>
-     </property>
-     <property name="text">
-      <string>zcashd doesn't seem to have any peers. You might not be connected to the internet, so this transaction might not work.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QLabel" name="syncingWarning">
      <property name="styleSheet">
       <string notr="true">color: red;</string>
      </property>
      <property name="text">
       <string>You are sending a transaction while your node is still syncing. This may not work.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="warningLabel">
-     <property name="styleSheet">
-      <string notr="true">color: red;</string>
-     </property>
-     <property name="text">
-      <string>You are using a custom fee. Since fees are transparent, you are giving up some privacy. Please use this only if you know what you are doing!</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
