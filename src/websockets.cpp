@@ -736,8 +736,8 @@ void AppDataServer::processGetInfo(QJsonObject jobj, MainWindow* mainWindow, std
     }
 
     // Max spendable safely from a z address and from any address
-    CAmount maxZSpendable = CAmount::fromqint64(0);
-    CAmount maxSpendable = CAmount::fromqint64(0);
+    CAmount maxZSpendable;
+    CAmount maxSpendable;
     for (auto a : mainWindow->getRPC()->getModel()->getAllBalances().keys()) {
         if (Settings::getInstance()->isSaplingAddress(a)) {
             if (mainWindow->getRPC()->getModel()->getAllBalances().value(a) > maxZSpendable) {

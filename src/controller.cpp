@@ -290,7 +290,6 @@ void Controller::refreshBalances() {
         ui->balTransparent->setText(balT.toDecimalZECString());
         ui->balTotal      ->setText(balTotal.toDecimalZECString());
 
-        auto price = Settings::getInstance()->getZECPrice();
         ui->balSheilded   ->setToolTip(balZ.toDecimalZECUSDString());
         ui->balTransparent->setToolTip(balT.toDecimalZECUSDString());
         ui->balTotal      ->setToolTip(balTotal.toDecimalZECUSDString());
@@ -330,7 +329,7 @@ void Controller::refreshTransactions() {
 
         for (auto& it : reply.get<json::array_t>()) {  
             QString address;
-            CAmount total_amount = CAmount::fromqint64(0);
+            CAmount total_amount;
             QList<TransactionItemDetail> items;
 
             // First, check if there's outgoing metadata

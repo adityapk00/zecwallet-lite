@@ -176,7 +176,7 @@ void MainWindow::updateFromCombo() {
     // delete
 }
 
-void MainWindow::inputComboTextChanged(int index) {
+void MainWindow::inputComboTextChanged(int) {
     // delete
 }
 
@@ -412,7 +412,7 @@ void MainWindow::maxAmountChecked(int checked) {
         if (rpc == nullptr) return;
            
         // Calculate maximum amount
-        CAmount sumAllAmounts = CAmount::fromqint64(0);
+        CAmount sumAllAmounts;
         // Calculate all other amounts
         int totalItems = ui->sendToWidgets->children().size() - 2;   // The last one is a spacer, so ignore that        
         // Start counting the sum skipping the first one, because the MAX button is on the first one, and we don't
@@ -445,7 +445,7 @@ Tx MainWindow::createTxFromSendPage() {
 
     // For each addr/amt in the sendTo tab
     int totalItems = ui->sendToWidgets->children().size() - 2;   // The last one is a spacer, so ignore that        
-    CAmount totalAmt = CAmount::fromqint64(0);
+    CAmount totalAmt;
     for (int i=0; i < totalItems; i++) {
         QString addr = ui->sendToWidgets->findChild<QLineEdit*>(QString("Address") % QString::number(i+1))->text().trimmed();
         // Remove label if it exists
@@ -538,7 +538,7 @@ bool MainWindow::confirmTx(Tx tx, RecurringPaymentInfo* rpi) {
     
     // For each addr/amt/memo, construct the JSON and also build the confirm dialog box    
     int row = 0;
-    CAmount totalSpending = CAmount::fromqint64(0);
+    CAmount totalSpending;
 
     for (int i=0; i < tx.toAddrs.size(); i++) {
         auto toAddr = tx.toAddrs[i];

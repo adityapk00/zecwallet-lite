@@ -105,7 +105,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         case Column::Confirmations: return QString::number(dat.confirmations);
         case Column::Amount: {
             // Sum up all the amounts
-            CAmount total = CAmount::fromqint64(0);
+            CAmount total;
             for (int i=0; i < dat.items.length(); i++) {
                 total = total + dat.items[i].amount;
             }
@@ -141,7 +141,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         case Column::Confirmations: return QString("%1 Network Confirmations").arg(QString::number(dat.confirmations));
         case Column::Amount: {
             // Sum up all the amounts
-            CAmount total = CAmount::fromqint64(0);
+            CAmount total;
             for (int i=0; i < dat.items.length(); i++) {
                 total = total + dat.items[i].amount;
             }
@@ -237,7 +237,7 @@ QString TxTableModel::getType(int row) const {
 QString TxTableModel::getAmt(int row) const {
     auto dat = modeldata->at(row);
     
-    CAmount total = CAmount::fromqint64(0);
+    CAmount total;
     for (int i=0; i < dat.items.length(); i++) {
         total = total + dat.items[i].amount;
     }
