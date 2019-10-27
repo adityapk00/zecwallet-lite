@@ -334,7 +334,7 @@ void Controller::refreshTransactions() {
 
         for (auto& it : reply.get<json::array_t>()) {  
             QString address;
-            qint64 total_amount;
+            qint64 total_amount = 0;
             QList<TransactionItemDetail> items;
 
             // First, check if there's outgoing metadata

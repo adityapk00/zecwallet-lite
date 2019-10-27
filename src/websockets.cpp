@@ -658,7 +658,7 @@ void AppDataServer::processSendTx(QJsonObject sendTx, MainWindow* mainwindow, st
     tx.fee = Settings::getMinerFee();
 
     // Find a from address that has at least the sending amout
-    double amt = sendTx["amount"].toString().toDouble();
+    qint64 amt = Settings::getAmountFromUserDecimalStr(sendTx["amount"].toString());
     auto allBalances = mainwindow->getRPC()->getModel()->getAllBalances();
     QList<QPair<QString, double>> bals;
     for (auto i : allBalances.keys()) {

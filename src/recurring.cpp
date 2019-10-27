@@ -460,7 +460,7 @@ void Recurring::processMultiplePending(RecurringPaymentInfo rpi, MainWindow* mai
 
 void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo rpi, QList<int> paymentNumbers) {
     // Amount is in USD or ZEC?
-    auto amt = rpi.amt;
+    qint64 amt = Settings::getAmountFromUserDecimalStr(QString::number(rpi.amt, 'f', 8));
     if (rpi.currency == "USD") {
         // If there is no price, then fail the payment
         if (Settings::getInstance()->getZECPrice() == 0) {
