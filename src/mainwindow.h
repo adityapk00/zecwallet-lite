@@ -17,7 +17,7 @@ using json = nlohmann::json;
 // Struct used to hold destination info when sending a Tx. 
 struct ToFields {
     QString addr;
-    qint64  amount;
+    CAmount amount;
     QString memo;
 };
 
@@ -25,7 +25,7 @@ struct ToFields {
 struct Tx {
     QString         fromAddr;
     QList<ToFields> toAddrs;
-    qint64          fee;
+    CAmount         fee;
 };
 
 namespace Ui {

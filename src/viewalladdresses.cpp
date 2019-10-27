@@ -1,4 +1,5 @@
 #include "viewalladdresses.h"
+#include "camount.h"
 #include "settings.h"
 
 ViewAllAddressesModel::ViewAllAddressesModel(QTableView *parent, QList<QString> taddrs, Controller* rpc)
@@ -22,7 +23,7 @@ QVariant ViewAllAddressesModel::data(const QModelIndex &index, int role) const {
     if (role == Qt::DisplayRole) {
         switch(index.column()) {
             case 0: return address;
-            case 1: return rpc->getModel()->getAllBalances().value(address, 0.0);
+            case 1: return rpc->getModel()->getAllBalances().value(address, CAmount::fromqint64(0)).toDecimalString();
         }
     }
     return QVariant();

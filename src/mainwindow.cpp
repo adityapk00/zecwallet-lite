@@ -438,7 +438,7 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
 
     ui->Address1->setText(paymentInfo.addr);
     ui->Address1->setCursorPosition(0);
-    ui->Amount1->setText(Settings::getDecimalString(paymentInfo.amt.toDouble()));
+    ui->Amount1->setText(paymentInfo.amt);
     ui->MemoTxt1->setText(paymentInfo.memo);
 
     // And switch to the send tab.
@@ -982,7 +982,7 @@ void MainWindow::setupReceiveTab() {
         }
         
         ui->rcvLabel->setText(label);
-        ui->rcvBal->setText(Settings::getZECUSDDisplayFormat(rpc->getModel()->getAllBalances().value(addr)));
+        ui->rcvBal->setText(rpc->getModel()->getAllBalances().value(addr).toDecimalZECUSDString());
         ui->txtReceive->setPlainText(addr);       
         ui->qrcodeDisplay->setQrcodeString(addr);
         if (rpc->getModel()->getUsedAddresses().value(addr, false)) {
@@ -1073,7 +1073,7 @@ void MainWindow::updateTAddrCombo(bool checked) {
             // If the address is in the address book, add it. 
             if (labels.contains(taddr) && !addrs.contains(taddr)) {
                 addrs.insert(taddr);
-                ui->listReceiveAddresses->addItem(taddr, 0);
+                ui->listReceiveAddresses->addItem(taddr, CAmount::fromqint64(0));
             }
         });
 
@@ -1084,7 +1084,7 @@ void MainWindow::updateTAddrCombo(bool checked) {
             if (!addrs.contains(addr))  {
                 addrs.insert(addr);
                 // Balance is zero since it has not been previously added
-                ui->listReceiveAddresses->addItem(addr, 0);
+                ui->listReceiveAddresses->addItem(addr, CAmount::fromqint64(0));
             }
         }
 
@@ -1101,7 +1101,7 @@ void MainWindow::updateTAddrCombo(bool checked) {
         // 5. Add a last, disabled item if there are remaining items
         if (allTaddrs.size() > addrs.size()) {
             auto num = QString::number(allTaddrs.size() - addrs.size());
-            ui->listReceiveAddresses->addItem("-- " + num + " more --", 0);
+            ui->listReceiveAddresses->addItem("-- " + num + " more --", CAmount::fromqint64(0));
 
             QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->listReceiveAddresses->model());
             QStandardItem* item =  model->findItems("--", Qt::MatchStartsWith)[0];

@@ -658,9 +658,9 @@ void AppDataServer::processSendTx(QJsonObject sendTx, MainWindow* mainwindow, st
     tx.fee = Settings::getMinerFee();
 
     // Find a from address that has at least the sending amout
-    qint64 amt = Settings::getAmountFromUserDecimalStr(sendTx["amount"].toString());
+    CAmount amt = CAmount::fromDecimalString(sendTx["amount"].toString());
     auto allBalances = mainwindow->getRPC()->getModel()->getAllBalances();
-    QList<QPair<QString, double>> bals;
+    QList<QPair<QString, CAmount>> bals;
     for (auto i : allBalances.keys()) {
         // Filter out sprout addresses
         if (Settings::getInstance()->isSproutAddress(i))
@@ -669,7 +669,7 @@ void AppDataServer::processSendTx(QJsonObject sendTx, MainWindow* mainwindow, st
         if (allBalances.value(i) < amt)
             continue;
 
-        bals.append(QPair<QString, double>(i, allBalances.value(i)));
+        bals.append(QPair<QString, CAmount>(i, allBalances.value(i)));
     }
 
     if (bals.isEmpty()) {
@@ -677,7 +677,7 @@ void AppDataServer::processSendTx(QJsonObject sendTx, MainWindow* mainwindow, st
         return;
     }
 
-    std::sort(bals.begin(), bals.end(), [=](const QPair<QString, double>a, const QPair<QString, double> b) -> bool {
+    std::sort(bals.begin(), bals.end(), [=](const QPair<QString, CAmount>a, const QPair<QString, CAmount> b) -> bool {
         // Sort z addresses first
         return a.first > b.first;
     });
@@ -736,8 +736,8 @@ void AppDataServer::processGetInfo(QJsonObject jobj, MainWindow* mainWindow, std
     }
 
     // Max spendable safely from a z address and from any address
-    double maxZSpendable = 0;
-    double maxSpendable = 0;
+    CAmount maxZSpendable = CAmount::fromqint64(0);
+    CAmount maxSpendable = CAmount::fromqint64(0);
     for (auto a : mainWindow->getRPC()->getModel()->getAllBalances().keys()) {
         if (Settings::getInstance()->isSaplingAddress(a)) {
             if (mainWindow->getRPC()->getModel()->getAllBalances().value(a) > maxZSpendable) {
@@ -751,14 +751,14 @@ void AppDataServer::processGetInfo(QJsonObject jobj, MainWindow* mainWindow, std
 
     setConnectedName(connectedName);
 
-    auto r = QJsonDocument(QJsonObject{
+    auto r = QJsonDocument(QJsonObject {
         {"version", 1.0},
         {"command", "getInfo"},
         {"saplingAddress", mainWindow->getRPC()->getDefaultSaplingAddress()},
         {"tAddress", mainWindow->getRPC()->getDefaultTAddress()},
-        {"balance", AppDataModel::getInstance()->getTotalBalance()},
-        {"maxspendable", maxSpendable},
-        {"maxzspendable", maxZSpendable},
+        {"balance", AppDataModel::getInstance()->getTotalBalance().toDecimalDouble()},
+        {"maxspendable", maxSpendable.toDecimalDouble()},
+        {"maxzspendable", maxZSpendable.toDecimalDouble()},
         {"tokenName", Settings::getTokenName()},
         {"zecprice", Settings::getInstance()->getZECPrice()},
         {"serverversion", QString(APP_VERSION)}

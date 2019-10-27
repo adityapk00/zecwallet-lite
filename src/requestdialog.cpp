@@ -73,7 +73,8 @@ void RequestDialog::showPaymentConfirmation(MainWindow* main, QString paymentURI
     req.txtFrom->setText(payInfo.addr);
     req.txtMemo->setPlainText(payInfo.memo);
     req.txtAmount->setText(payInfo.amt);
-    req.txtAmountUSD->setText(Settings::getUSDFromZecAmount(req.txtAmount->text().toDouble()));
+    CAmount amount = CAmount::fromDecimalString(req.txtAmount->text());
+    req.txtAmountUSD->setText(amount.toDecimalUSDString());
 
     req.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Pay"));
 
@@ -112,9 +113,11 @@ void RequestDialog::showRequestZcash(MainWindow* main) {
     // Amount textbox
     req.txtAmount->setValidator(main->getAmountValidator());
     QObject::connect(req.txtAmount, &QLineEdit::textChanged, [=] (auto text) {
-        req.txtAmountUSD->setText(Settings::getUSDFromZecAmount(text.toDouble()));
+        CAmount amount = CAmount::fromDecimalString(text);
+        req.txtAmountUSD->setText(amount.toDecimalUSDString());
     });
-    req.txtAmountUSD->setText(Settings::getUSDFromZecAmount(req.txtAmount->text().toDouble()));
+    CAmount amount = CAmount::fromDecimalString(req.txtAmount->text());
+    req.txtAmountUSD->setText(amount.toDecimalUSDString());
 
     req.txtMemo->setAcceptButton(req.buttonBox->button(QDialogButtonBox::Ok));
     req.txtMemo->setLenDisplayLabel(req.lblMemoLen);
@@ -124,8 +127,9 @@ void RequestDialog::showRequestZcash(MainWindow* main) {
 
     if (d.exec() == QDialog::Accepted) {
         // Construct a zcash Payment URI with the data and pay it immediately.
+        CAmount amount = CAmount::fromDecimalString(req.txtAmount->text());
         QString memoURI = "zcash:" + req.cmbMyAddress->currentText()
-                    + "?amt=" + Settings::getDecimalString(req.txtAmount->text().toDouble())
+                    + "?amt=" + amount.toDecimalString()
                     + "&memo=" + QUrl::toPercentEncoding(req.txtMemo->toPlainText());
 
         QString sendURI = "zcash:" + AddressBook::addressFromAddressLabel(req.txtFrom->text()) 

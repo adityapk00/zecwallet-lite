@@ -3,6 +3,7 @@
 
 #include "precompiled.h"
 
+#include "camount.h"
 #include "mainwindow.h"
 #include "ui_mobileappconnector.h"
 
@@ -151,11 +152,11 @@ public:
         return instance;
     }
 
-    double getTBalance()     { return balTransparent;  }
-    double getZBalance()     { return balShielded; }
-    double getTotalBalance() { return balTotal; }
+    CAmount getTBalance()     { return balTransparent;  }
+    CAmount getZBalance()     { return balShielded; }
+    CAmount getTotalBalance() { return balTotal; }
 
-    void   setBalances(double transparent, double shielded) {
+    void    setBalances(CAmount transparent, CAmount shielded) {
         balTransparent = transparent;
         balShielded = shielded;
         balTotal = balTransparent + balShielded;
@@ -164,9 +165,9 @@ public:
 private:
     AppDataModel() = default;   // Private, for singleton
 
-    double balTransparent;
-    double balShielded;
-    double balTotal;
+    CAmount balTransparent;
+    CAmount balShielded;
+    CAmount balTotal;
 
     QString saplingAddress;
 

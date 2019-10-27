@@ -105,11 +105,11 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         case Column::Confirmations: return QString::number(dat.confirmations);
         case Column::Amount: {
             // Sum up all the amounts
-            qint64 total = 0;
+            CAmount total = CAmount::fromqint64(0);
             for (int i=0; i < dat.items.length(); i++) {
-                total += dat.items[i].amount;
+                total = total + dat.items[i].amount;
             }
-            return Settings::getZECDisplayFormat(total);
+            return total.toDecimalZECString();
         }
         }
     } 
@@ -141,11 +141,11 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         case Column::Confirmations: return QString("%1 Network Confirmations").arg(QString::number(dat.confirmations));
         case Column::Amount: {
             // Sum up all the amounts
-            qint64 total = 0;
+            CAmount total = CAmount::fromqint64(0);
             for (int i=0; i < dat.items.length(); i++) {
-                total += dat.items[i].amount;
+                total = total + dat.items[i].amount;
             }
-            return Settings::getInstance()->getUSDFromZecAmount(total);
+            return total.toDecimalUSDString();
         }    
         }
     }
@@ -237,9 +237,9 @@ QString TxTableModel::getType(int row) const {
 QString TxTableModel::getAmt(int row) const {
     auto dat = modeldata->at(row);
     
-    qint64 total = 0;
+    CAmount total = CAmount::fromqint64(0);
     for (int i=0; i < dat.items.length(); i++) {
-        total += dat.items[i].amount;
+        total = total + dat.items[i].amount;
     }
-    return Settings::getDecimalString(total);
+    return total.toDecimalString();
 }

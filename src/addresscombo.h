@@ -1,6 +1,7 @@
 #ifndef ADDRESSCOMBO_H
 #define ADDRESSCOMBO_H
 
+#include "camount.h"
 #include "precompiled.h"
 
 class AddressCombo : public QComboBox 
@@ -12,8 +13,8 @@ public:
     QString     itemText(int i);
     QString     currentText();
 
-    void        addItem(const QString& itemText, double bal);
-    void        insertItem(int index, const QString& text, double bal = 0.0);
+    void        addItem(const QString& itemText, CAmount bal);
+    void        insertItem(int index, const QString& text, CAmount bal = CAmount::fromqint64(0));
 
 public slots:
     void setCurrentText(const QString& itemText);

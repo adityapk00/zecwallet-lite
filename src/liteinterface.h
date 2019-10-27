@@ -3,6 +3,7 @@
 
 #include "precompiled.h"
 
+#include "camount.h"
 #include "connection.h"
 
 using json = nlohmann::json;
@@ -11,7 +12,7 @@ using json = nlohmann::json;
 // into a struct with address, amount, memo
 struct TransactionItemDetail {
     QString         address;
-    qint64          amount;
+    CAmount         amount;
     QString         memo;
 };
 

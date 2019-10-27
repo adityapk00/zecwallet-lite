@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "settings.h"
+#include "camount.h"
 
 Settings* Settings::instance = nullptr;
 
@@ -178,66 +179,6 @@ void Settings::openTxInExplorer(QString txid) {
 }
 
 
-
-QString Settings::getUSDFormat(double usdAmt) {
-    return "$" + QLocale(QLocale::English).toString(usdAmt, 'f', 2);
-}
-
-
-QString Settings::getUSDFromZecAmount(qint64 bal) {
-    return getUSDFormat(bal * Settings::getInstance()->getZECPrice());
-}
-
-QString Settings::getDecimalString(qint64 amt) {
-    if (amt < 0) {
-        return "-" + Settings::getDecimalString(-1 * amt);
-    }
-
-    // Zcash has 8 decimal places
-    int places = Settings::getNumberOfDecimalPlaces();
-    qint64 divider = QString("1" + QString("0").repeated(places)).toULongLong();
-
-    int wholePart = amt / divider;
-    int decimalPart = amt % divider;
-
-    QString r = QString::number(wholePart);
-    if (decimalPart > 0) {
-        QString decimalPartStr = QString::number(decimalPart);
-        QString leadingZeros = QString("0").repeated(places - decimalPartStr.length());
-
-        r = r + "." + leadingZeros + decimalPartStr;
-    }
-
-    return r;
-}
-
-qint64 Settings::getAmountFromUserDecimalStr(QString amt) {
-    int places = Settings::getNumberOfDecimalPlaces();
-    qint64 divider = QString("1" + QString("0").repeated(places)).toULongLong();
-
-    auto amtParts = amt.split(".");
-    qint64 r = amtParts[0].toULongLong() * divider;
-    if (amtParts.length() == 2) {
-        auto trailingZeros = QString("0").repeated(places - amtParts[1].length());
-        r += QString(amtParts[1] + trailingZeros).toULongLong();
-    }
-
-    return r;
-}
-
-QString Settings::getZECDisplayFormat(qint64 bal) {
-    // This is idiotic. Why doesn't QString have a way to do this?
-    return getDecimalString(bal) % " " % Settings::getTokenName();
-}
-
-QString Settings::getZECUSDDisplayFormat(qint64 bal) {
-    auto usdFormat = getUSDFromZecAmount(bal);
-    if (!usdFormat.isEmpty())
-        return getZECDisplayFormat(bal) % " (" % usdFormat % ")";
-    else
-        return getZECDisplayFormat(bal);
-}
-
 const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (right click to copy) txid:"));
 
 QString Settings::getTokenName() {
@@ -256,8 +197,8 @@ QString Settings::getDonationAddr() {
 
 }
 
-double Settings::getMinerFee() {
-    return 10000;
+CAmount Settings::getMinerFee() {
+    return CAmount::fromqint64(10000);
 }
 
 bool Settings::isValidSaplingPrivateKey(QString pk) {
@@ -282,7 +223,8 @@ bool Settings::isValidAddress(QString addr) {
 
 // Get a pretty string representation of this Payment URI
 QString Settings::paymentURIPretty(PaymentURI uri) {
-    return QString() + "Payment Request\n" + "Pay: " + uri.addr + "\nAmount: " + getZECDisplayFormat(uri.amt.toDouble()) 
+    CAmount amount = CAmount::fromDecimalString(uri.amt);
+    return QString() + "Payment Request\n" + "Pay: " + uri.addr + "\nAmount: " + amount.toDecimalZECString() 
         + "\nMemo:" + QUrl::fromPercentEncoding(uri.memo.toUtf8());
 }
 

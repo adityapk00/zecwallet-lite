@@ -24,16 +24,16 @@ void AddressCombo::setCurrentText(const QString& text) {
     }
 } 
 
-void AddressCombo::addItem(const QString& text, double bal) {
+void AddressCombo::addItem(const QString& text, CAmount bal) {
     QString txt = AddressBook::addLabelToAddress(text);
-    if (bal > 0)
-        txt = txt % "(" % Settings::getZECDisplayFormat(bal) % ")";
+    if (bal.toqint64() > 0)
+        txt = txt % "(" % bal.toDecimalZECString() % ")";
         
     QComboBox::addItem(txt);
 }
 
-void AddressCombo::insertItem(int index, const QString& text, double bal) {
+void AddressCombo::insertItem(int index, const QString& text, CAmount bal) {
     QString txt = AddressBook::addLabelToAddress(text) % 
-                    "(" % Settings::getZECDisplayFormat(bal) % ")";
+                    "(" % bal.toDecimalZECString() % ")";
     QComboBox::insertItem(index, txt);
 }

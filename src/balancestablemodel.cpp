@@ -1,6 +1,7 @@
 #include "balancestablemodel.h"
 #include "addressbook.h"
 #include "settings.h"
+#include "camount.h"
 
 
 BalancesTableModel::BalancesTableModel(QObject *parent)
@@ -8,7 +9,7 @@ BalancesTableModel::BalancesTableModel(QObject *parent)
 }
 
 void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QString> taddrs,
-    const QMap<QString, qint64> balances, const QList<UnspentOutput> outputs)
+    const QMap<QString, CAmount> balances, const QList<UnspentOutput> outputs)
 {    
     loading = false;
 
@@ -22,7 +23,7 @@ void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QSt
 
     // Process the address balances into a list
     delete modeldata;
-    modeldata = new QList<std::tuple<QString, qint64>>();
+    modeldata = new QList<std::tuple<QString, CAmount>>();
     std::for_each(balances.keyBegin(), balances.keyEnd(), [=] (auto keyIt) {
         modeldata->push_back(std::make_tuple(keyIt, balances.value(keyIt)));
     });
@@ -30,13 +31,13 @@ void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QSt
     // Add all addresses that have no balances as well
     for (auto zaddr: zaddrs) {
         if (!balances.contains(zaddr)) {
-            modeldata->push_back(std::make_tuple(zaddr, 0));
+            modeldata->push_back(std::make_tuple(zaddr, CAmount::fromqint64(0)));
         }
     }
 
     for (auto taddr: taddrs) {
         if (!balances.contains(taddr)) {
-            modeldata->push_back(std::make_tuple(taddr, 0));
+            modeldata->push_back(std::make_tuple(taddr, CAmount::fromqint64(0)));
         }
     }
 
@@ -101,14 +102,14 @@ QVariant BalancesTableModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) {
         switch (index.column()) {
         case 0: return AddressBook::addLabelToAddress(std::get<0>(modeldata->at(index.row())));
-        case 1: return Settings::getZECDisplayFormat(std::get<1>(modeldata->at(index.row())));
+        case 1: return std::get<1>(modeldata->at(index.row())).toDecimalZECString();
         }
     }
 
     if(role == Qt::ToolTipRole) {
         switch (index.column()) {
         case 0: return AddressBook::addLabelToAddress(std::get<0>(modeldata->at(index.row())));
-        case 1: return Settings::getUSDFromZecAmount(std::get<1>(modeldata->at(index.row())));
+        case 1: return std::get<1>(modeldata->at(index.row())).toDecimalZECString();
         }
     }
     

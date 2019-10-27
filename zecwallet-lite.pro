@@ -60,7 +60,8 @@ SOURCES += \
     src/viewalladdresses.cpp \
     src/datamodel.cpp \
     src/controller.cpp \
-    src/liteinterface.cpp 
+    src/liteinterface.cpp \
+    src/camount.cpp
 
 HEADERS += \
     src/firsttimewizard.h \
@@ -88,6 +89,7 @@ HEADERS += \
     src/datamodel.h \
     src/controller.h \
     src/liteinterface.h \
+    src/camount.h \
     lib/zecwalletlitelib.h 
 
 FORMS += \
@@ -110,7 +112,7 @@ FORMS += \
     src/recurringdialog.ui \
     src/newrecurring.ui \
     src/requestdialog.ui \
-    src/recurringmultiple.ui
+    src/recurringmultiple.ui 
 
 
 TRANSLATIONS = res/zec_qt_wallet_es.ts \

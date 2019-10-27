@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include "precompiled.h"
+#include "camount.h"
 
 struct Config {
     QString server;
@@ -80,20 +81,11 @@ public:
     static bool    isZAddress(QString addr);
     static bool    isTAddress(QString addr);
 
-    static QString getDecimalString(qint64 zecamt);
-    static QString getUSDFormat(double usdAmt);
-
-    static QString getUSDFromZecAmount(qint64 zecamt);
-    static QString getZECDisplayFormat(qint64 zecamt);
-    static QString getZECUSDDisplayFormat(qint64 bal);
-
-    static qint64  getAmountFromUserDecimalStr(QString amt);
-
     static QString getTokenName();
     static QString getDonationAddr();
 
     static QString getDefaultServer();
-    static double  getMinerFee();
+    static CAmount getMinerFee();
 
     static int     getMaxMobileAppTxns() { return 30; }
 
