@@ -19,10 +19,10 @@ release: target/release/zecwalletlite.$(EXT)
 debug: target/debug/zecwalletlite.$(EXT) 
 
 target/release/zecwalletlite.$(EXT): src/lib.rs Cargo.toml
-	CFLAGS=$(CFLAGS) cargo build --lib --release
+	LIBS="" CFLAGS=$(CFLAGS) cargo build --lib --release
 
 target/debug/zecwalletlite.$(EXT): src/lib.rs Cargo.toml
-	CFLAGS=$(CFLAGS) cargo build --lib
+	LIBS="" CFLAGS=$(CFLAGS) cargo build --lib
 
 clean:
 	rm -rf target
