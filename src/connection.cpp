@@ -65,6 +65,7 @@ void ConnectionLoader::doAutoConnect() {
     }    
     
     auto connection = makeConnection(config);
+    auto me = this;
 
     // After the lib is initialized, try to do get info
     connection->doRPC("info", "", [=](auto) {
@@ -95,7 +96,7 @@ void ConnectionLoader::doAutoConnect() {
                     if (isSyncing != nullptr && reply.find("synced_blocks") != reply.end()) {
                         qint64 synced = reply["synced_blocks"].get<json::number_unsigned_t>();
                         qint64 total = reply["total_blocks"].get<json::number_unsigned_t>();
-                        showInformation("Synced " + QString::number(synced) + " / " + QString::number(total));
+                        me->showInformation("Synced " + QString::number(synced) + " / " + QString::number(total));
                     }
                 },
                 [=](QString err) {

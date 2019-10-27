@@ -1,6 +1,7 @@
 #ifndef CAMOUNT_H
 #define CAMOUNT_H
 
+#include "precompiled.h"
 
 class CAmount {
 private:
