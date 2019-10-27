@@ -137,7 +137,7 @@ void Controller::refresh(bool force) {
     getInfoThenRefresh(force);
 }
 
-void Controller::getInfoThenRefresh(bool doUpdate) {
+void Controller::getInfoThenRefresh(bool force) {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
@@ -158,7 +158,7 @@ void Controller::getInfoThenRefresh(bool doUpdate) {
             main->disableRecurring();
 
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
-        bool doUpdate = doUpdate || (model->getLatestBlock() != curBlock);
+        bool doUpdate = force || (model->getLatestBlock() != curBlock);
         model->setLatestBlock(curBlock);
 
         qDebug() << "Refreshing. Full update: " << doUpdate;
