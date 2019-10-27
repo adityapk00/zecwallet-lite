@@ -137,15 +137,13 @@ void Controller::refresh(bool force) {
     getInfoThenRefresh(force);
 }
 
-void Controller::getInfoThenRefresh(bool force) {
+void Controller::getInfoThenRefresh(bool doUpdate) {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
     static bool prevCallSucceeded = false;
 
     zrpc->fetchInfo([=] (const json& reply) {   
-        qDebug() << "Info updated";
-
         prevCallSucceeded = true;
 
         // Testnet?
@@ -159,9 +157,11 @@ void Controller::getInfoThenRefresh(bool force) {
         if (!Settings::getInstance()->isTestnet())
             main->disableRecurring();
 
-        static int    lastBlock = 0;
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
+        bool doUpdate = doUpdate || (model->getLatestBlock() != curBlock);
         model->setLatestBlock(curBlock);
+
+        qDebug() << "Refreshing. Full update: " << doUpdate;
 
         // Connected, so display checkmark.
         auto tooltip = Settings::getInstance()->getSettings().server + "\n" + QString::fromStdString(reply.dump());
@@ -178,10 +178,8 @@ void Controller::getInfoThenRefresh(bool force) {
         // See if recurring payments needs anything
         Recurring::getInstance()->processPending(main);
 
-        if ( force || (curBlock != lastBlock) ) {
+        if ( doUpdate ) {
             // Something changed, so refresh everything.
-            lastBlock = curBlock;
-
             refreshBalances();        
             refreshAddresses();     // This calls refreshZSentTransactions() and refreshReceivedZTrans()
             refreshTransactions();
@@ -340,6 +338,10 @@ void Controller::refreshTransactions() {
             CAmount total_amount;
             QList<TransactionItemDetail> items;
 
+            auto confirmations = model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1;
+            auto txid = QString::fromStdString(it["txid"]);
+            auto datetime = it["datetime"].get<json::number_integer_t>();
+
             // First, check if there's outgoing metadata
             if (!it["outgoing_metadata"].is_null()) {
             
@@ -365,12 +367,7 @@ void Controller::refreshTransactions() {
                 }
 
                 txdata.push_back(TransactionItem{
-                   "Sent",
-                   it["datetime"].get<json::number_integer_t>(),
-                   address,
-                   QString::fromStdString(it["txid"]),
-                   model->getLatestBlock() - it["block_height"].get<json::number_integer_t>(),
-                   items
+                   "Sent", datetime, address, txid,confirmations, items
                 });
             } else {
                 // Incoming Transaction
@@ -389,12 +386,7 @@ void Controller::refreshTransactions() {
                 });
 
                 TransactionItem tx{
-                    "Receive",
-                    it["datetime"].get<json::number_integer_t>(),
-                    address,
-                    QString::fromStdString(it["txid"]),
-                    model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1,
-                    items
+                    "Receive", datetime, address, txid,confirmations, items
                 };
 
                 txdata.push_back(tx);
