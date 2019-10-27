@@ -47,7 +47,6 @@ public:
     QRegExpValidator*   getAmountValidator() { return amtValidator; }
 
     QString doSendTxValidations(Tx tx);
-    void setDefaultPayFrom();
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -59,7 +58,6 @@ public:
 
     void updateLabels();
     void updateTAddrCombo(bool checked);
-    void updateFromCombo();
 
     // Disable recurring on mainnet
     void disableRecurring();
@@ -100,7 +98,6 @@ private:
 
     void cancelButton();
     void sendButton();
-    void inputComboTextChanged(int index);
     void addAddressSection();
     void maxAmountChecked(int checked);
 

@@ -43,6 +43,10 @@ public:
         return this->amount < other.amount;
     }
 
+    bool operator< (const qint64& other) const {
+        return this->amount < other;
+    }
+
     bool operator> (const CAmount& other) const {
         return this->amount > other.amount;
     }

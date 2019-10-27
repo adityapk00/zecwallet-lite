@@ -33,7 +33,9 @@ public:
     const QList<UnspentOutput>       getUTXOs()             { QReadLocker locker(lock); return *utxos; }
     const QMap<QString, CAmount>     getAllBalances()       { QReadLocker locker(lock); return *balances; }
     const QMap<QString, bool>        getUsedAddresses()     { QReadLocker locker(lock); return *usedAddresses; }
-
+    
+    CAmount                    getAvailableBalance()          { return availableBalance; }
+    void                       setAvailableBalance(CAmount a) { this->availableBalance = a; }
 
     DataModel();
     ~DataModel();
@@ -45,6 +47,8 @@ private:
     QMap<QString, bool>*    usedAddresses   = nullptr;
     QList<QString>*         zaddresses      = nullptr;
     QList<QString>*         taddresses      = nullptr;
+
+    CAmount                 availableBalance;
 
     QReadWriteLock* lock;
 

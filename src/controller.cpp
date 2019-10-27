@@ -127,9 +127,6 @@ void Controller::noConnection() {
     ui->balSheilded->setToolTip("");
     ui->balTransparent->setToolTip("");
     ui->balTotal->setToolTip("");
-
-    // Clear send tab from address
-    ui->inputsCombo->clear();
 }
 
 /// This will refresh all the balance data from zcashd
@@ -243,9 +240,6 @@ void Controller::updateUI(bool anyUnconfirmed) {
 
     // Update balances model data, which will update the table too
     balancesTableModel->setNewData(model->getAllZAddresses(), model->getAllTAddresses(), model->getAllBalances(), model->getUTXOs());
-
-    // Update from address
-    main->updateFromCombo();
 };
 
 // Function to process reply of the listunspent and z_listunspent API calls, used below.
@@ -280,19 +274,33 @@ void Controller::refreshBalances() {
 
     // 1. Get the Balances
     zrpc->fetchBalance([=] (json reply) {    
-        CAmount balT      = CAmount::fromqint64(reply["tbalance"].get<json::number_unsigned_t>());
-        CAmount balZ      = CAmount::fromqint64(reply["zbalance"].get<json::number_unsigned_t>());
-        CAmount balTotal  = balT + balZ;
+        CAmount balT        = CAmount::fromqint64(reply["tbalance"].get<json::number_unsigned_t>());
+        CAmount balZ        = CAmount::fromqint64(reply["zbalance"].get<json::number_unsigned_t>());
+        CAmount balVerified = CAmount::fromqint64(reply["verified_zbalance"].get<json::number_unsigned_t>());
+        
+        CAmount balTotal     = balT + balZ;
+        CAmount balAvailable = balT + balVerified;
 
+        // This is for the websockets
         AppDataModel::getInstance()->setBalances(balT, balZ);
+        
+        // This is for the datamodel
+        model->setAvailableBalance(balAvailable);
 
+        // Balances table
         ui->balSheilded   ->setText(balZ.toDecimalZECString());
+        ui->balVerified   ->setText(balVerified.toDecimalZECString());
         ui->balTransparent->setText(balT.toDecimalZECString());
         ui->balTotal      ->setText(balTotal.toDecimalZECString());
 
-        ui->balSheilded   ->setToolTip(balZ.toDecimalZECUSDString());
-        ui->balTransparent->setToolTip(balT.toDecimalZECUSDString());
-        ui->balTotal      ->setToolTip(balTotal.toDecimalZECUSDString());
+        ui->balSheilded   ->setToolTip(balZ.toDecimalUSDString());
+        ui->balVerified   ->setToolTip(balVerified.toDecimalUSDString());
+        ui->balTransparent->setToolTip(balT.toDecimalUSDString());
+        ui->balTotal      ->setToolTip(balTotal.toDecimalUSDString());
+
+        // Send tab
+        ui->txtAvailableZEC->setText(balAvailable.toDecimalZECString());
+        ui->txtAvailableUSD->setText(balAvailable.toDecimalUSDString());
     });
 
     // 2. Get the UTXOs

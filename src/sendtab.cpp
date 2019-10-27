@@ -22,10 +22,6 @@ void MainWindow::setupSendTab() {
     // Cancel Button
     QObject::connect(ui->cancelSendButton, &QPushButton::clicked, this, &MainWindow::cancelButton);
 
-    // Input Combobox current text changed
-    QObject::connect(ui->inputsCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this, &MainWindow::inputComboTextChanged);
-
     // Hook up add address button click
     QObject::connect(ui->addAddressButton, &QPushButton::clicked, this, &MainWindow::addAddressSection);
 
@@ -166,18 +162,6 @@ void MainWindow::updateLabelsAutoComplete() {
     for (auto target: ui->sendToWidgets->findChildren<QLineEdit *>(re)) {
         target->setCompleter(labelCompleter);
     }
-}
-
-void MainWindow::setDefaultPayFrom() {
-    
-};
-
-void MainWindow::updateFromCombo() {
-    // delete
-}
-
-void MainWindow::inputComboTextChanged(int) {
-    // delete
 }
 
     
@@ -336,12 +320,9 @@ void MainWindow::memoButtonClicked(int number, bool includeReplyTo) {
     memoDialog.memoTxt->setAcceptButton(memoDialog.buttonBox->button(QDialogButtonBox::Ok));
 
     auto fnAddReplyTo = [=, &dialog]() {
-        QString replyTo = ui->inputsCombo->currentText();
-        if (!Settings::isZAddress(replyTo)) {
-            replyTo = rpc->getDefaultSaplingAddress();
-            if (replyTo.isEmpty())
-                return;
-        }
+        auto replyTo = rpc->getDefaultSaplingAddress();
+        if (replyTo.isEmpty())
+            return;
 
         memoDialog.memoTxt->includeReplyTo(replyTo);
 
@@ -424,10 +405,8 @@ void MainWindow::maxAmountChecked(int checked) {
 
         sumAllAmounts = sumAllAmounts + Settings::getMinerFee();
         
-        auto addr = ui->inputsCombo->currentText();
-
-        auto maxamount  = rpc->getModel()->getAllBalances().value(addr) - sumAllAmounts;
-        maxamount       = (maxamount.toqint64() < 0) ? CAmount::fromqint64(0) : maxamount;
+        auto maxamount  = rpc->getModel()->getAvailableBalance() - sumAllAmounts;
+        maxamount       = (maxamount < 0) ? CAmount::fromqint64(0): maxamount;
             
         ui->Amount1->setText(maxamount.toDecimalString());
     } else if (checked == Qt::Unchecked) {
@@ -439,9 +418,6 @@ void MainWindow::maxAmountChecked(int checked) {
 // Create a Tx from the current state of the send page. 
 Tx MainWindow::createTxFromSendPage() {
     Tx tx;
-
-    // Gather the from / to addresses 
-    tx.fromAddr = ui->inputsCombo->currentText();
 
     // For each addr/amt in the sendTo tab
     int totalItems = ui->sendToWidgets->children().size() - 2;   // The last one is a spacer, so ignore that        

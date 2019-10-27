@@ -430,10 +430,6 @@ void MainWindow::payZcashURI(QString uri, QString myAddr) {
     // Now, set the fields on the send tab
     clearSendForm();
 
-    if (!myAddr.isEmpty()) {
-        ui->inputsCombo->setCurrentText(myAddr);
-    }
-
     ui->Address1->setText(paymentInfo.addr);
     ui->Address1->setCursorPosition(0);
     ui->Amount1->setText(paymentInfo.amt);
@@ -631,40 +627,6 @@ void MainWindow::setupBalancesTab() {
     ui->lblSyncWarning->setVisible(false);
     ui->lblSyncWarningReceive->setVisible(false);
 
-    // Double click on balances table
-    auto fnDoSendFrom = [=](const QString& addr, const QString& to = QString(), bool sendMax = false) {
-        // Find the inputs combo
-        for (int i = 0; i < ui->inputsCombo->count(); i++) {
-            auto inputComboAddress = ui->inputsCombo->itemText(i);
-            if (inputComboAddress.startsWith(addr)) {
-                ui->inputsCombo->setCurrentIndex(i);
-                break;
-            }
-        }
-
-        // If there's a to address, add that as well
-        if (!to.isEmpty()) {
-            // Remember to clear any existing address fields, because we are creating a new transaction.
-            this->clearSendForm();
-            ui->Address1->setText(to);
-        }
-
-        // See if max button has to be checked
-        if (sendMax) {
-            ui->Max1->setChecked(true);
-        }
-
-        // And switch to the send tab.
-        ui->tabWidget->setCurrentIndex(1);
-    };
-
-    // Double click opens up memo if one exists
-    QObject::connect(ui->balancesTable, &QTableView::doubleClicked, [=](auto index) {
-        index = index.sibling(index.row(), 0);
-        auto addr = AddressBook::addressFromAddressLabel(ui->balancesTable->model()->data(index).toString());
-        
-        fnDoSendFrom(addr);
-    });
 
     // Setup context menu on balances tab
     ui->balancesTable->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -688,18 +650,8 @@ void MainWindow::setupBalancesTab() {
             this->exportKeys(addr);
         });
 
-        menu.addAction("Send from " % addr.left(40) % (addr.size() > 40 ? "..." : ""), [=]() {
-            fnDoSendFrom(addr);
-        });
 
         if (Settings::isTAddress(addr)) {
-            auto defaultSapling = rpc->getDefaultSaplingAddress();
-            if (!defaultSapling.isEmpty()) {
-                menu.addAction(tr("Shield balance to Sapling"), [=] () {
-                    fnDoSendFrom(addr, defaultSapling, true);
-                });
-            }
-
             menu.addAction(tr("View on block explorer"), [=] () {
                 Settings::openAddressInExplorer(addr);
             });
@@ -1117,9 +1069,6 @@ void MainWindow::updateLabels() {
     else {
         addZAddrsToComboList(ui->rdioZSAddr->isChecked())(true);
     }
-
-    // Update the Send Tab
-    updateFromCombo();
 
     // Update the autocomplete
     updateLabelsAutoComplete();
