@@ -14,11 +14,11 @@ void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QSt
 
     int currentRows = rowCount(QModelIndex());
     // Copy over the utxos for our use
-    delete utxos;
-    utxos = new QList<UnspentOutput>();
+    delete unspentOutputs;
+    unspentOutputs = new QList<UnspentOutput>();
 
     // This is a QList deep copy.
-    *utxos = outputs;
+    *unspentOutputs = outputs;
 
     // Process the address balances into a list
     delete modeldata;
@@ -50,7 +50,7 @@ void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QSt
 
 BalancesTableModel::~BalancesTableModel() {
     delete modeldata;
-    delete utxos;
+    delete unspentOutputs;
 }
 
 int BalancesTableModel::rowCount(const QModelIndex&) const
@@ -83,8 +83,9 @@ QVariant BalancesTableModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ForegroundRole) {
         // If any of the UTXOs for this address has zero confirmations, paint it in red
         const auto& addr = std::get<0>(modeldata->at(index.row()));
-        for (auto utxo : *utxos) {
-            if (utxo.address == addr && !utxo.spendable) {
+        for (auto unconfirmedOutput : *unspentOutputs) {
+            if (unconfirmedOutput.address == addr && 
+                    (!unconfirmedOutput.spendable || unconfirmedOutput.pending)) {
                 QBrush b;
                 b.setColor(Qt::red);
                 return b;

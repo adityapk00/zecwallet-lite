@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>968</width>
-    <height>616</height>
+    <width>1274</width>
+    <height>779</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -149,25 +149,12 @@
                 </layout>
                </item>
                <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
                 <widget class="QLabel" name="lblSyncWarning">
                  <property name="styleSheet">
                   <string notr="true">color:red;</string>
                  </property>
                  <property name="text">
-                  <string>Your node is still syncing, balances may not be updated</string>
+                  <string>Your node is still syncing, balances may not be updated.</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -186,9 +173,25 @@
                   <string notr="true">color: red;</string>
                  </property>
                  <property name="text">
-                  <string>Some transactions are not yet confirmed</string>
+                  <string>Some transactions are not yet confirmed. Balances may change.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
@@ -359,8 +362,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>920</width>
-                <height>301</height>
+                <width>1162</width>
+                <height>344</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="sendToLayout">
@@ -1051,8 +1054,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>968</width>
-     <height>22</height>
+     <width>1274</width>
+     <height>39</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -78,7 +78,7 @@ private:
 
     void refreshTransactions();    
 
-    bool processUnspent     (const json& reply, QMap<QString, qint64>* newBalances, QList<UnspentOutput>* newUtxos);
+    void processUnspent     (const json& reply, QMap<QString, qint64>* newBalances, QList<UnspentOutput>* newUnspentOutputs);
     void updateUI           (bool anyUnconfirmed);
 
     void getInfoThenRefresh(bool force);
@@ -89,7 +89,7 @@ private:
     BalancesTableModel*         balancesTableModel          = nullptr;
 
     DataModel*                  model;
-    LiteInterface*               zrpc;
+    LiteInterface*              zrpc;
 
     QTimer*                     timer;
     QTimer*                     txTimer;

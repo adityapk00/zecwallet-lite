@@ -18,8 +18,8 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-    QList<std::tuple<QString, qint64>>*    modeldata   = nullptr;    
-    QList<UnspentOutput>*                  utxos       = nullptr;  
+    QList<std::tuple<QString, qint64>>*    modeldata        = nullptr;    
+    QList<UnspentOutput>*                  unspentOutputs   = nullptr;  
 
     bool loading = true;
 };

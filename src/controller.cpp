@@ -254,26 +254,30 @@ void Controller::updateUI(bool anyUnconfirmed) {
 };
 
 // Function to process reply of the listunspent and z_listunspent API calls, used below.
-bool Controller::processUnspent(const json& reply, QMap<QString, qint64>* balancesMap, QList<UnspentOutput>* newUtxos) {
-    bool anyUnconfirmed = false;
-
-    auto processFn = [=](const json& array) {
+void Controller::processUnspent(const json& reply, QMap<QString, qint64>* balancesMap, QList<UnspentOutput>* unspentOutputs) {
+    auto processFn = [=](const json& array) -> bool {        
         for (auto& it : array) {
             QString qsAddr  = QString::fromStdString(it["address"]);
             int block       = it["created_in_block"].get<json::number_unsigned_t>();
             QString txid    = QString::fromStdString(it["created_in_txid"]);
             QString amount  = Settings::getDecimalString(it["value"].get<json::number_unsigned_t>());
 
-            newUtxos->push_back(UnspentOutput{ qsAddr, txid, amount, block, true });
+            bool spendable = it["unconfirmed_spent"].is_null() && it["spent"].is_null();    // TODO: Wait for 4 confirmations
+            bool pending   = !it["unconfirmed_spent"].is_null();
 
-            (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] + it["value"].get<json::number_unsigned_t>();
-        }    
+            qDebug() << "For address" << qsAddr << "spendable, pending" << spendable << ":" << pending;
+
+            unspentOutputs->push_back(UnspentOutput{ qsAddr, txid, amount, block, spendable, pending });
+            if (spendable) {
+                (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] + it["value"].get<json::number_unsigned_t>();
+            }
+        }
     };
 
     processFn(reply["unspent_notes"].get<json::array_t>());
     processFn(reply["utxos"].get<json::array_t>());
-
-    return anyUnconfirmed;
+    processFn(reply["pending_notes"].get<json::array_t>());
+    processFn(reply["pending_utxos"].get<json::array_t>());
 };
 
 void Controller::refreshBalances() {    
@@ -300,16 +304,22 @@ void Controller::refreshBalances() {
 
     // 2. Get the UTXOs
     // First, create a new UTXO list. It will be replacing the existing list when everything is processed.
-    auto newUtxos = new QList<UnspentOutput>();
+    auto newUnspentOutputs = new QList<UnspentOutput>();
     auto newBalances = new QMap<QString, qint64>();
 
     // Call the Transparent and Z unspent APIs serially and then, once they're done, update the UI
     zrpc->fetchUnspent([=] (json reply) {
-        auto anyUnconfirmed = processUnspent(reply, newBalances, newUtxos);
+        processUnspent(reply, newBalances, newUnspentOutputs);
 
         // Swap out the balances and UTXOs
         model->replaceBalances(newBalances);
-        model->replaceUTXOs(newUtxos);
+        model->replaceUTXOs(newUnspentOutputs);
+
+        // Find if any output is not spendable or is pending
+        bool anyUnconfirmed = std::find_if(newUnspentOutputs->constBegin(), newUnspentOutputs->constEnd(), 
+                                    [=](const UnspentOutput& u) -> bool { 
+                                        return !u.spendable ||  u.pending; 
+                              }) != newUnspentOutputs->constEnd();
 
         updateUI(anyUnconfirmed);
 

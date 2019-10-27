@@ -10,6 +10,7 @@ struct UnspentOutput {
     QString amount;    
     int     blockCreated;
     bool    spendable;
+    bool    pending;
 };
 
 
