@@ -15,6 +15,9 @@ public:
     static CAmount fromqint64(qint64 a) {
         return CAmount(a);
     }
+    static CAmount fromDouble(double d) {
+        return CAmount::fromDecimalString(QString::number(d, 'f', 8));
+    }
 
     CAmount() : amount(0) {};
     CAmount(const CAmount&) = default;

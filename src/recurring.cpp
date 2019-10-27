@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 #include "controller.h"
 #include "settings.h"
+#include "camount.h"
 #include "ui_newrecurring.h"
 #include "ui_recurringdialog.h"
 #include "ui_recurringpayments.h"
@@ -69,7 +70,7 @@ QJsonObject RecurringPaymentInfo::toJson() {
         {"desc", desc},
         {"from", fromAddr},
         {"to", toAddr},
-        {"amt", Settings::getDecimalString(amt)},
+        {"amt", amt},
         {"memo", memo},
         {"currency", currency},
         {"schedule", (int)schedule},
@@ -81,7 +82,8 @@ QJsonObject RecurringPaymentInfo::toJson() {
 }
 
 QString RecurringPaymentInfo::getAmountPretty() const {
-    return currency == "USD" ? Settings::getUSDFormat(amt) : Settings::getZECDisplayFormat(amt);
+    CAmount amount = CAmount::fromDouble(amt);
+    return currency == "USD" ? amount.toDecimalUSDString() : amount.toDecimalZECString();
 }
 
 QString RecurringPaymentInfo::getScheduleDescription() const {
@@ -135,7 +137,7 @@ RecurringPaymentInfo* Recurring::getNewRecurringFromTx(QWidget* parent, MainWind
         ui.lblTo->setText(tx.toAddrs[0].addr);
 
         // Default is USD
-        ui.lblAmt->setText(Settings::getUSDFromZecAmount(tx.toAddrs[0].amount));
+        ui.lblAmt->setText(tx.toAddrs[0].amount.toDecimalUSDString());
 
         ui.txtMemo->setPlainText(tx.toAddrs[0].memo);
         ui.txtMemo->setEnabled(false);
@@ -147,10 +149,10 @@ RecurringPaymentInfo* Recurring::getNewRecurringFromTx(QWidget* parent, MainWind
             return;
 
         if (c == "USD") {
-            ui.lblAmt->setText(Settings::getUSDFromZecAmount(tx.toAddrs[0].amount));
+            ui.lblAmt->setText(tx.toAddrs[0].amount.toDecimalUSDString());
         }
         else {
-            ui.lblAmt->setText(Settings::getDecimalString(tx.toAddrs[0].amount));
+            ui.lblAmt->setText(tx.toAddrs[0].amount.toDecimalString());
         }
     });
 
@@ -203,11 +205,11 @@ void Recurring::updateInfoWithTx(RecurringPaymentInfo* r, Tx tx) {
     r->fromAddr = tx.fromAddr;
     if (r->currency.isEmpty() || r->currency == "USD") {
         r->currency = "USD";
-        r->amt = tx.toAddrs[0].amount * Settings::getInstance()->getZECPrice();
+        r->amt = tx.toAddrs[0].amount.toqint64() * Settings::getInstance()->getZECPrice();
     }
     else {
         r->currency = Settings::getTokenName();
-        r->amt = tx.toAddrs[0].amount;
+        r->amt = tx.toAddrs[0].amount.toqint64();
     }
 
     // Make sure that the number of payments is properly listed in the array
@@ -460,7 +462,7 @@ void Recurring::processMultiplePending(RecurringPaymentInfo rpi, MainWindow* mai
 
 void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo rpi, QList<int> paymentNumbers) {
     // Amount is in USD or ZEC?
-    qint64 amt = Settings::getAmountFromUserDecimalStr(QString::number(rpi.amt, 'f', 8));
+    double amount = rpi.amt;
     if (rpi.currency == "USD") {
         // If there is no price, then fail the payment
         if (Settings::getInstance()->getZECPrice() == 0) {
@@ -473,7 +475,7 @@ void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo r
         }
         
         // Translate it into ZEC
-        amt = rpi.amt / Settings::getInstance()->getZECPrice();
+        amount = rpi.amt / Settings::getInstance()->getZECPrice();
     }
 
     // Build a Tx
@@ -483,9 +485,9 @@ void Recurring::executeRecurringPayment(MainWindow* main, RecurringPaymentInfo r
     
     // If this is a multiple payment, we'll add up all the amounts
     if (paymentNumbers.size() > 1)
-        amt *= paymentNumbers.size();
+        amount *= paymentNumbers.size();
 
-    tx.toAddrs.append(ToFields { rpi.toAddr, amt, rpi.memo });
+    tx.toAddrs.append(ToFields { rpi.toAddr, CAmount::fromDouble(amount), rpi.memo });
 
     // To prevent some weird race conditions, we immediately mark the payment as paid.
     // If something goes wrong, we'll get the error callback below, and the status will be 
