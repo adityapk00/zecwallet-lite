@@ -1,7 +1,9 @@
 ifeq ($(shell uname),Darwin)
     EXT := dylib
+	CFLAGS := "-mmacosx-version-min=10.11"
 else
     EXT := a
+	CFLAGS := ""
 endif
 
 all: release
@@ -15,10 +17,10 @@ release: target/release/zecwalletlite.$(EXT)
 debug: target/debug/zecwalletlite.$(EXT) 
 
 target/release/zecwalletlite.$(EXT): src/lib.rs Cargo.toml
-	cargo build --lib --release
+	CFLAGS=$(CFLAGS) cargo build --lib --release
 
 target/debug/zecwalletlite.$(EXT): src/lib.rs Cargo.toml
-	cargo build --lib
+	CFLAGS=$(CFLAGS) cargo build --lib
 
 clean:
 	rm -rf target
