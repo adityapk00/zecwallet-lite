@@ -150,14 +150,14 @@ bool TxTableModel::exportToCsv(QString fileName) const {
         }
     }
 
-    if (role == Qt::DecorationRole && index.column() == 0) {
+    if (role == Qt::DecorationRole && index.column() == 0) {        
         bool hasMemo = false;
         for (int i=0; i < dat.items.length(); i++) {
             if (!dat.items[i].memo.isEmpty()) {
                 hasMemo = true;
             }
         }
-
+        
         // If the memo is a Payment URI, then show a payment request icon
         if (dat.items.length() == 1 && dat.items[0].memo.startsWith("zcash:")) {
             QIcon icon(":/icons/res/paymentreq.gif");

@@ -377,10 +377,15 @@ void Controller::refreshTransactions() {
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
                 model->markAddressUsed(address);
 
+                QString memo;
+                if (!it["memo"].is_null()) {
+                    memo = QString::fromStdString(it["memo"]);
+                }
+
                 items.push_back(TransactionItemDetail{
                     address,
                     CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
-                    ""
+                    memo
                 });
 
                 TransactionItem tx{
