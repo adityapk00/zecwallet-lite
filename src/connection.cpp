@@ -67,7 +67,7 @@ void ConnectionLoader::doAutoConnect() {
     auto connection = makeConnection(config);
 
     // After the lib is initialized, try to do get info
-    connection->doRPC("info", "", [=](auto reply) {
+    connection->doRPC("info", "", [=](auto) {
         // If success, set the connection
         main->logger->write("Connection is online.");
 

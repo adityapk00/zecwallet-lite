@@ -255,7 +255,7 @@ void Controller::updateUI(bool anyUnconfirmed) {
 
 // Function to process reply of the listunspent and z_listunspent API calls, used below.
 void Controller::processUnspent(const json& reply, QMap<QString, qint64>* balancesMap, QList<UnspentOutput>* unspentOutputs) {
-    auto processFn = [=](const json& array) -> bool {        
+    auto processFn = [=](const json& array) {        
         for (auto& it : array) {
             QString qsAddr  = QString::fromStdString(it["address"]);
             int block       = it["created_in_block"].get<json::number_unsigned_t>();
@@ -361,10 +361,10 @@ void Controller::refreshTransactions() {
 
                 txdata.push_back(TransactionItem{
                    "Sent",
-                   it["datetime"].get<json::number_unsigned_t>(),
+                   it["datetime"].get<json::number_integer_t>(),
                    address,
                    QString::fromStdString(it["txid"]),
-                   model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
+                   model->getLatestBlock() - it["block_height"].get<json::number_integer_t>(),
                    items
                 });
             } else {
@@ -380,10 +380,10 @@ void Controller::refreshTransactions() {
 
                 TransactionItem tx{
                     "Receive",
-                    it["datetime"].get<json::number_unsigned_t>(),
+                    it["datetime"].get<json::number_integer_t>(),
                     address,
                     QString::fromStdString(it["txid"]),
-                    model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>() + 1,
+                    model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1,
                     items
                 };
 
