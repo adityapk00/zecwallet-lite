@@ -189,6 +189,10 @@ QString Settings::getUSDFromZecAmount(qint64 bal) {
 }
 
 QString Settings::getDecimalString(qint64 amt) {
+    if (amt < 0) {
+        return "-" + Settings::getDecimalString(-1 * amt);
+    }
+
     // Zcash has 8 decimal places
     int places = Settings::getNumberOfDecimalPlaces();
     qint64 divider = QString("1" + QString("0").repeated(places)).toULongLong();

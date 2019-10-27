@@ -265,8 +265,6 @@ void Controller::processUnspent(const json& reply, QMap<QString, qint64>* balanc
             bool spendable = it["unconfirmed_spent"].is_null() && it["spent"].is_null();    // TODO: Wait for 4 confirmations
             bool pending   = !it["unconfirmed_spent"].is_null();
 
-            qDebug() << "For address" << qsAddr << "spendable, pending" << spendable << ":" << pending;
-
             unspentOutputs->push_back(UnspentOutput{ qsAddr, txid, amount, block, spendable, pending });
             if (spendable) {
                 (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] + it["value"].get<json::number_unsigned_t>();
@@ -344,7 +342,7 @@ void Controller::refreshTransactions() {
             
                 for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
                     QString address = QString::fromStdString(o["address"]);
-                    qint64 amount = -1 * o["value"].get<json::number_integer_t>(); // Sent items are -ve
+                    qint64 amount = -1 * o["value"].get<json::number_unsigned_t>(); // Sent items are -ve
                     
                     QString memo;
                     if (!o["memo"].is_null()) {
@@ -385,7 +383,7 @@ void Controller::refreshTransactions() {
                     it["datetime"].get<json::number_unsigned_t>(),
                     address,
                     QString::fromStdString(it["txid"]),
-                    model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>(),
+                    model->getLatestBlock() - it["block_height"].get<json::number_unsigned_t>() + 1,
                     items
                 };
 
@@ -432,10 +430,10 @@ void Controller::executeTransaction(Tx tx,
     zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
         if (reply.find("txid") == reply.end()) {
             error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
+        } else {
+            QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
+            submitted(txid);
         }
-
-        QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
-        submitted(txid);
     },
     [=](QString errStr) {
         error("", errStr);
