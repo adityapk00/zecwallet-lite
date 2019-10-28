@@ -13,7 +13,7 @@ src/ui_*.h
 src/precompiled.h.cpp
 .qmake.stash
 zecwallet
-ZecWallet.app
+Zecwallet-Lite.app
 zecwallet-lite-mingw*
 zecwallet-lite.vcxproj*
 zecwallet.vcxproj*
