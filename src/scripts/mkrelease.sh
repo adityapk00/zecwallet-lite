@@ -9,7 +9,7 @@ if [ -z $PREV_VERSION ]; then echo "PREV_VERSION is not set"; exit 1; fi
 
 echo -n "Version files.........."
 # Replace the version number in the .pro file so it gets picked up everywhere
-sed -i "s/${PREV_VERSION}/${APP_VERSION}/g" zec-qt-wallet.pro > /dev/null
+sed -i "s/${PREV_VERSION}/${APP_VERSION}/g" zecwallet-lite.pro > /dev/null
 
 # Also update it in the README.md
 sed -i "s/${PREV_VERSION}/${APP_VERSION}/g" README.md > /dev/null
@@ -32,7 +32,8 @@ echo "[OK]"
 
 echo -n "Building..............."
 rm -rf bin/zecwallet* > /dev/null
-make clean > /dev/null
+# Build the lib first
+cd lib && make release && cd ..
 make -j$(nproc) > /dev/null
 echo "[OK]"
 
@@ -84,7 +85,7 @@ mkdir -p $debdir/usr/local/bin
 
 cat src/scripts/control | sed "s/RELEASE_VERSION/$APP_VERSION/g" > $debdir/DEBIAN/control
 
-cp zecwallet                   $debdir/usr/local/bin/
+cp zecwallet-lite                   $debdir/usr/local/bin/
 
 mkdir -p $debdir/usr/share/pixmaps/
 cp res/zecwallet-lite.xpm           $debdir/usr/share/pixmaps/
@@ -119,6 +120,8 @@ echo "[OK]"
 
 
 echo -n "Building..............."
+# Build the lib first
+cd lib && make winrelease && cd ..
 x86_64-w64-mingw32.static-qmake-qt5 zecwallet-lite.pro CONFIG+=release > /dev/null
 make -j32 > /dev/null
 echo "[OK]"

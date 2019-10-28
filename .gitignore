@@ -37,3 +37,6 @@ IDEWorkspaceChecks.plist
 *.sln
 node_modules
 zec-qt-wallet.pro.user.4.10-pre1
+zecwallet-lite
+zecwallet-lite_plugin_import.cpp
+zecwallet-lite_resource.rc

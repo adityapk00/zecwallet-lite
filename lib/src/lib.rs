@@ -105,14 +105,6 @@ pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const
         }
     };
 
-    let seed = match lightclient.do_seed_phrase() {
-        Ok(s) => s.dump(),
-        Err(e) => {
-            let e_str = CString::new(format!("Error: {}", e)).unwrap();
-            return e_str.into_raw();
-        }
-    };
-
     LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
  
     let c_str = CString::new("OK").unwrap();
