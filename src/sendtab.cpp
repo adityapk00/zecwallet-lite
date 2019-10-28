@@ -666,6 +666,9 @@ void MainWindow::sendButton() {
                     d->close();
                     delete connD;
                     delete d;
+
+                    // And switch to the balances tab
+                    ui->tabWidget->setCurrentIndex(0);
                 });
                 
                 // Force a UI update so we get the unconfirmed Tx
