@@ -175,13 +175,19 @@ void MainWindow::restoreSavedStates() {
     QSettings s;
     restoreGeometry(s.value("geometry").toByteArray());
 
-    ui->balancesTable->horizontalHeader()->restoreState(s.value("baltablegeometry").toByteArray());
-    ui->transactionsTable->horizontalHeader()->restoreState(s.value("tratablegeometry").toByteArray());
+    auto balance_geom = s.value("baltablegeom");
+    if (balance_geom == QVariant()) {
+        ui->balancesTable->setColumnWidth(0, 500);
+    } else {
+        ui->balancesTable->horizontalHeader()->restoreState(balance_geom.toByteArray());
+    }
 
-    // Explicitly set the tx table resize headers, since some previous values may have made them
-    // non-expandable.
-    ui->transactionsTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Interactive);
-    ui->transactionsTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Interactive);
+    auto tx_geom = s.value("tratablegeom");
+    if (tx_geom == QVariant()) {
+        ui->transactionsTable->setColumnWidth(1, 500);
+    } else {
+        ui->transactionsTable->horizontalHeader()->restoreState(tx_geom.toByteArray());
+    }
 }
 
 void MainWindow::doClose() {
@@ -192,8 +198,8 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     QSettings s;
 
     s.setValue("geometry", saveGeometry());
-    s.setValue("baltablegeometry", ui->balancesTable->horizontalHeader()->saveState());
-    s.setValue("tratablegeometry", ui->transactionsTable->horizontalHeader()->saveState());
+    s.setValue("baltablegeom", ui->balancesTable->horizontalHeader()->saveState());
+    s.setValue("tratablegeom", ui->transactionsTable->horizontalHeader()->saveState());
 
     s.sync();
 

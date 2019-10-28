@@ -22,7 +22,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -392,8 +392,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1226</width>
-                <height>504</height>
+                <width>1162</width>
+                <height>344</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="sendToLayout">
@@ -932,6 +932,9 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -1085,7 +1088,7 @@
      <x>0</x>
      <y>0</y>
      <width>1274</width>
-     <height>22</height>
+     <height>39</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
