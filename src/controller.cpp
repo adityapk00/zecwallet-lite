@@ -338,7 +338,13 @@ void Controller::refreshTransactions() {
             CAmount total_amount;
             QList<TransactionItemDetail> items;
 
-            auto confirmations = model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1;
+            long confirmations;
+            if (it.find("unconfirmed") != it.end() && it["unconfirmed"].get<json::boolean_t>()) {
+                confirmations = 0;
+            } else {
+                confirmations = model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1;
+            }
+            
             auto txid = QString::fromStdString(it["txid"]);
             auto datetime = it["datetime"].get<json::number_integer_t>();
 
