@@ -162,7 +162,7 @@ void Settings::openAddressInExplorer(QString address) {
     if (Settings::getInstance()->isTestnet()) {
         url = "https://chain.so/address/ZECTEST/" + address;
     } else {
-        url = "https://chain.so/address/ZEC/" + address;
+        url = "https://zcha.in/accounts/" + address;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
@@ -173,7 +173,7 @@ void Settings::openTxInExplorer(QString txid) {
         url = "https://chain.so/tx/ZECTEST/" + txid;
     }
     else {
-        url = "https://chain.so/tx/ZEC/" + txid;
+        url = "https://zcha.in/transactions/" + txid;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
