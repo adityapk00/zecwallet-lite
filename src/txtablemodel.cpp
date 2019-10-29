@@ -69,10 +69,20 @@ bool TxTableModel::exportToCsv(QString fileName) const {
     return headers.size();
  }
 
+QString TxTableModel::concatMultipleMemos(const TransactionItem& dat) const {
+    // Concat all the memos
+    QString memo;
+    for (auto item : dat.items) {
+        if (!item.memo.trimmed().isEmpty()) {
+            memo += item.address + ": \"" + item.memo + "\"\n";
+        }
+    }
 
- QVariant TxTableModel::data(const QModelIndex &index, int role) const
- {
-     // Align numeric columns (confirmations, amount) right
+    return memo;
+};
+
+QVariant TxTableModel::data(const QModelIndex &index, int role) const {
+    // Align numeric columns (confirmations, amount) right
     if (role == Qt::TextAlignmentRole && 
          (index.column() == Column::Confirmations || index.column() == Column::Amount))
         return QVariant(Qt::AlignRight | Qt::AlignVCenter);
@@ -127,7 +137,7 @@ bool TxTableModel::exportToCsv(QString fileName) const {
                             (memo.isEmpty() ? "" : " tx memo: \"" + memo + "\"");
                         }
                     } else {
-                        return "Multiple";
+                        return concatMultipleMemos(dat);
                     }
                 }
         case Column::Address: {
@@ -202,20 +212,8 @@ QString TxTableModel::getTxId(int row) const {
 
 QString TxTableModel::getMemo(int row) const {
     auto dat = modeldata->at(row);
-    bool hasMemo = false;
-    for (int i=0; i < dat.items.length(); i++) {
-        if (!dat.items[i].memo.isEmpty()) {
-            hasMemo = true;
-        }
-    }
-
-    if (dat.items.length() == 1) {
-        return dat.items[0].memo;
-    } else if (hasMemo) {
-        return "(Multiple)";
-    } else {
-        return "";
-    }
+    
+    return concatMultipleMemos(dat);
 }
 
 qint64 TxTableModel::getConfirmations(int row) const {

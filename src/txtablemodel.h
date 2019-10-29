@@ -38,6 +38,8 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
+    QString concatMultipleMemos(const TransactionItem&) const;
+
     QList<TransactionItem>* modeldata    = nullptr;
 
     QList<QString>           headers;
