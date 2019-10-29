@@ -22,9 +22,12 @@ QString CAmount::toDecimalString() const {
     QString r = QString::number(wholePart);
     if (decimalPart > 0) {
         QString decimalPartStr = QString::number(decimalPart);
-        QString leadingZeros = QString("0").repeated(NUMPLACES - decimalPartStr.length());
+        r = r + "." + decimalPartStr.rightJustified(NUMPLACES, '0');
 
-        r = r + "." + leadingZeros + decimalPartStr;
+        // Trim tailing 0s
+        while (r.right(1) == "0") {
+            r = r.left(r.length() - 1);
+        }
     }
 
     return r;
