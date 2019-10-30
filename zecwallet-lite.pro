@@ -93,6 +93,7 @@ HEADERS += \
     lib/zecwalletlitelib.h 
 
 FORMS += \
+    src/encryption.ui \
     src/mainwindow.ui \
     src/migration.ui \
     src/newseed.ui \

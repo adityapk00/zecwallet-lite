@@ -161,8 +161,6 @@ void Controller::getInfoThenRefresh(bool force) {
         bool doUpdate = force || (model->getLatestBlock() != curBlock);
         model->setLatestBlock(curBlock);
 
-        qDebug() << "Refreshing. Full update: " << doUpdate;
-
         // Connected, so display checkmark.
         auto tooltip = Settings::getInstance()->getSettings().server + "\n" + QString::fromStdString(reply.dump());
         QIcon i(":/icons/res/connected.gif");
@@ -177,6 +175,14 @@ void Controller::getInfoThenRefresh(bool force) {
 
         // See if recurring payments needs anything
         Recurring::getInstance()->processPending(main);
+
+        // Check if the wallet is locked/encrypted
+        zrpc->fetchWalletEncryptionStatus([=] (const json& reply) {
+            bool isEncrypted = reply["encrypted"].get<json::boolean_t>();
+            bool isLocked = reply["locked"].get<json::boolean_t>();
+
+            model->setEncryptionStatus(isEncrypted, isLocked);
+        });
 
         if ( doUpdate ) {
             // Something changed, so refresh everything.
@@ -405,6 +411,31 @@ void Controller::refreshTransactions() {
     });
 }
 
+// If the wallet is encrpyted and locked, we need to unlock it 
+void Controller::unlockIfEncrypted(std::function<void(void)> cb, std::function<void(void)> error) {
+    auto encStatus = getModel()->getEncryptionStatus();
+    if (encStatus.first && encStatus.second) {
+        // Wallet is encrypted and locked. Ask for the password and unlock.
+        QString password = QInputDialog::getText(main, main->tr("Wallet Password"), 
+                            main->tr("Please enter your wallet password"), QLineEdit::Password);
+
+        zrpc->unlockWallet(password, [=](json reply) {
+            if (isJsonSuccess(reply)) {
+                cb();
+            } else {
+                QMessageBox::critical(main, main->tr("Wallet Decryption Failed"),
+                    QString::fromStdString(reply["error"].get<json::string_t>()),
+                    QMessageBox::Ok
+                );
+                error();
+            }
+        });
+    } else {
+        // Not locked, so just call the function
+        cb();
+    }
+}
+
 /**
  * Execute a transaction with the standard UI. i.e., standard status bar message and standard error
  * handling
@@ -430,21 +461,25 @@ void Controller::executeStandardUITransaction(Tx tx) {
 void Controller::executeTransaction(Tx tx, 
         const std::function<void(QString txid)> submitted,
         const std::function<void(QString txid, QString errStr)> error) {
-    // First, create the json params
-    json params = json::array();
-    fillTxJsonParams(params, tx);
-    std::cout << std::setw(2) << params << std::endl;
+    unlockIfEncrypted([=] () {
+        // First, create the json params
+        json params = json::array();
+        fillTxJsonParams(params, tx);
+        std::cout << std::setw(2) << params << std::endl;
 
-    zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
-        if (reply.find("txid") == reply.end()) {
-            error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
-        } else {
-            QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
-            submitted(txid);
-        }
-    },
-    [=](QString errStr) {
-        error("", errStr);
+        zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
+            if (reply.find("txid") == reply.end()) {
+                error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
+            } else {
+                QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
+                submitted(txid);
+            }
+        },
+        [=](QString errStr) {
+            error("", errStr);
+        });
+    }, [=]() {
+        error("", main->tr("Failed to unlock wallet"));
     });
 }
 

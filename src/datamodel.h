@@ -28,6 +28,9 @@ public:
     void setLatestBlock(int blockHeight);
     int  getLatestBlock() { return this->latestBlock; }
 
+    void setEncryptionStatus(bool encrypted, bool locked) { this->isEncrypted = encrypted; this->isLocked = locked; }
+    QPair<bool, bool> getEncryptionStatus() { return qMakePair(this->isEncrypted, this->isLocked); }
+
     const QList<QString>             getAllZAddresses()     { QReadLocker locker(lock); return *zaddresses; }
     const QList<QString>             getAllTAddresses()     { QReadLocker locker(lock); return *taddresses; }
     const QList<UnspentOutput>       getUTXOs()             { QReadLocker locker(lock); return *utxos; }
@@ -41,6 +44,9 @@ public:
     ~DataModel();
 private: 
     int latestBlock;
+
+    bool isEncrypted    = false;
+    bool isLocked       = false;
 
     QList<UnspentOutput>*   utxos           = nullptr;
     QMap<QString, CAmount>* balances        = nullptr;

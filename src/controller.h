@@ -38,8 +38,7 @@ public:
     
     void checkForUpdate(bool silent = true);
     void refreshZECPrice();
-    //void getZboardTopics(std::function<void(QMap<QString, QString>)> cb);
-
+    
     void executeStandardUITransaction(Tx tx); 
 
     void executeTransaction(Tx tx, 
@@ -54,11 +53,42 @@ public:
     void noConnection();
     bool isEmbedded() { return ezcashd != nullptr; }
 
-    void createNewZaddr(bool sapling, const std::function<void(json)>& cb) { zrpc->createNewZaddr(sapling, cb); }
-    void createNewTaddr(const std::function<void(json)>& cb) { zrpc->createNewTaddr(cb); }
+    void encryptWallet(QString password, const std::function<void(json)>& cb) { 
+        zrpc->encryptWallet(password, cb); 
+    }
+    
+    void removeWalletEncryption(QString password, const std::function<void(json)>& cb) { 
+                zrpc->removeWalletEncryption(password, cb); }
 
-    void fetchPrivKey(QString addr, const std::function<void(json)>& cb) { zrpc->fetchPrivKey(addr, cb); }
-    void fetchAllPrivKeys(const std::function<void(json)> cb) { zrpc->fetchAllPrivKeys(cb); }
+    void saveWallet(const std::function<void(json)>& cb) { zrpc->saveWallet(cb); }
+
+    void createNewZaddr(bool sapling, const std::function<void(json)>& cb) { 
+        unlockIfEncrypted([=] () {
+            zrpc->createNewZaddr(sapling, cb);
+        }, [=](){});
+    }
+    void createNewTaddr(const std::function<void(json)>& cb) { 
+        unlockIfEncrypted([=] () {
+            zrpc->createNewTaddr(cb); 
+        }, [=](){});
+    }
+
+    void fetchPrivKey(QString addr, const std::function<void(json)>& cb) { 
+        unlockIfEncrypted([=] () {
+            zrpc->fetchPrivKey(addr, cb); 
+        },
+        [=]() {
+            cb({ {"error", "Failed to unlock wallet"} });
+        });
+    }
+    void fetchAllPrivKeys(const std::function<void(json)> cb) { 
+        unlockIfEncrypted([=] () {
+            zrpc->fetchAllPrivKeys(cb); 
+        },
+        [=]() {
+            cb({ {"error", "Failed to unlock wallet"} });
+        });
+    }
 
     // void importZPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) { zrpc->importZPrivKey(addr, rescan, cb); }
     // void importTPrivKey(QString addr, bool rescan, const std::function<void(json)>& cb) { zrpc->importTPrivKey(addr, rescan, cb); }
@@ -74,7 +104,9 @@ private:
     void processUnspent     (const json& reply, QMap<QString, CAmount>* newBalances, QList<UnspentOutput>* newUnspentOutputs);
     void updateUI           (bool anyUnconfirmed);
 
-    void getInfoThenRefresh(bool force);
+    void getInfoThenRefresh (bool force);
+
+    void unlockIfEncrypted  (std::function<void(void)> cb, std::function<void(void)> error);
     
     QProcess*                   ezcashd                     = nullptr;
 

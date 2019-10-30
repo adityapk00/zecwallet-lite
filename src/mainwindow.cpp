@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "addressbook.h"
 #include "viewalladdresses.h"
+#include "ui_encryption.h"
 #include "ui_mainwindow.h"
 #include "ui_mobileappconnector.h"
 #include "ui_addressbook.h"
@@ -22,8 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-	    
-
 	// Include css    
     QString theme_name;
     try
@@ -77,6 +76,15 @@ MainWindow::MainWindow(QWidget *parent) :
     // Pay Zcash URI
     QObject::connect(ui->actionPay_URI, &QAction::triggered, [=] () {
         payZcashURI();
+    });
+
+    // Wallet encryption
+    QObject::connect(ui->actionEncrypt_Wallet, &QAction::triggered, [=]() {
+        encryptWallet();
+    });
+
+    QObject::connect(ui->actionRemove_Wallet_Encryption, &QAction::triggered, [=]() {
+        removeWalletEncryption();
     });
 
     // Export All Private Keys
@@ -209,6 +217,107 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     // Bubble up
     if (event)
         QMainWindow::closeEvent(event);
+}
+
+
+void MainWindow::encryptWallet() {
+    // Check if wallet is already encrypted
+    auto encStatus = rpc->getModel()->getEncryptionStatus();
+    if (encStatus.first) {
+        QMessageBox::information(this, tr("Wallet is already encrypted"), 
+                    tr("Your wallet is already encrypted with a password.\nPlease use 'Remove Wallet Encryption if you want to remove the wallet encryption."),
+                    QMessageBox::Ok
+                );
+        return;
+    }
+
+    QDialog d(this);
+    Ui_encryptionDialog ed;
+    ed.setupUi(&d);
+
+    // Handle edits on the password box
+    auto fnPasswordEdited = [=](const QString&) {
+        // Enable the OK button if the passwords match.
+        if (!ed.txtPassword->text().isEmpty() && 
+                ed.txtPassword->text() == ed.txtConfirmPassword->text()) {
+            ed.lblPasswordMatch->setText("");
+            ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        } else {
+            ed.lblPasswordMatch->setText(tr("Passwords don't match"));
+            ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        }
+    };
+
+    ed.txtPassword->setText("");
+
+    QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
+    QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
+
+    auto fnShowError = [=](QString title, const json& res) {
+        QMessageBox::critical(this, title,
+            tr("Error was:\n") + QString::fromStdString(res.dump()),
+            QMessageBox::Ok
+        );
+    };
+
+    if (d.exec() == QDialog::Accepted) {
+        rpc->encryptWallet(ed.txtPassword->text(), [=](json res) {
+            if (isJsonSuccess(res)) {
+                // Save the wallet
+                rpc->saveWallet([=] (json reply) {
+                    if (isJsonSuccess(reply)) {
+                        QMessageBox::information(this, tr("Wallet Encrypted"), 
+                            tr("Your wallet was successfully encrypted! The password will be needed to send funds or export private keys."),
+                            QMessageBox::Ok
+                        );
+                    } else {
+                        fnShowError(tr("Wallet Encryption Failed"), reply);
+                    }
+                });
+            } else {
+                fnShowError(tr("Wallet Encryption Failed"), res);
+            }
+        });
+    }
+}
+
+void MainWindow::removeWalletEncryption() {
+    // Check if wallet is already encrypted
+    auto encStatus = rpc->getModel()->getEncryptionStatus();
+    if (!encStatus.first) {
+        QMessageBox::information(this, tr("Wallet is not encrypted"), 
+                    tr("Your wallet is not encrypted with a password."),
+                    QMessageBox::Ok
+                );
+        return;
+    }
+
+    QString password = QInputDialog::getText(this, tr("Wallet Password"), 
+                            tr("Please enter your wallet password"), QLineEdit::Password);
+
+    rpc->removeWalletEncryption(password, [=] (json res) {
+        if (isJsonSuccess(res)) {
+                // Save the wallet
+                rpc->saveWallet([=] (json reply) {
+                    if(isJsonSuccess(reply)) {
+                        QMessageBox::information(this, tr("Wallet Encryption Removed"), 
+                            tr("Your wallet was successfully decrypted! You will no longer need a password to send funds or export private keys."),
+                            QMessageBox::Ok
+                        );
+                    } else {
+                        QMessageBox::critical(this, tr("Wallet Decryption Failed"),
+                            QString::fromStdString(reply["error"].get<json::string_t>()),
+                            QMessageBox::Ok
+                        );
+                    }
+                });
+            } else {
+                QMessageBox::critical(this, tr("Wallet Decryption Failed"),
+                    QString::fromStdString(res["error"].get<json::string_t>()),
+                    QMessageBox::Ok
+                );
+            }
+    });            
 }
 
 void MainWindow::setupStatusBar() {
@@ -602,7 +711,7 @@ void MainWindow::exportKeys(QString addr) {
         if (! *(isDialogAlive.get()) ) return;
 
         if (reply.is_discarded() || !reply.is_array()) {
-            pui.privKeyTxt->setPlainText(tr("Error loading private keys"));
+            pui.privKeyTxt->setPlainText(tr("Error loading private keys: ") + QString::fromStdString(reply.dump()));
             pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
 
             return;

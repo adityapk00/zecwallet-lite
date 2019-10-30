@@ -96,6 +96,9 @@ private:
     Tx   createTxFromSendPage();
     bool confirmTx(Tx tx, RecurringPaymentInfo* rpi);
 
+    void encryptWallet();
+    void removeWalletEncryption();
+
     void cancelButton();
     void sendButton();
     void addAddressSection();

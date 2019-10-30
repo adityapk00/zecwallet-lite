@@ -392,8 +392,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1162</width>
-                <height>344</height>
+                <width>1226</width>
+                <height>504</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="sendToLayout">
@@ -1088,7 +1088,7 @@
      <x>0</x>
      <y>0</y>
      <width>1274</width>
-     <height>39</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1127,6 +1127,9 @@
     <addaction name="action_Address_Book"/>
     <addaction name="actionSettings"/>
     <addaction name="action_Recurring_Payments"/>
+    <addaction name="separator"/>
+    <addaction name="actionEncrypt_Wallet"/>
+    <addaction name="actionRemove_Wallet_Encryption"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
@@ -1211,6 +1214,16 @@
   <action name="actionFile_a_bug">
    <property name="text">
     <string>File a bug...</string>
+   </property>
+  </action>
+  <action name="actionEncrypt_Wallet">
+   <property name="text">
+    <string>Encrypt Wallet</string>
+   </property>
+  </action>
+  <action name="actionRemove_Wallet_Encryption">
+   <property name="text">
+    <string>Remove Wallet Encryption</string>
    </property>
   </action>
  </widget>

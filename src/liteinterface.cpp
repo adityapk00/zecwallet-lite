@@ -77,6 +77,36 @@ void LiteInterface::saveWallet(const std::function<void(json)>& cb) {
     conn->doRPCWithDefaultErrorHandling("save", "", cb);
 }
 
+void LiteInterface::unlockWallet(QString password, const std::function<void(json)>& cb) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPCWithDefaultErrorHandling("unlock", password, cb);
+}
+
+void LiteInterface::fetchWalletEncryptionStatus(const std::function<void(json)>& cb) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPCWithDefaultErrorHandling("encryptionstatus", "", cb);
+}
+
+void LiteInterface::encryptWallet(QString password, const std::function<void(json)>& cb) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPCWithDefaultErrorHandling("encrypt", password, cb);
+}
+
+
+void LiteInterface::removeWalletEncryption(QString password, const std::function<void(json)>& cb) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPCWithDefaultErrorHandling("decrypt", password, cb);
+}
+
+
 void LiteInterface::sendTransaction(QString params, const std::function<void(json)>& cb, 
     const std::function<void(QString)>& err) {
     if (conn == nullptr)
