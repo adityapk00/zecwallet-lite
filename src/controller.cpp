@@ -372,10 +372,13 @@ void Controller::refreshTransactions() {
                     total_amount = total_amount + amount;
                 }
 
-                if (items.length() == 1) {
-                    address = items[0].address;
-                } else {
-                    address = "(Multiple)";
+                {
+                    // Concat all the addresses
+                    QList<QString> addresses;
+                    for (auto item : items) {
+                        addresses.push_back(item.address);
+                    }
+                    address = addresses.join(",");
                 }
 
                 txdata.push_back(TransactionItem{
