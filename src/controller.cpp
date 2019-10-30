@@ -420,7 +420,12 @@ void Controller::unlockIfEncrypted(std::function<void(void)> cb, std::function<v
     if (encStatus.first && encStatus.second) {
         // Wallet is encrypted and locked. Ask for the password and unlock.
         QString password = QInputDialog::getText(main, main->tr("Wallet Password"), 
-                            main->tr("Please enter your wallet password"), QLineEdit::Password);
+                            main->tr("Your wallet is encrypted.\nPlease enter your wallet password"), QLineEdit::Password);
+
+        if (password.isEmpty()) {
+            error();
+            return;
+        }
 
         zrpc->unlockWallet(password, [=](json reply) {
             if (isJsonSuccess(reply)) {
