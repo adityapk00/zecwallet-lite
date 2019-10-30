@@ -225,7 +225,7 @@ void MainWindow::encryptWallet() {
     auto encStatus = rpc->getModel()->getEncryptionStatus();
     if (encStatus.first) {
         QMessageBox::information(this, tr("Wallet is already encrypted"), 
-                    tr("Your wallet is already encrypted with a password.\nPlease use 'Remove Wallet Encryption if you want to remove the wallet encryption."),
+                    tr("Your wallet is already encrypted with a password.\nPlease use 'Remove Wallet Encryption' if you want to remove the wallet encryption."),
                     QMessageBox::Ok
                 );
         return;
@@ -248,10 +248,11 @@ void MainWindow::encryptWallet() {
         }
     };
 
-    ed.txtPassword->setText("");
-
     QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
     QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
+
+    ed.txtPassword->setText("");
+    ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     auto fnShowError = [=](QString title, const json& res) {
         QMessageBox::critical(this, title,
