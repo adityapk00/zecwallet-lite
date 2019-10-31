@@ -275,6 +275,9 @@ void MainWindow::encryptWallet() {
                         fnShowError(tr("Wallet Encryption Failed"), reply);
                     }
                 });
+
+                // And then refresh the UI
+                rpc->refresh(true);
             } else {
                 fnShowError(tr("Wallet Encryption Failed"), res);
             }
@@ -312,6 +315,9 @@ void MainWindow::removeWalletEncryption() {
                         );
                     }
                 });
+
+                // And then refresh the UI
+                rpc->refresh(true);
             } else {
                 QMessageBox::critical(this, tr("Wallet Decryption Failed"),
                     QString::fromStdString(res["error"].get<json::string_t>()),
