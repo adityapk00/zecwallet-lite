@@ -272,6 +272,34 @@ void Controller::processUnspent(const json& reply, QMap<QString, CAmount>* balan
     processFn(reply["pending_utxos"].get<json::array_t>());
 };
 
+void Controller::updateUIBalances() {
+    CAmount balT = getModel()->getBalT();
+    CAmount balZ = getModel()->getBalZ();
+    CAmount balVerified = getModel()->getBalVerified();
+
+    // Reduce the BalanceZ by the pending outgoing amount. We're adding
+    // here because totalPending is already negative for outgoing txns.
+    balZ = balZ + getModel()->getTotalPending();
+
+    CAmount balTotal     = balT + balZ;
+    CAmount balAvailable = balT + balVerified;
+
+    // Balances table
+    ui->balSheilded   ->setText(balZ.toDecimalZECString());
+    ui->balVerified   ->setText(balVerified.toDecimalZECString());
+    ui->balTransparent->setText(balT.toDecimalZECString());
+    ui->balTotal      ->setText(balTotal.toDecimalZECString());
+
+    ui->balSheilded   ->setToolTip(balZ.toDecimalUSDString());
+    ui->balVerified   ->setToolTip(balVerified.toDecimalUSDString());
+    ui->balTransparent->setToolTip(balT.toDecimalUSDString());
+    ui->balTotal      ->setToolTip(balTotal.toDecimalUSDString());
+
+    // Send tab
+    ui->txtAvailableZEC->setText(balAvailable.toDecimalZECString());
+    ui->txtAvailableUSD->setText(balAvailable.toDecimalUSDString());
+}
+
 void Controller::refreshBalances() {    
     if (!zrpc->haveConnection()) 
         return noConnection();
@@ -282,29 +310,18 @@ void Controller::refreshBalances() {
         CAmount balZ        = CAmount::fromqint64(reply["zbalance"].get<json::number_unsigned_t>());
         CAmount balVerified = CAmount::fromqint64(reply["verified_zbalance"].get<json::number_unsigned_t>());
         
-        CAmount balTotal     = balT + balZ;
-        CAmount balAvailable = balT + balVerified;
+        model->setBalT(balT);
+        model->setBalZ(balZ);
+        model->setBalVerified(balVerified);
 
         // This is for the websockets
         AppDataModel::getInstance()->setBalances(balT, balZ);
         
         // This is for the datamodel
+        CAmount balAvailable = balT + balVerified;
         model->setAvailableBalance(balAvailable);
 
-        // Balances table
-        ui->balSheilded   ->setText(balZ.toDecimalZECString());
-        ui->balVerified   ->setText(balVerified.toDecimalZECString());
-        ui->balTransparent->setText(balT.toDecimalZECString());
-        ui->balTotal      ->setText(balTotal.toDecimalZECString());
-
-        ui->balSheilded   ->setToolTip(balZ.toDecimalUSDString());
-        ui->balVerified   ->setToolTip(balVerified.toDecimalUSDString());
-        ui->balTransparent->setToolTip(balT.toDecimalUSDString());
-        ui->balTotal      ->setToolTip(balTotal.toDecimalUSDString());
-
-        // Send tab
-        ui->txtAvailableZEC->setText(balAvailable.toDecimalZECString());
-        ui->txtAvailableUSD->setText(balAvailable.toDecimalUSDString());
+        updateUIBalances();
     });
 
     // 2. Get the UTXOs
@@ -408,6 +425,21 @@ void Controller::refreshTransactions() {
             }
             
         }
+
+        // Calculate the total unspent amount that's pending. This will need to be 
+        // shown in the UI so the user can keep track of pending funds
+        CAmount totalPending;
+        for (auto txitem : txdata) {
+            if (txitem.confirmations == 0) {
+                for (auto item: txitem.items) {
+                    totalPending = totalPending + item.amount;
+                }
+            }
+        }
+        getModel()->setTotalPending(totalPending);
+
+        // Update UI Balance
+        updateUIBalances();
 
         // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);        

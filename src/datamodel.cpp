@@ -24,6 +24,7 @@ DataModel::~DataModel() {
 }
 
 void DataModel::setLatestBlock(int blockHeight) {
+    QReadLocker locker(lock);
     this->latestBlock = blockHeight;
 }
 

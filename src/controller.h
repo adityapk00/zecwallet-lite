@@ -103,6 +103,7 @@ private:
 
     void processUnspent     (const json& reply, QMap<QString, CAmount>* newBalances, QList<UnspentOutput>* newUnspentOutputs);
     void updateUI           (bool anyUnconfirmed);
+    void updateUIBalances   ();
 
     void getInfoThenRefresh (bool force);
 
