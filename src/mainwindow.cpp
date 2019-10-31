@@ -263,10 +263,10 @@ void MainWindow::encryptWallet() {
 
     if (d.exec() == QDialog::Accepted) {
         rpc->encryptWallet(ed.txtPassword->text(), [=](json res) {
-            if (isJsonSuccess(res)) {
+            if (isJsonResultSuccess(res)) {
                 // Save the wallet
                 rpc->saveWallet([=] (json reply) {
-                    if (isJsonSuccess(reply)) {
+                    if (isJsonResultSuccess(reply)) {
                         QMessageBox::information(this, tr("Wallet Encrypted"), 
                             tr("Your wallet was successfully encrypted! The password will be needed to send funds or export private keys."),
                             QMessageBox::Ok
@@ -314,10 +314,10 @@ void MainWindow::removeWalletEncryption() {
     }
 
     rpc->removeWalletEncryption(password, [=] (json res) {
-        if (isJsonSuccess(res)) {
+        if (isJsonResultSuccess(res)) {
                 // Save the wallet
                 rpc->saveWallet([=] (json reply) {
-                    if(isJsonSuccess(reply)) {
+                    if(isJsonResultSuccess(reply)) {
                         QMessageBox::information(this, tr("Wallet Encryption Removed"), 
                             tr("Your wallet was successfully decrypted! You will no longer need a password to send funds or export private keys."),
                             QMessageBox::Ok
@@ -654,54 +654,47 @@ void MainWindow::exportSeed() {
     if (!rpc->getConnection())
         return;
 
-    QDialog d(this);
-    Ui_PrivKey pui;
-    pui.setupUi(&d);
     
-    // Make the window big by default
-    auto ps = this->geometry();
-    QMargins margin = QMargins() + 50;
-    d.setGeometry(ps.marginsRemoved(margin));
-
-    Settings::saveRestore(&d);
-
-    pui.privKeyTxt->setPlainText(tr("This might take several minutes. Loading..."));
-    pui.privKeyTxt->setReadOnly(true);
-    pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-
-    pui.helpLbl->setText(tr("This is your wallet seed. Please back it up carefully and safely."));
-
-    // Disable the save button until it finishes loading
-    pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
-    pui.buttonBox->button(QDialogButtonBox::Ok)->setVisible(false);
-
-    // Wire up save button
-    QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                           "zcash-seed.txt");
-        QFile file(fileName);
-        if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::information(this, tr("Unable to open file"), file.errorString());
-            return;
-        }        
-        QTextStream out(&file);
-        out << pui.privKeyTxt->toPlainText();
-    });
 
     rpc->fetchSeed([=](json reply) {
-         if (isJsonError(reply)) {
-            pui.privKeyTxt->setPlainText(tr("Error loading wallet seed: ") + QString::fromStdString(reply["error"]));
-            pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
-
+        if (isJsonError(reply)) {
             return;
         }
+        
+        QDialog d(this);
+        Ui_PrivKey pui;
+        pui.setupUi(&d);
+        
+        // Make the window big by default
+        auto ps = this->geometry();
+        QMargins margin = QMargins() + 50;
+        d.setGeometry(ps.marginsRemoved(margin));
 
+        Settings::saveRestore(&d);
+
+        pui.privKeyTxt->setReadOnly(true);
+        pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
         pui.privKeyTxt->setPlainText(QString::fromStdString(reply.dump()));
-        pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
-    });
+        
+        pui.helpLbl->setText(tr("This is your wallet seed. Please back it up carefully and safely."));
 
-    
-    d.exec();
+        // Wire up save button
+        QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
+            QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                            "zcash-seed.txt");
+            QFile file(fileName);
+            if (!file.open(QIODevice::WriteOnly)) {
+                QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+                return;
+            }        
+            QTextStream out(&file);
+            out << pui.privKeyTxt->toPlainText();
+        });
+
+        pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
+        
+        d.exec();
+    });
 }
 
 void MainWindow::exportAllKeys() {
@@ -714,57 +707,51 @@ void MainWindow::exportKeys(QString addr) {
 
     bool allKeys = addr.isEmpty() ? true : false;
 
-    QDialog d(this);
-    Ui_PrivKey pui;
-    pui.setupUi(&d);
-    
-    // Make the window big by default
-    auto ps = this->geometry();
-    QMargins margin = QMargins() + 50;
-    d.setGeometry(ps.marginsRemoved(margin));
-
-    Settings::saveRestore(&d);
-
-    pui.privKeyTxt->setPlainText(tr("This might take several minutes. Loading..."));
-    pui.privKeyTxt->setReadOnly(true);
-    pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-
-    if (allKeys)
-        pui.helpLbl->setText(tr("These are all the private keys for all the addresses in your wallet"));
-    else
-        pui.helpLbl->setText(tr("Private key for ") + addr);
-
-    // Disable the save button until it finishes loading
-    pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
-    pui.buttonBox->button(QDialogButtonBox::Ok)->setVisible(false);
-
-    // Wire up save button
-    QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                           allKeys ? "zcash-all-privatekeys.txt" : "zcash-privatekey.txt");
-        QFile file(fileName);
-        if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::information(this, tr("Unable to open file"), file.errorString());
-            return;
-        }        
-        QTextStream out(&file);
-        out << pui.privKeyTxt->toPlainText();
-    });
-
-    // Call the API
-    auto isDialogAlive = std::make_shared<bool>(true);
-
     auto fnUpdateUIWithKeys = [=](json reply) {
-        // Check to see if we are still showing.
-        if (! *(isDialogAlive.get()) ) return;
+        if (isJsonError(reply)) {
+            return;                
+        }
 
         if (reply.is_discarded() || !reply.is_array()) {
-            pui.privKeyTxt->setPlainText(tr("Error loading private keys: ") + QString::fromStdString(reply.dump()));
-            pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
-
+            QMessageBox::critical(this, tr("Error getting private keys"),
+                tr("Error loading private keys: ") + QString::fromStdString(reply.dump()),
+                QMessageBox::Ok);
             return;
         }
+            
+        QDialog d(this);
+        Ui_PrivKey pui;
+        pui.setupUi(&d);
         
+        // Make the window big by default
+        auto ps = this->geometry();
+        QMargins margin = QMargins() + 50;
+        d.setGeometry(ps.marginsRemoved(margin));
+
+        Settings::saveRestore(&d);
+
+        pui.privKeyTxt->setReadOnly(true);
+        pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
+
+        if (allKeys)
+            pui.helpLbl->setText(tr("These are all the private keys for all the addresses in your wallet"));
+        else
+            pui.helpLbl->setText(tr("Private key for ") + addr);
+
+
+        // Wire up save button
+        QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
+            QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                            allKeys ? "zcash-all-privatekeys.txt" : "zcash-privatekey.txt");
+            QFile file(fileName);
+            if (!file.open(QIODevice::WriteOnly)) {
+                QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+                return;
+            }        
+            QTextStream out(&file);
+            out << pui.privKeyTxt->toPlainText();
+        });
+
         QString allKeysTxt;
         for (auto i : reply.get<json::array_t>()) {
             allKeysTxt = allKeysTxt % QString::fromStdString(i["private_key"]) % " # addr=" % QString::fromStdString(i["address"]) % "\n";
@@ -772,6 +759,8 @@ void MainWindow::exportKeys(QString addr) {
 
         pui.privKeyTxt->setPlainText(allKeysTxt);
         pui.buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
+
+        d.exec();
     };
 
     if (allKeys) {
@@ -779,10 +768,7 @@ void MainWindow::exportKeys(QString addr) {
     }
     else { 
         rpc->fetchPrivKey(addr, fnUpdateUIWithKeys);                
-    }
-    
-    d.exec();
-    *isDialogAlive = false;
+    }    
 }
 
 void MainWindow::setupBalancesTab() {
