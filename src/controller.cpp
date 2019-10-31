@@ -462,6 +462,9 @@ void Controller::unlockIfEncrypted(std::function<void(void)> cb, std::function<v
         zrpc->unlockWallet(password, [=](json reply) {
             if (isJsonSuccess(reply)) {
                 cb();
+
+                // Refresh the wallet so the encryption status is now in sync.
+                refresh(true);
             } else {
                 QMessageBox::critical(main, main->tr("Wallet Decryption Failed"),
                     QString::fromStdString(reply["error"].get<json::string_t>()),

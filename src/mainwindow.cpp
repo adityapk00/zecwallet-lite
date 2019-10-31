@@ -296,8 +296,22 @@ void MainWindow::removeWalletEncryption() {
         return;
     }
 
+    bool ok;
     QString password = QInputDialog::getText(this, tr("Wallet Password"), 
-                            tr("Please enter your wallet password"), QLineEdit::Password);
+                            tr("Please enter your wallet password"), QLineEdit::Password, "", &ok);
+
+    // If cancel was pressed, just return
+    if (!ok) {
+        return;
+    }
+
+    if (password.isEmpty()) {
+        QMessageBox::critical(this, tr("Wallet Decryption Failed"),
+            tr("Please enter a password to decrypt your wallet!"),
+            QMessageBox::Ok
+        );
+        return;
+    }
 
     rpc->removeWalletEncryption(password, [=] (json res) {
         if (isJsonSuccess(res)) {
