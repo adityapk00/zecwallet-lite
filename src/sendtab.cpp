@@ -614,6 +614,7 @@ void MainWindow::sendButton() {
     Tx tx = createTxFromSendPage();
 
     QString error = doSendTxValidations(tx);
+
     if (!error.isEmpty()) {
         // Something went wrong, so show an error and exit
         QMessageBox msg(QMessageBox::Critical, tr("Transaction Error"), error,
@@ -707,6 +708,9 @@ void MainWindow::sendButton() {
 }
 
 QString MainWindow::doSendTxValidations(Tx tx) {
+    // Check to see if we have enough verified funds to send the Tx.
+
+    CAmount total;
     for (auto toAddr : tx.toAddrs) {
         if (!Settings::isValidAddress(toAddr.addr)) {
             QString addr = (toAddr.addr.length() > 100 ? toAddr.addr.left(100) + "..." : toAddr.addr);
@@ -718,6 +722,16 @@ QString MainWindow::doSendTxValidations(Tx tx) {
         if (toAddr.amount.toqint64() < 0) {
             return QString(tr("Amount for address '%1' is invalid!").arg(toAddr.addr));
         }
+
+        total = total + toAddr.amount;
+    }
+    total = total + tx.fee;
+
+    auto available = rpc->getModel()->getAvailableBalance();
+
+    if (available < total) {
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 5 confirmations before they can be spent")
+            .arg(available.toDecimalZECString(), total.toDecimalZECString());
     }
 
     return "";
