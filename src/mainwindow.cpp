@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // File a bug
     QObject::connect(ui->actionFile_a_bug, &QAction::triggered, [=]() {
-        QDesktopServices::openUrl(QUrl("https://github.com/zcashfoundation/zecwallet/issues/new"));
+        QDesktopServices::openUrl(QUrl("https://github.com/adityapk00/zecwallet-lite/issues/new"));
     });
 
     // Set up check for updates action
