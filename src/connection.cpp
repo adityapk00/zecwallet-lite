@@ -173,7 +173,7 @@ void Executor::run() {
 
     QString reply = litelib_process_response(resp);
 
-    qDebug() << "RPC Reply=" << reply;
+    //qDebug() << "RPC Reply=" << reply;
     auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
     if (parsed.is_discarded() || parsed.is_null()) {
         emit handleError(reply);
@@ -212,7 +212,7 @@ void Connection::doRPC(const QString cmd, const QString args, const std::functio
         return;
     }
 
-    qDebug() << "Doing RPC: " << cmd;
+    //qDebug() << "Doing RPC: " << cmd;
 
     // Create a runner.
     auto runner = new Executor(cmd, args);
