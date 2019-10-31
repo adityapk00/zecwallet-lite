@@ -1099,7 +1099,7 @@
     <addaction name="actionPay_URI"/>
     <addaction name="separator"/>
     <addaction name="actionExport_All_Private_Keys"/>
-    <addaction name="actionBackup_wallet_dat"/>
+    <addaction name="actionExport_Seed"/>
     <addaction name="separator"/>
     <addaction name="actionExport_transactions"/>
     <addaction name="separator"/>
@@ -1178,9 +1178,9 @@
     <string>Ctrl+B</string>
    </property>
   </action>
-  <action name="actionBackup_wallet_dat">
+  <action name="actionExport_Seed">
    <property name="text">
-    <string>&amp;Backup wallet.dat</string>
+    <string>&amp;Export seed phrase</string>
    </property>
   </action>
   <action name="actionExport_transactions">

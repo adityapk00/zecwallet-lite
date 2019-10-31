@@ -81,9 +81,19 @@ public:
             cb({ {"error", "Failed to unlock wallet"} });
         });
     }
+
     void fetchAllPrivKeys(const std::function<void(json)> cb) { 
         unlockIfEncrypted([=] () {
             zrpc->fetchAllPrivKeys(cb); 
+        },
+        [=]() {
+            cb({ {"error", "Failed to unlock wallet"} });
+        });
+    }
+
+    void fetchSeed(const std::function<void(json)> cb) {
+        unlockIfEncrypted([=] () {
+            zrpc->fetchSeed(cb); 
         },
         [=]() {
             cb({ {"error", "Failed to unlock wallet"} });

@@ -56,6 +56,13 @@ void LiteInterface::fetchPrivKey(QString addr, const std::function<void(json)>& 
     conn->doRPCWithDefaultErrorHandling("export", addr, cb);
 }
 
+void LiteInterface::fetchSeed(const std::function<void(json)>& cb) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPCWithDefaultErrorHandling("seed", "", cb);
+}
+
 void LiteInterface::fetchBalance(const std::function<void(json)>& cb) {
     if (conn == nullptr)
         return;

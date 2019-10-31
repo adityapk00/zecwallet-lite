@@ -52,6 +52,7 @@ public:
 
     void fetchPrivKey(QString addr, const std::function<void(json)>& cb);
     void fetchAllPrivKeys(const std::function<void(json)>);
+    void fetchSeed(const std::function<void(json)>&);
 
     void saveWallet(const std::function<void(json)>& cb);
 

@@ -127,4 +127,10 @@ inline bool isJsonSuccess(const json& res) {
                     QString::fromStdString(res["result"].get<json::string_t>()) == "success";
 }
 
+inline bool isJsonError(const json& res) {
+    return res.find("result") != res.end() && 
+                    QString::fromStdString(res["result"].get<json::string_t>()) == "error";
+}
+
+
 #endif // SETTINGS_H
