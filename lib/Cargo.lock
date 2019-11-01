@@ -1051,7 +1051,7 @@ version = "0.1.0"
 dependencies = [
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
- "zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=bc9bef6ec16b9c852134b1f3f54f53ed49114a86)",
+ "zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=af0e0b9b2bcc131804d5e940f94d45c6fef74481)",
 ]
 
 [[package]]
@@ -2266,7 +2266,7 @@ dependencies = [
 [[package]]
 name = "zecwalletlitelib"
 version = "0.1.0"
-source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=bc9bef6ec16b9c852134b1f3f54f53ed49114a86#bc9bef6ec16b9c852134b1f3f54f53ed49114a86"
+source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=af0e0b9b2bcc131804d5e940f94d45c6fef74481#af0e0b9b2bcc131804d5e940f94d45c6fef74481"
 dependencies = [
  "base58 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bellman 0.1.0 (git+https://github.com/adityapk00/librustzcash.git?rev=188537ea025fcb7fbdfc11266f307a084a5451e4)",
@@ -2562,4 +2562,4 @@ dependencies = [
 "checksum zcash_client_backend 0.0.0 (git+https://github.com/adityapk00/librustzcash.git?rev=188537ea025fcb7fbdfc11266f307a084a5451e4)" = "<none>"
 "checksum zcash_primitives 0.0.0 (git+https://github.com/adityapk00/librustzcash.git?rev=188537ea025fcb7fbdfc11266f307a084a5451e4)" = "<none>"
 "checksum zcash_proofs 0.0.0 (git+https://github.com/adityapk00/librustzcash.git?rev=188537ea025fcb7fbdfc11266f307a084a5451e4)" = "<none>"
-"checksum zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=bc9bef6ec16b9c852134b1f3f54f53ed49114a86)" = "<none>"
+"checksum zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=af0e0b9b2bcc131804d5e940f94d45c6fef74481)" = "<none>"
