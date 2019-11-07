@@ -1,5 +1,3 @@
-**Zecwallet-Lite is currently in beta**
-
 Zecwallet-Lite is z-Addr first, Sapling compatible wallet lightwallet for Zcash. It has full support for all Zcash features:
 - Send + Receive fully shileded transactions
 - Supports transparent addresses and transactions
