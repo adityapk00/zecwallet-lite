@@ -2,16 +2,17 @@
 param (
     [Parameter(Mandatory=$true)][string]$version,
     [Parameter(Mandatory=$true)][string]$prev,
+    [Parameter(Mandatory=$true)][string]$certificate,
     [Parameter(Mandatory=$true)][string]$server,
     [Parameter(Mandatory=$true)][string]$winserver
 )
 
 Write-Host "[Initializing]"
-Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-binaries-zecwallet-v$version.tar.gz
-Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-deb-zecwallet-v$version.deb
-Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-binaries-zecwallet-v$version.zip
-Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-installer-zecwallet-v$version.msi
-Remove-Item -Force -ErrorAction Ignore ./artifacts/macOS-zecwallet-v$version.dmg
+Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-binaries-zecwallet-lite-v$version.tar.gz
+Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-deb-zecwallet-lite-v$version.deb
+Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-binaries-lite-zecwallet-v$version.zip
+Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-installer-lite-zecwallet-v$version.msi
+Remove-Item -Force -ErrorAction Ignore ./artifacts/macOS-zecwallet--litev$version.dmg
 Remove-Item -Force -ErrorAction Ignore ./artifacts/signatures-v$version.tar.gz
 
 
@@ -27,7 +28,7 @@ Write-Host ""
 
 
 Write-Host "[Building on Mac]"
-bash src/scripts/mkmacdmg.sh --qt_path ~/Qt/5.11.1/clang_64/ --version $version --zcash_path ~/prod/zcash 
+bash src/scripts/mkmacdmg.sh --qt_path ~/Qt/5.11.1/clang_64/ --version $version --certificate "$certificate"
 if (! $?) {
     Write-Output "[Error]"
     exit 1;
@@ -37,9 +38,11 @@ Write-Host ""
 
 Write-Host "[Building Linux + Windows]"
 Write-Host -NoNewline "Copying files.........."
+# Cleanup some local files to aid copying
+rm -rf lib/target/
 ssh $server "rm -rf /tmp/zqwbuild"
 ssh $server "mkdir /tmp/zqwbuild"
-scp -r src/ singleapplication/ res/ ./zec-qt-wallet.pro ./application.qrc ./LICENSE ./README.md ${server}:/tmp/zqwbuild/ | Out-Null
+scp -r src/ singleapplication/ res/ lib/ ./zecwallet-lite.pro ./application.qrc ./LICENSE ./README.md ${server}:/tmp/zqwbuild/ | Out-Null
 ssh $server "dos2unix -q /tmp/zqwbuild/src/scripts/mkrelease.sh" | Out-Null
 ssh $server "dos2unix -q /tmp/zqwbuild/src/version.h"
 Write-Host "[OK]"
@@ -86,11 +89,11 @@ Write-Host "[OK]"
 
 # Finally, test to make sure all files exist
 Write-Host -NoNewline "Checking Build........."
-if (! (Test-Path ./artifacts/linux-binaries-zecwallet-v$version.tar.gz) -or
-    ! (Test-Path ./artifacts/linux-deb-zecwallet-v$version.deb) -or
-    ! (Test-Path ./artifacts/Windows-binaries-zecwallet-v$version.zip) -or
-    ! (Test-Path ./artifacts/macOS-zecwallet-v$version.dmg) -or 
-    ! (Test-Path ./artifacts/Windows-installer-zecwallet-v$version.msi) ) {
+if (! (Test-Path ./artifacts/linux-binaries-zecwallet-lite-v$version.tar.gz) -or
+    ! (Test-Path ./artifacts/linux-deb-zecwallet-lite-v$version.deb) -or
+    ! (Test-Path ./artifacts/Windows-binaries-zecwallet-lite-v$version.zip) -or
+    ! (Test-Path ./artifacts/macOS-zecwallet-lite-v$version.dmg) -or 
+    ! (Test-Path ./artifacts/Windows-installer-zecwallet-lite-v$version.msi) ) {
         Write-Host "[Error]"
         exit 1;
     }

@@ -12,8 +12,8 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -z|--zcash_path)
-    ZCASH_DIR="$2"
+    -c|--certificate)
+    CERTIFICATE="$2"
     shift # past argument
     shift # past value
     ;;
@@ -32,6 +32,11 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 if [ -z $QT_PATH ]; then 
     echo "QT_PATH is not set. Please set it to the base directory of Qt"; 
+    exit 1; 
+fi
+
+if [ -z $CERTIFICATE ]; then 
+    echo "CERTIFICATE is not set. Please set it the name of the MacOS developer certificate to sign the binary with"; 
     exit 1; 
 fi
 
@@ -71,6 +76,7 @@ mkdir artifacts >/dev/null 2>&1
 rm -f artifcats/zecwallet-lite.dmg >/dev/null 2>&1
 rm -f artifacts/rw* >/dev/null 2>&1
 $QT_PATH/bin/macdeployqt zecwallet-lite.app 
+codesign --deep --force --verify --verbose -s "$CERTIFICATE" --options runtime --timestamp Zecwallet-Lite.app/
 echo "[OK]"
 
 

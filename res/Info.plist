@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>logo.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.zecwallet</string>
+	<string>com.yourcompany.zecwallet-lite</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
