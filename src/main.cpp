@@ -205,7 +205,7 @@ public:
         
 
         w = new MainWindow();
-        w->setWindowTitle("Zecwallet Lightclient v" + QString(APP_VERSION));
+        w->setWindowTitle("Zecwallet Lite v" + QString(APP_VERSION));
 
         // If there was a payment URI on the command line, pay it
         if (parser.positionalArguments().length() > 0) {
