@@ -49,7 +49,7 @@ void ConnectionLoader::doAutoConnect() {
     main->logger->write(QObject::tr("Attempting to initialize library with ") + config->server);
 
     // Check to see if there's an existing wallet
-    if (litelib_wallet_exists(Settings::getChainName().toStdString().c_str())) {
+    if (litelib_wallet_exists(Settings::getDefaultChainName().toStdString().c_str())) {
         main->logger->write(QObject::tr("Using existing wallet."));
         char* resp = litelib_initialize_existing(config->dangerous, config->server.toStdString().c_str());
         QString response = litelib_process_response(resp);
@@ -68,9 +68,10 @@ void ConnectionLoader::doAutoConnect() {
     auto me = this;
 
     // After the lib is initialized, try to do get info
-    connection->doRPC("info", "", [=](auto) {
+    connection->doRPC("info", "", [=](auto reply) {
         // If success, set the connection
         main->logger->write("Connection is online.");
+        connection->setInfo(reply);
 
         isSyncing = new QAtomicInteger<bool>();
         isSyncing->store(true);

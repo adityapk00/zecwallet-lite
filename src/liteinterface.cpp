@@ -130,6 +130,15 @@ void LiteInterface::fetchInfo(const std::function<void(json)>& cb,
     conn->doRPC("info", "", cb, err);
 }
 
+
+void LiteInterface::fetchLatestBlock(const std::function<void(json)>& cb, 
+                        const std::function<void(QString)>& err) {
+    if (conn == nullptr)
+        return;
+
+    conn->doRPC("height", "", cb, err);       
+}
+
 /**
  * Method to get all the private keys for both z and t addresses. It will make 2 batch calls,
  * combine the result, and call the callback with a single list containing both the t-addr and z-addr

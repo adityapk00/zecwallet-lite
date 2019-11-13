@@ -67,6 +67,8 @@ void Controller::setConnection(Connection* c) {
 
     ui->statusBar->showMessage("Ready!");
 
+    processInfo(c->getInfo());
+
     // If we're allowed to get the Zec Price, get the prices
     if (Settings::getInstance()->getAllowFetchPrices())
         refreshZECPrice();
@@ -137,41 +139,45 @@ void Controller::refresh(bool force) {
     getInfoThenRefresh(force);
 }
 
+void Controller::processInfo(const json& info) {
+    // Testnet?
+    QString chainName;
+    if (!info["chain_name"].is_null()) {
+        chainName = QString::fromStdString(info["chain_name"].get<json::string_t>());
+        Settings::getInstance()->setTestnet(chainName == "test");
+    };
+
+
+    QString version = QString::fromStdString(info["version"].get<json::string_t>());
+    Settings::getInstance()->setZcashdVersion(version);
+
+    // Recurring pamynets are testnet only
+    if (!Settings::getInstance()->isTestnet())
+        main->disableRecurring();
+}
+
 void Controller::getInfoThenRefresh(bool force) {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
     static bool prevCallSucceeded = false;
 
-    zrpc->fetchInfo([=] (const json& reply) {   
-        prevCallSucceeded = true;
+    zrpc->fetchLatestBlock([=] (const json& reply) {   
+        prevCallSucceeded = true;       
 
-        // Testnet?
-        QString chainName;
-        if (!reply["chain_name"].is_null()) {
-            chainName = QString::fromStdString(reply["chain_name"].get<json::string_t>());
-            Settings::getInstance()->setTestnet(chainName == "test");
-        };
-
-        // Recurring pamynets are testnet only
-        if (!Settings::getInstance()->isTestnet())
-            main->disableRecurring();
-
-        int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
+        int curBlock  = reply["height"].get<json::number_integer_t>();
         bool doUpdate = force || (model->getLatestBlock() != curBlock);
         model->setLatestBlock(curBlock);
 
         // Connected, so display checkmark.
-        auto tooltip = Settings::getInstance()->getSettings().server + "\n" + QString::fromStdString(reply.dump());
+        auto tooltip = Settings::getInstance()->getSettings().server + "\n" + 
+                            QString::fromStdString(zrpc->getConnection()->getInfo().dump());
         QIcon i(":/icons/res/connected.gif");
+        QString chainName = Settings::getInstance()->isTestnet() ? "test" : "main";
         main->statusLabel->setText(chainName + "(" + QString::number(curBlock) + ")");
         main->statusLabel->setToolTip(tooltip);
         main->statusIcon->setPixmap(i.pixmap(16, 16));
         main->statusIcon->setToolTip(tooltip);
-
-        //int version = reply["version"].get<json::string_t>();
-        int version = 1;
-        Settings::getInstance()->setZcashdVersion(version);
 
         // See if recurring payments needs anything
         Recurring::getInstance()->processPending(main);

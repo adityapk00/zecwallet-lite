@@ -123,8 +123,12 @@ public:
 
     void showTxError(const QString& error);
 
+    json    getInfo() { return serverInfo; }
+    void    setInfo(const json& info) { serverInfo = info; }
+
 private:
-    bool shutdownInProgress = false;    
+    bool shutdownInProgress = false;
+    json serverInfo;
 };
 
 #endif

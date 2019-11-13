@@ -74,11 +74,11 @@ bool Settings::isTAddress(QString addr) {
     return addr.startsWith("t");
 }
 
-int Settings::getZcashdVersion() {
+QString Settings::getZcashdVersion() {
     return _zcashdVersion;
 }
 
-void Settings::setZcashdVersion(int version) {
+void Settings::setZcashdVersion(QString version) {
     _zcashdVersion = version;
 }
 

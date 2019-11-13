@@ -107,6 +107,7 @@ public:
     QString getDefaultTAddress();   
     
 private:
+    void processInfo(const json&);
     void refreshBalances();
 
     void refreshTransactions();    
