@@ -99,7 +99,7 @@ public:
 
     static const QString labelRegExp;
 
-    static const int     updateSpeed         = 60 * 1000;        // 60 sec
+    static const int     updateSpeed         = 30 * 1000;        // 30 sec
     static const int     priceRefreshSpeed   = 60 * 60 * 1000;   // 1 hr
 
 private:

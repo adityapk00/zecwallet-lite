@@ -169,6 +169,8 @@ void Controller::getInfoThenRefresh(bool force) {
         bool doUpdate = force || (model->getLatestBlock() != curBlock);
         model->setLatestBlock(curBlock);
 
+        main->logger->write(QString("Refresh. curblock ") % QString::number(curBlock) % ", update=" % (doUpdate ? "true" : "false") );
+
         // Connected, so display checkmark.
         auto tooltip = Settings::getInstance()->getSettings().server + "\n" + 
                             QString::fromStdString(zrpc->getConnection()->getInfo().dump());
