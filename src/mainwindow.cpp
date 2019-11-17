@@ -408,9 +408,13 @@ void MainWindow::setupSettingsModal() {
         // Fetch prices
         settings.chkFetchPrices->setChecked(Settings::getInstance()->getAllowFetchPrices());
         
+        // List of default servers
+        settings.cmbServer->addItem("https://lightd-main.zecwallet.co:443");
+        settings.cmbServer->addItem("https://lightd-main.zcashfr.io:443");
+
         // Load current values into the dialog        
         auto conf = Settings::getInstance()->getSettings();
-        settings.txtServer->setText(conf.server);
+        settings.cmbServer->setCurrentText(conf.server);
 
         // Connection tab by default
         settings.tabWidget->setCurrentIndex(0);
@@ -429,11 +433,15 @@ void MainWindow::setupSettingsModal() {
             Settings::getInstance()->setAllowFetchPrices(settings.chkFetchPrices->isChecked());
 
             // Save the server
-            Settings::getInstance()->saveSettings(settings.txtServer->text().trimmed());
+            bool reloadConnection = false;
+            if (conf.server != settings.cmbServer->currentText().trimmed()) {
+                reloadConnection = true;
+            }
+            Settings::getInstance()->saveSettings(settings.cmbServer->currentText().trimmed());
 
-            if (false /* connection needs reloading?*/) {
+            if (reloadConnection) {
                 // Save settings
-                Settings::getInstance()->saveSettings(settings.txtServer->text());
+                Settings::getInstance()->saveSettings(settings.cmbServer->currentText());
                 
                 auto cl = new ConnectionLoader(this, rpc);
                 cl->loadConnection();

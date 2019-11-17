@@ -10,12 +10,6 @@
     <height>539</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>540</width>
-    <height>500</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Settings</string>
   </property>
@@ -57,14 +51,15 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="txtServer">
-         <property name="placeholderText">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2"/>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QComboBox" name="cmbServer">
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer">
