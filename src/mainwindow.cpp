@@ -442,9 +442,13 @@ void MainWindow::setupSettingsModal() {
             if (reloadConnection) {
                 // Save settings
                 Settings::getInstance()->saveSettings(settings.cmbServer->currentText());
-                
-                auto cl = new ConnectionLoader(this, rpc);
-                cl->loadConnection();
+
+                // Save the wallet
+                getRPC()->saveWallet([=] (auto) {
+                    // Then reload the connection
+                    auto cl = new ConnectionLoader(this, rpc);
+                    cl->loadConnection();
+                });
             }
         }
     });

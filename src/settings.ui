@@ -46,7 +46,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Server</string>
+          <string>Lightwallet Server</string>
          </property>
         </widget>
        </item>
