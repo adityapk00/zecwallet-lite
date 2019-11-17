@@ -139,7 +139,6 @@ Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> c
 
 // Update the UI with the status
 void ConnectionLoader::showInformation(QString info, QString detail) {
-    qDebug() << "Showing info " << info << ":" << detail;
     connD->status->setText(info);
     connD->statusDetail->setText(detail);
 }

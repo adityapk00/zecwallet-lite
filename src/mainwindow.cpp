@@ -105,6 +105,20 @@ MainWindow::MainWindow(QWidget *parent) :
         AppDataServer::getInstance()->connectAppDialog(this);
     });
 
+    // Rescan
+    QObject::connect(ui->actionRescan, &QAction::triggered, [=]() {
+        // To rescan, we clear the wallet state, and then reload the connection
+        // This will start a sync, and show the scanning status. 
+        getRPC()->clearWallet([=] (auto) {
+            // Save the wallet
+            getRPC()->saveWallet([=] (auto) {
+                // Then reload the connection. The ConnectionLoader deletes itself.
+                auto cl = new ConnectionLoader(this, rpc);
+                cl->loadConnection();
+            });
+        });
+    });
+
     // Address Book
     QObject::connect(ui->action_Address_Book, &QAction::triggered, this, &MainWindow::addressBook);
 
@@ -419,12 +433,6 @@ void MainWindow::setupSettingsModal() {
         // Connection tab by default
         settings.tabWidget->setCurrentIndex(0);
 
-        // Enable the troubleshooting options only if using embedded zcashd
-        if (!rpc->isEmbedded()) {
-            settings.chkRescan->setEnabled(false);
-            settings.chkRescan->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -rescan"));
-        }
-
         if (settingsDialog.exec() == QDialog::Accepted) {
             // Check for updates
             Settings::getInstance()->setCheckForUpdates(settings.chkCheckUpdates->isChecked());
@@ -445,7 +453,7 @@ void MainWindow::setupSettingsModal() {
 
                 // Save the wallet
                 getRPC()->saveWallet([=] (auto) {
-                    // Then reload the connection
+                    // Then reload the connection. The ConnectionLoader deletes itself.
                     auto cl = new ConnectionLoader(this, rpc);
                     cl->loadConnection();
                 });
