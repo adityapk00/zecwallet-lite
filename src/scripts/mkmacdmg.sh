@@ -55,7 +55,8 @@ export PATH=$PATH:/usr/local/bin
 #Clean
 echo -n "Cleaning..............."
 make distclean >/dev/null 2>&1
-rm -f artifacts/macOS-zecwallet-v$APP_VERSION.dmg
+rm -f artifacts/macOS-zecwallet-v$APP_VERSION.dmg 
+rm -rf Zecwallet-Lite.app/ zecwallet-lite.app/
 echo "[OK]"
 
 
@@ -76,9 +77,16 @@ mkdir artifacts >/dev/null 2>&1
 rm -f artifcats/zecwallet-lite.dmg >/dev/null 2>&1
 rm -f artifacts/rw* >/dev/null 2>&1
 $QT_PATH/bin/macdeployqt zecwallet-lite.app 
-codesign --deep --force --verify --verbose -s "$CERTIFICATE" --options runtime --timestamp Zecwallet-Lite.app/
+codesign --deep --force --verify --verbose -s "$CERTIFICATE" --options runtime --timestamp zecwallet-lite.app/
 echo "[OK]"
 
+
+# Code Signing Note:
+# On MacOS, you still need to run these 3 commands:
+# xcrun altool --notarize-app -t osx -f macOS-zecwallet-lite-v1.0.0.dmg --primary-bundle-id="com.yourcompany.zecwallet-lite" -u "apple developer id@email.com" -p "one time password" 
+# xcrun altool --notarization-info <output from pervious command> -u "apple developer id@email.com" -p "one time password" 
+#...wait for the notarization to finish...
+# xcrun stapler staple macOS-zecwallet-lite-v1.0.0.dmg
 
 echo -n "Building dmg..........."
 mv zecwallet-lite.app Zecwallet-Lite.app
