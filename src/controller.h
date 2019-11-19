@@ -62,6 +62,8 @@ public:
 
     void saveWallet(const std::function<void(json)>& cb) { zrpc->saveWallet(cb); }
 
+    void clearWallet(const std::function<void(json)>& cb) { zrpc->clearWallet(cb); }
+
     void createNewZaddr(bool sapling, const std::function<void(json)>& cb) { 
         unlockIfEncrypted([=] () {
             zrpc->createNewZaddr(sapling, cb);
@@ -107,6 +109,7 @@ public:
     QString getDefaultTAddress();   
     
 private:
+    void processInfo(const json&);
     void refreshBalances();
 
     void refreshTransactions();    

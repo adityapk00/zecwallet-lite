@@ -16,6 +16,7 @@
 #include "connection.h"
 #include "requestdialog.h"
 #include "websockets.h"
+#include <QRegularExpression>
 
 using json = nlohmann::json;
 
@@ -102,6 +103,20 @@ MainWindow::MainWindow(QWidget *parent) :
             return;
 
         AppDataServer::getInstance()->connectAppDialog(this);
+    });
+
+    // Rescan
+    QObject::connect(ui->actionRescan, &QAction::triggered, [=]() {
+        // To rescan, we clear the wallet state, and then reload the connection
+        // This will start a sync, and show the scanning status. 
+        getRPC()->clearWallet([=] (auto) {
+            // Save the wallet
+            getRPC()->saveWallet([=] (auto) {
+                // Then reload the connection. The ConnectionLoader deletes itself.
+                auto cl = new ConnectionLoader(this, rpc);
+                cl->loadConnection();
+            });
+        });
     });
 
     // Address Book
@@ -407,18 +422,16 @@ void MainWindow::setupSettingsModal() {
         // Fetch prices
         settings.chkFetchPrices->setChecked(Settings::getInstance()->getAllowFetchPrices());
         
+        // List of default servers
+        settings.cmbServer->addItem("https://lightd-main.zecwallet.co:443");
+        settings.cmbServer->addItem("https://lightd-main.zcashfr.io:443");
+
         // Load current values into the dialog        
         auto conf = Settings::getInstance()->getSettings();
-        settings.txtServer->setText(conf.server);
+        settings.cmbServer->setCurrentText(conf.server);
 
         // Connection tab by default
         settings.tabWidget->setCurrentIndex(0);
-
-        // Enable the troubleshooting options only if using embedded zcashd
-        if (!rpc->isEmbedded()) {
-            settings.chkRescan->setEnabled(false);
-            settings.chkRescan->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -rescan"));
-        }
 
         if (settingsDialog.exec() == QDialog::Accepted) {
             // Check for updates
@@ -428,14 +441,22 @@ void MainWindow::setupSettingsModal() {
             Settings::getInstance()->setAllowFetchPrices(settings.chkFetchPrices->isChecked());
 
             // Save the server
-            Settings::getInstance()->saveSettings(settings.txtServer->text().trimmed());
+            bool reloadConnection = false;
+            if (conf.server != settings.cmbServer->currentText().trimmed()) {
+                reloadConnection = true;
+            }
+            Settings::getInstance()->saveSettings(settings.cmbServer->currentText().trimmed());
 
-            if (false /* connection needs reloading?*/) {
+            if (reloadConnection) {
                 // Save settings
-                Settings::getInstance()->saveSettings(settings.txtServer->text());
-                
-                auto cl = new ConnectionLoader(this, rpc);
-                cl->loadConnection();
+                Settings::getInstance()->saveSettings(settings.cmbServer->currentText());
+
+                // Save the wallet
+                getRPC()->saveWallet([=] (auto) {
+                    // Then reload the connection. The ConnectionLoader deletes itself.
+                    auto cl = new ConnectionLoader(this, rpc);
+                    cl->loadConnection();
+                });
             }
         }
     });
@@ -443,7 +464,7 @@ void MainWindow::setupSettingsModal() {
 
 void MainWindow::addressBook() {
     // Check to see if there is a target.
-    QRegExp re("Address[0-9]+", Qt::CaseInsensitive);
+    QRegularExpression re("Address[0-9]+", QRegularExpression::CaseInsensitiveOption);
     for (auto target: ui->sendToWidgets->findChildren<QLineEdit *>(re)) {
         if (target->hasFocus()) {
             AddressBook::open(this, target);

@@ -11,4 +11,4 @@ crate-type = ["staticlib"]
 [dependencies]
 libc = "0.2.58"
 lazy_static = "1.4.0"
-zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "af0e0b9b2bcc131804d5e940f94d45c6fef74481" }
+zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "4f946da7745ff6372c2475eeb2bbcd06a729eef1" }

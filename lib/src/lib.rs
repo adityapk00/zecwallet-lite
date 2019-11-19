@@ -57,6 +57,9 @@ pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> 
         }
     };
 
+    // Initialize logging
+    let _ = lightclient.init_logging();
+
     let seed = match lightclient.do_seed_phrase() {
         Ok(s) => s.dump(),
         Err(e) => {
@@ -105,6 +108,9 @@ pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const
         }
     };
 
+    // Initialize logging
+    let _ = lightclient.init_logging();
+
     LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
  
     let c_str = CString::new("OK").unwrap();
@@ -136,6 +142,9 @@ pub extern fn litelib_initialize_existing(dangerous: bool, server: *const c_char
             return e_str.into_raw();
         }
     };
+
+    // Initialize logging
+    let _ = lightclient.init_logging();
 
     LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
 

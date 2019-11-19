@@ -44,6 +44,9 @@ public:
 
     void fetchInfo(const std::function<void(json)>& cb, 
                     const std::function<void(QString)>& err);
+
+    void fetchLatestBlock(const std::function<void(json)>& cb, 
+                        const std::function<void(QString)>& err);
     
     void fetchBalance(const std::function<void(json)>& cb);
 
@@ -55,6 +58,7 @@ public:
     void fetchSeed(const std::function<void(json)>&);
 
     void saveWallet(const std::function<void(json)>& cb);
+    void clearWallet(const std::function<void(json)>& cb);
 
     void fetchWalletEncryptionStatus(const std::function<void(json)>& cb);
     void encryptWallet(QString password, const std::function<void(json)>& cb);

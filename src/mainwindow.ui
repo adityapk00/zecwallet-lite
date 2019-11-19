@@ -392,8 +392,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1226</width>
-                <height>504</height>
+                <width>1162</width>
+                <height>344</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="sendToLayout">
@@ -1088,7 +1088,7 @@
      <x>0</x>
      <y>0</y>
      <width>1274</width>
-     <height>22</height>
+     <height>39</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1130,6 +1130,8 @@
     <addaction name="separator"/>
     <addaction name="actionEncrypt_Wallet"/>
     <addaction name="actionRemove_Wallet_Encryption"/>
+    <addaction name="separator"/>
+    <addaction name="actionRescan"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
@@ -1224,6 +1226,11 @@
   <action name="actionRemove_Wallet_Encryption">
    <property name="text">
     <string>Remove Wallet Encryption</string>
+   </property>
+  </action>
+  <action name="actionRescan">
+   <property name="text">
+    <string>Rescan</string>
    </property>
   </action>
  </widget>
