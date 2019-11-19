@@ -109,9 +109,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->actionRescan, &QAction::triggered, [=]() {
         // To rescan, we clear the wallet state, and then reload the connection
         // This will start a sync, and show the scanning status. 
-        getRPC()->clearWallet([=] (auto) {
+        this->getRPC()->clearWallet([=] (auto) {
             // Save the wallet
-            getRPC()->saveWallet([=] (auto) {
+            this->getRPC()->saveWallet([=] (auto) {
                 // Then reload the connection. The ConnectionLoader deletes itself.
                 auto cl = new ConnectionLoader(this, rpc);
                 cl->loadConnection();
