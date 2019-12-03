@@ -17,6 +17,16 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+    -u|--username)
+    APPLE_USERNAME="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -p|--password)
+    APPLE_PASSWORD="$2"
+    shift # past argument
+    shift # past value
+    ;;
     -v|--version)
     APP_VERSION="$2"
     shift # past argument
@@ -35,8 +45,18 @@ if [ -z $QT_PATH ]; then
     exit 1; 
 fi
 
-if [ -z $CERTIFICATE ]; then 
+if [ -z "$CERTIFICATE" ]; then 
     echo "CERTIFICATE is not set. Please set it the name of the MacOS developer certificate to sign the binary with"; 
+    exit 1; 
+fi
+
+if [ -z "$APPLE_USERNAME" ]; then 
+    echo "APPLE_USERNAME is not set. Please set it the name of the MacOS developer login email to submit the binary for Apple for notarization"; 
+    exit 1; 
+fi
+
+if [ -z "$APPLE_PASSWORD" ]; then 
+    echo "APPLE_PASSWORD is not set. Please set it the name of the MacOS developer Application password to submit the binary for Apple for notarization"; 
     exit 1; 
 fi
 
@@ -76,8 +96,9 @@ echo -n "Deploying.............."
 mkdir artifacts >/dev/null 2>&1
 rm -f artifcats/zecwallet-lite.dmg >/dev/null 2>&1
 rm -f artifacts/rw* >/dev/null 2>&1
-$QT_PATH/bin/macdeployqt zecwallet-lite.app 
-codesign --deep --force --verify --verbose -s "$CERTIFICATE" --options runtime --timestamp zecwallet-lite.app/
+mv zecwallet-lite.app Zecwallet-Lite.app
+$QT_PATH/bin/macdeployqt Zecwallet-Lite.app 
+codesign --deep --force --verify --verbose -s "$CERTIFICATE" --options runtime --timestamp Zecwallet-Lite.app
 echo "[OK]"
 
 
@@ -89,11 +110,16 @@ echo "[OK]"
 # xcrun stapler staple macOS-zecwallet-lite-v1.0.0.dmg
 
 echo -n "Building dmg..........."
-mv zecwallet-lite.app Zecwallet-Lite.app
+
 create-dmg --volname "Zecwallet-Lite-v$APP_VERSION" --volicon "res/logo.icns" --window-pos 200 120 --icon "Zecwallet-Lite.app" 200 190  --app-drop-link 600 185 --hide-extension "Zecwallet-Lite.app"  --window-size 800 400 --hdiutil-quiet --background res/dmgbg.png  artifacts/macOS-zecwallet-lite-v$APP_VERSION.dmg Zecwallet-Lite.app >/dev/null 2>&1
 
 if [ ! -f artifacts/macOS-zecwallet-lite-v$APP_VERSION.dmg ]; then
     echo "[ERROR]"
     exit 1
 fi
+echo  "[OK]"
+
+# Submit to Apple for notarization
+echo -n "Apple notarization....."
+xcrun altool --notarize-app -t osx -f artifacts/macOS-zecwallet-lite-v$APP_VERSION.dmg --primary-bundle-id="com.yourcompany.zecwallet-lite" -u "$APPLE_USERNAME" -p "$APPLE_PASSWORD" 
 echo  "[OK]"
