@@ -21,24 +21,29 @@ void BalancesTableModel::setNewData(const QList<QString> zaddrs, const QList<QSt
     // This is a QList deep copy.
     *unspentOutputs = outputs;
 
+    // Are there any z or t addresses with balance in the balances table?
+    bool anyz = false;
+    bool anyt = false;
+
     // Process the address balances into a list
     delete modeldata;
     modeldata = new QList<std::tuple<QString, CAmount>>();
-    std::for_each(balances.keyBegin(), balances.keyEnd(), [=] (auto keyIt) {
+    std::for_each(balances.keyBegin(), balances.keyEnd(), [=, &anyz, &anyt] (auto keyIt) {
         modeldata->push_back(std::make_tuple(keyIt, balances.value(keyIt)));
+        if (Settings::isZAddress(keyIt)) {
+            anyz = true;
+        } else if (Settings::isTAddress(keyIt)) {
+            anyt = true;
+        }
     });
 
-    // Add all addresses that have no balances as well
-    for (auto zaddr: zaddrs) {
-        if (!balances.contains(zaddr)) {
-            modeldata->push_back(std::make_tuple(zaddr, CAmount::fromqint64(0)));
-        }
+    // Add all addresses that have no balances, if there are no existing addresses
+    if (!anyz && zaddrs.length() > 0) {
+        modeldata->push_back(std::make_tuple(zaddrs[0], CAmount::fromqint64(0)));
     }
 
-    for (auto taddr: taddrs) {
-        if (!balances.contains(taddr)) {
-            modeldata->push_back(std::make_tuple(taddr, CAmount::fromqint64(0)));
-        }
+    if (!anyt && taddrs.length() > 0) {
+        modeldata->push_back(std::make_tuple(taddrs[0], CAmount::fromqint64(0)));
     }
 
     // And then update the data

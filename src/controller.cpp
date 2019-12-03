@@ -288,6 +288,9 @@ void Controller::updateUIBalances() {
     // Reduce the BalanceZ by the pending outgoing amount. We're adding
     // here because totalPending is already negative for outgoing txns.
     balZ = balZ + getModel()->getTotalPending();
+    if (balZ < 0) {
+        balZ = CAmount::fromqint64(0);
+    }
 
     CAmount balTotal     = balT + balZ;
     CAmount balAvailable = balT + balVerified;

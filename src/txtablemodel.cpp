@@ -136,8 +136,9 @@ QVariant TxTableModel::data(const QModelIndex &index, int role) const {
                         if (memo.startsWith("zcash:")) {
                             return Settings::paymentURIPretty(Settings::parseURI(memo));
                         } else {
+                            // Don't render memo html in tooltip
                             return modeldata->at(index.row()).type + 
-                            (memo.isEmpty() ? "" : " tx memo: \"" + memo + "\"");
+                            (memo.isEmpty() ? "" : " tx memo: \"" + memo.toHtmlEscaped() + "\"");
                         }
                     } else {
                         return concatMultipleMemos(dat);
