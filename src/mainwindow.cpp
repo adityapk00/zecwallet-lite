@@ -1008,9 +1008,6 @@ void MainWindow::setupReceiveTab() {
         if (checked) { 
             updateTAddrCombo(checked);
         } 
-
-        // Toggle the "View all addresses" button as well
-        ui->btnViewAllAddresses->setVisible(checked);
     });
 
     // View all addresses goes to "View all private keys"
@@ -1026,7 +1023,14 @@ void MainWindow::setupReceiveTab() {
         Settings::saveRestoreTableHeader(viewaddrs.tblAddresses, &d, "viewalladdressestable");
         viewaddrs.tblAddresses->horizontalHeader()->setStretchLastSection(true);
 
-        ViewAllAddressesModel model(viewaddrs.tblAddresses, getRPC()->getModel()->getAllTAddresses(), getRPC());
+        QList<QString> allAddresses;
+        if (ui->rdioTAddr->isChecked()) {
+            allAddresses = getRPC()->getModel()->getAllTAddresses();
+        } else {
+            allAddresses = getRPC()->getModel()->getAllZAddresses();
+        }
+
+        ViewAllAddressesModel model(viewaddrs.tblAddresses, allAddresses, getRPC());
         viewaddrs.tblAddresses->setModel(&model);
 
         QObject::connect(viewaddrs.btnExportAll, &QPushButton::clicked,  this, &MainWindow::exportAllKeys);
@@ -1062,6 +1066,20 @@ void MainWindow::setupReceiveTab() {
         if (!rpc->getConnection())
             return;
 
+        // Go over the dropdown and just select the next address that has:
+        // 0 balance and has no labels
+        for (int i=ui->listReceiveAddresses->currentIndex()+1; i < ui->listReceiveAddresses->count(); i++) {
+            QString item = ui->listReceiveAddresses->itemText(i);
+            CAmount bal = getRPC()->getModel()->getAllBalances().value(item, CAmount());
+            if (bal == 0 && AddressBook::getInstance()->getLabelForAddress(item).isEmpty()) {
+                // Pick this one, since it has no balance and no label
+                ui->listReceiveAddresses->setCurrentIndex(i);
+                return;
+            }
+        }
+
+        // If none of the existing items were eligible, create a new one.
+
         if (ui->rdioZSAddr->isChecked()) {
             addNewZaddr(true);
         } else if (ui->rdioTAddr->isChecked()) {
@@ -1074,7 +1092,6 @@ void MainWindow::setupReceiveTab() {
         if (tab == 2) {
             // Switched to receive tab, select the z-addr radio button
             ui->rdioZSAddr->setChecked(true);
-            ui->btnViewAllAddresses->setVisible(false);
             
             // And then select the first one
             ui->listReceiveAddresses->setCurrentIndex(0);
