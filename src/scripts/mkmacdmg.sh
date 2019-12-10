@@ -111,7 +111,7 @@ echo "[OK]"
 
 echo -n "Building dmg..........."
 
-create-dmg --volname "Zecwallet-Lite-v$APP_VERSION" --volicon "res/logo.icns" --window-pos 200 120 --icon "Zecwallet-Lite.app" 200 190  --app-drop-link 600 185 --hide-extension "Zecwallet-Lite.app"  --window-size 800 400 --hdiutil-quiet --background res/dmgbg.png  artifacts/macOS-zecwallet-lite-v$APP_VERSION.dmg Zecwallet-Lite.app >/dev/null 2>&1
+create-dmg --volname "Zecwallet-Lite-v$APP_VERSION" --volicon "res/logo.icns" --window-pos 200 120 --icon "Zecwallet-Lite.app" 200 190  --icon-size 100 --app-drop-link 600 185 --hide-extension "Zecwallet-Lite.app"  --window-size 800 400 --hdiutil-quiet --background res/dmgbg.png  artifacts/macOS-zecwallet-lite-v$APP_VERSION.dmg Zecwallet-Lite.app >/dev/null 2>&1
 
 if [ ! -f artifacts/macOS-zecwallet-lite-v$APP_VERSION.dmg ]; then
     echo "[ERROR]"
