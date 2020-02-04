@@ -423,6 +423,7 @@ void MainWindow::setupSettingsModal() {
         settings.chkFetchPrices->setChecked(Settings::getInstance()->getAllowFetchPrices());
         
         // List of default servers
+        settings.cmbServer->addItem("https://lightwalletd.zecwallet.co:1443");
         settings.cmbServer->addItem("https://lightd-main.zecwallet.co:443");
         settings.cmbServer->addItem("https://lightd-main.zcashfr.io:443");
 

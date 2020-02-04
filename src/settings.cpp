@@ -19,7 +19,7 @@ Config Settings::getSettings() {
     // Load from the QT Settings. 
     QSettings s;
     
-    auto server        = s.value("connection/server").toString();
+    auto server        = s.value("connection/lightwalletdserver").toString();
     if (server.trimmed().isEmpty()) {
         server = Settings::getDefaultServer();
     }
@@ -30,7 +30,7 @@ Config Settings::getSettings() {
 void Settings::saveSettings(const QString& server) {
     QSettings s;
 
-    s.setValue("connection/server", server);
+    s.setValue("connection/lightwalletdserver", server);
     s.sync();
 
     // re-init to load correct settings
@@ -154,7 +154,7 @@ void Settings::saveRestoreTableHeader(QTableView* table, QDialog* d, QString tab
 }
 
 QString Settings::getDefaultServer() {
-    return "https://lightd-main.zecwallet.co:443/";
+    return "https://lightwalletd.zecwallet.co:1443/";
 }
 
 void Settings::openAddressInExplorer(QString address) {
