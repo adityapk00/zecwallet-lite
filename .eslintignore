@@ -49,7 +49,8 @@ main.js.map
 
 .idea
 npm-debug.log.*
+__snapshots__
 
-zcashd
-
-native/artifacts.json
+# Package.json
+package.json
+.travis.yml

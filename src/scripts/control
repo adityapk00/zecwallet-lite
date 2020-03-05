@@ -1,9 +1,0 @@
-Package: zecwallet-lite
-Version: RELEASE_VERSION
-Section: base
-Priority: optional
-Architecture: amd64
-Maintainer: Aditya Kulkarni <zcash@adityapk.com>
-Description: Zecwallet-Lite is a lightclient UI wallet for Zcash.
- Zecwallet-Lite is a lightclient UI wallet for Zcash. It comes with 
- full support for shielded addresses, transparent addresses and memos for Zcash.
