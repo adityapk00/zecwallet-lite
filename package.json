@@ -23,7 +23,7 @@
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-mac": "yarn build && electron-builder build --mac",
     "package-linux": "yarn build && electron-builder build --linux",
-    "package-win": "yarn build && electron-builder build --x64 --win",
+    "package-win": "yarn build && electron-builder build --win --x64",
     "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && yarn flow-typed && electron-builder install-app-deps && yarn build-dll && opencollective-postinstall",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{js,jsx,json,html,css,less,scss,yml}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
@@ -112,17 +112,22 @@
       "target": [
         "deb",
         "AppImage"
-      ]
+      ],
+      "desktop": {
+        "Name": "ZecWallet Lite",
+        "Comment": "Shielded Lightclient for Zcash",
+        "GenericName": "Wallet",
+        "Type": "Application",
+        "StartupNotify": true,
+        "StartupWMClass": "zecwalletlite",
+        "Categories": "Utility;",
+        "MimeType": "x-scheme-handler/zcash;",
+        "Keywords": "zecwallet;"
+      }
     },
     "directories": {
       "buildResources": "resources",
       "output": "release"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate",
-      "private": false
     }
   },
   "repository": {
