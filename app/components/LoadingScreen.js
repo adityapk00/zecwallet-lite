@@ -82,7 +82,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
       // Show the wallet creation screen
       this.setState({ walletScreen: 1 });
     } else {
-      const result = native.litelib_initialize_existing(true, url);
+      const result = native.litelib_initialize_existing(false, url);
       console.log(`Intialization: ${result}`);
       if (result !== 'OK') {
         this.setState({
@@ -174,7 +174,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
 
   createNewWallet = () => {
     const { url } = this.state;
-    const result = native.litelib_initialize_new(true, url);
+    const result = native.litelib_initialize_new(false, url);
 
     if (result.startsWith('Error')) {
       this.setState({ newWalletError: result });
