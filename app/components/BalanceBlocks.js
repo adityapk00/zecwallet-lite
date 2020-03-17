@@ -1,5 +1,5 @@
 import React from 'react';
-import cstyles from './Common.css';
+import cstyles from './Common.module.css';
 import Utils from '../utils/utils';
 
 // eslint-disable-next-line react/prop-types

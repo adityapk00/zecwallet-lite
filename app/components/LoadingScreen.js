@@ -8,8 +8,8 @@ import native from '../../native/index.node';
 import routes from '../constants/routes.json';
 import { RPCConfig, Info } from './AppState';
 import RPC from '../rpc';
-import cstyles from './Common.css';
-import styles from './LoadingScreen.css';
+import cstyles from './Common.module.css';
+import styles from './LoadingScreen.module.css';
 import Logo from '../assets/img/logobig.png';
 
 type Props = {
