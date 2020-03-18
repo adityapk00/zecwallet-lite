@@ -28,8 +28,8 @@ Pre-Requisits
 
 You need to have the following software installed before you can build Zecwallet Fullnode
 
-[Nodejs v12.16.1 or higher](https://nodejs.org)
-[Yarn](https://yarnpkg.com)
+* [Nodejs v12.16.1 or higher](https://nodejs.org)
+* [Yarn](https://yarnpkg.com)
 
 ```
 git clone https://github.com/ZcashFoundation/zecwallet.git
