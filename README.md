@@ -1,4 +1,4 @@
-**Experimental**
+**Zecwallet Web is Experimental**
 
 
 Zecwallet Web is the Zecwallet Lite client compiled to run inside a browser. __Please read [privacy section](#privacy) below before using it__.
