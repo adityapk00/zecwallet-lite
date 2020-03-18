@@ -60,7 +60,7 @@ You'll need to edit the envoy proxy config file in `envoy/envoy.yaml` to point t
 Using a web wallet is generally not a good idea, since your private keys live in the browser and might get stolen. Please only use Zecwallet Web with small amounts of money, and don't use it on machines and browsers you don't trust. 
 
 * Zecwallet Web has *not been audited*, so it likely has bugs and other vulnerabilities
-* Your wallet, it's private keys and your seed phrase are all stored inside the browser. If your browser is compromised, you will likely lose your private keys and probably your funds. 
+* Your wallet, its private keys and your seed phrase are all stored inside the browser. If your browser is compromised, you will likely lose your private keys and probably your funds. 
 * While you get blockchain privacy if you use z-addresses, using Zecwallet Web likely exposes your IP address to malilcious attackers and might be used to link your on-chain transactions
 * Currently, WASM is limited by a single thread, so some operations, like sending transactions, might be very slow. 
 * Zecwallet Web uses a custom fork of librustzcash that replaces some libraries (most noteably secp256k1) with their pure-rust implementations. This might cause unexpected bugs or security issues.
