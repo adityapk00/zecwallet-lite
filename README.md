@@ -30,10 +30,11 @@ You need to have the following software installed before you can build Zecwallet
 
 * [Nodejs v12.16.1 or higher](https://nodejs.org)
 * [Yarn](https://yarnpkg.com)
+* [Rust v1.40+](https://www.rust-lang.org/tools/install)
 
 ```
-git clone https://github.com/ZcashFoundation/zecwallet.git
-cd zecwallet
+git clone https://github.com/adityapk00/zecwallet-lite.git
+cd zecwallet-lite
 
 yarn install
 yarn build
