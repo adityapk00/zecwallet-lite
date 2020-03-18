@@ -21,6 +21,9 @@ git checkout wasm
 
 Build the wasm packge + node files
 ```
+cd app/wasm
+wasm-pack build
+cd ../..
 npm install
 npm run build
 ```
@@ -60,3 +63,5 @@ Using a web wallet is generally not a good idea, since your private keys live in
 * Your wallet, it's private keys and your seed phrase are all stored inside the browser. If your browser is compromised, you will likely lose your private keys and probably your funds. 
 * While you get blockchain privacy if you use z-addresses, using Zecwallet Web likely exposes your IP address to malilcious attackers and might be used to link your on-chain transactions
 * Currently, WASM is limited by a single thread, so some operations, like sending transactions, might be very slow. 
+* Zecwallet Web uses a custom fork of librustzcash that replaces some libraries (most noteably secp256k1) with their pure-rust implementations. This might cause unexpected bugs or security issues.
+
