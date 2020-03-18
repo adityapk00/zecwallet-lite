@@ -1,7 +1,19 @@
 /* eslint-disable max-classes-per-file */
 import axios from 'axios';
+import _sodium from 'libsodium-wrappers-sumo';
 import { TotalBalance, AddressBalance, Transaction, RPCConfig, TxDetail, Info } from './components/AppState';
-import native from '../native/index.node';
+
+const rust = import('./wasm/pkg');
+
+let native = null;
+
+async function initNative() {
+  if (!native) {
+    native = await rust;
+  }
+}
+
+const LOCALSTORAGE_WALLET_KEY = "lite_wallet_hex_bytes";
 
 export default class RPC {
   rpcConfig: RPCConfig;
@@ -54,25 +66,83 @@ export default class RPC {
     this.refreshTimerID = setTimeout(() => this.refresh(lastBlockHeight), 60 * 1000);
   }
 
-  static doSync() {
-    const syncstr = native.litelib_execute('sync', '');
+  static async doNewWallet(): string {
+    await _sodium.ready;
+    const sodium = _sodium;
+
+    const randomHex = sodium.to_hex(sodium.randombytes_buf(32));
+
+    await initNative();
+
+    const result = await native.litelib_initialize_new(randomHex);
+    console.log("Litelib init result", result);
+
+    return result;
+  }
+
+  static async doRestoreWallet(seed: string, birthday: number) {
+    await initNative();
+
+    const result = await native.litelib_initialize_new_from_phrase(seed, BigInt(birthday));
+    console.log("Litelib restore result", result);
+
+    return result;
+  }
+
+  static async doReadExistingWallet(walletHex: string) {
+    await initNative();
+
+    const result = await native.litelib_initialize_existing(walletHex);
+    console.log("Litelib init existing result", result);
+
+    return result;
+  }
+
+  static readWalletFromLocalStorage() : string | null {
+    const localStorage = window.localStorage;
+    const walletHex = localStorage.getItem(LOCALSTORAGE_WALLET_KEY);
+
+    return walletHex;
+  }
+
+  static async saveWalletToLocalStorage() {
+    const walletHex = await RPC.doSave();
+
+    const localStorage = window.localStorage;
+    localStorage.setItem(LOCALSTORAGE_WALLET_KEY, walletHex);
+
+    console.log("Saved wallet to local storage");
+  }
+
+  static async doSave(): string {
+    await initNative();
+
+    const savestr = await native.litelib_execute('save', '');
+    console.log(`Save result: wallet bytes: ${savestr.length}`);
+
+    return savestr;
+  }
+
+  static async doSync() {
+    await initNative();
+
+    const syncstr = await native.litelib_execute('sync', '');
     console.log(`Sync exec result: ${syncstr}`);
   }
 
-  static doRescan() {
-    const syncstr = native.litelib_execute('rescan', '');
+  static async doRescan() {
+    await initNative();
+
+    const syncstr = await native.litelib_execute('rescan', '');
     console.log(`rescan exec result: ${syncstr}`);
   }
 
-  static doSyncStatus(): string {
-    const syncstr = native.litelib_execute('syncstatus', '');
+  static async doSyncStatus(): string {
+    await initNative();
+
+    const syncstr = await native.litelib_execute('syncstatus', '');
     console.log(`syncstatus: ${syncstr}`);
     return syncstr;
-  }
-
-  static doSave() {
-    const savestr = native.litelib_execute('save', '');
-    console.log(`Sync status: ${savestr}`);
   }
 
   async refresh(lastBlockHeight: number) {
@@ -99,8 +169,10 @@ export default class RPC {
   }
 
   // Special method to get the Info object. This is used both internally and by the Loading screen
-  static getInfoObject() {
-    const infostr = native.litelib_execute('info', '');
+  static async getInfoObject() {
+    await initNative();
+
+    const infostr = await native.litelib_execute('info', '');
     const infoJSON = JSON.parse(infostr);
 
     const info = new Info();
@@ -112,16 +184,15 @@ export default class RPC {
     info.currencyName = info.testnet ? 'TAZ' : 'ZEC';
     info.solps = 0;
 
-    const encStatus = native.litelib_execute('encryptionstatus', '');
-    const encJSON = JSON.parse(encStatus);
-    info.encrypted = encJSON.encrypted;
-    info.locked = encJSON.locked;
+    // Encryption is not enabled in the web wallet
+    info.encrypted = false;
+    info.locked = false;
 
     return info;
   }
 
   async fetchInfo(): number {
-    const info = RPC.getInfoObject(this.rpcConfig);
+    const info = await RPC.getInfoObject(this.rpcConfig);
 
     this.fnSetInfo(info);
 
@@ -130,7 +201,9 @@ export default class RPC {
 
   // This method will get the total balances
   async fetchTotalBalance() {
-    const balanceStr = native.litelib_execute('balance', '');
+    await initNative();
+
+    const balanceStr = await native.litelib_execute('balance', '');
     const balanceJSON = JSON.parse(balanceStr);
 
     // Total Balance
@@ -142,7 +215,7 @@ export default class RPC {
     this.fnSetTotalBalance(balance);
 
     // Fetch pending notes and UTXOs
-    const pendingNotes = native.litelib_execute('notes', '');
+    const pendingNotes = await native.litelib_execute('notes', '');
     const pendingJSON = JSON.parse(pendingNotes);
 
     const pendingAddressBalances = new Map();
@@ -192,22 +265,28 @@ export default class RPC {
     this.fnSetAllAddresses(allAddresses);
   }
 
-  static getPrivKeyAsString(address: string): string {
-    const privKeyStr = native.litelib_execute('export', address);
+  static async getPrivKeyAsString(address: string): string {
+    await initNative();
+
+    const privKeyStr = await native.litelib_execute('export', address);
     const privKeyJSON = JSON.parse(privKeyStr);
 
     return privKeyJSON[0].private_key;
   }
 
-  static createNewAddress(zaddress: boolean) {
-    const addrStr = native.litelib_execute('new', zaddress ? 'z' : 't');
+  static async createNewAddress(zaddress: boolean) {
+    await initNative();
+
+    const addrStr = await native.litelib_execute('new', zaddress ? 'z' : 't');
     const addrJSON = JSON.parse(addrStr);
 
     return addrJSON[0];
   }
 
-  static fetchSeed(): string {
-    const seedStr = native.litelib_execute('seed', '');
+  static async fetchSeed(): string {
+    await initNative();
+
+    const seedStr = await native.litelib_execute('seed', '');
     const seedJSON = JSON.parse(seedStr);
 
     return seedJSON.seed;
@@ -215,7 +294,9 @@ export default class RPC {
 
   // Fetch all T and Z transactions
   async fetchTandZTransactions(latestBlockHeight: number) {
-    const listStr = native.litelib_execute('list', '');
+    await initNative();
+
+    const listStr = await native.litelib_execute('list', '');
     const listJSON = JSON.parse(listStr);
 
     const txlist = listJSON.map(tx => {
@@ -256,10 +337,11 @@ export default class RPC {
   }
 
   // Send a transaction using the already constructed sendJson structure
-  sendTransaction(sendJson: []): string {
+  async sendTransaction(sendJson: []): string {
     let sendStr;
     try {
-      sendStr = native.litelib_execute('send', JSON.stringify(sendJson));
+      await initNative();
+      sendStr = await native.litelib_execute('send', JSON.stringify(sendJson));
     } catch (err) {
       // TODO Show a modal with the error
       console.log(`Error sending Tx: ${err}`);
@@ -284,52 +366,6 @@ export default class RPC {
 
       return txid;
     }
-  }
-
-  async encryptWallet(password): boolean {
-    const resultStr = native.litelib_execute('encrypt', password);
-    const resultJSON = JSON.parse(resultStr);
-
-    // To update the wallet encryption status
-    this.fetchInfo();
-
-    // And save the wallet
-    RPC.doSave();
-
-    return resultJSON.result === 'success';
-  }
-
-  async decryptWallet(password): boolean {
-    const resultStr = native.litelib_execute('decrypt', password);
-    const resultJSON = JSON.parse(resultStr);
-
-    // To update the wallet encryption status
-    this.fetchInfo();
-
-    // And save the wallet
-    RPC.doSave();
-
-    return resultJSON.result === 'success';
-  }
-
-  async lockWallet(): boolean {
-    const resultStr = native.litelib_execute('lock', '');
-    const resultJSON = JSON.parse(resultStr);
-
-    // To update the wallet encryption status
-    this.fetchInfo();
-
-    return resultJSON.result === 'success';
-  }
-
-  async unlockWallet(password: string): boolean {
-    const resultStr = native.litelib_execute('unlock', password);
-    const resultJSON = JSON.parse(resultStr);
-
-    // To update the wallet encryption status
-    this.fetchInfo();
-
-    return resultJSON.result === 'success';
   }
 
   setupNextZecPriceRefresh(retryCount: number, timeout: number) {

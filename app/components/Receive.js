@@ -9,12 +9,14 @@ import {
   AccordionItemPanel
 } from 'react-accessible-accordion';
 import QRCode from 'qrcode.react';
-import { shell, clipboard } from 'electron';
 import styles from './Receive.module.css';
 import cstyles from './Common.module.css';
 import Utils from '../utils/utils';
 import { AddressBalance, Info, ReceivePageState, AddressBookEntry } from './AppState';
 import ScrollPane from './ScrollPane';
+import { withRouter } from 'react-router';
+import routes from '../constants/routes.json';
+import PropTypes from 'prop-types';
 
 const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKey, fetchAndSetSinglePrivKey }) => {
   const { address } = addressBalance;
@@ -22,11 +24,11 @@ const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKe
   const [copied, setCopied] = useState(false);
   const balance = addressBalance.balance || 0;
 
-  const openAddress = () => {
+  const getAddressLink = () => {
     if (currencyName === 'TAZ') {
-      shell.openExternal(`https://chain.so/address/ZECTEST/${address}`);
+      return `https://chain.so/address/ZECTEST/${address}`;
     } else {
-      shell.openExternal(`https://zcha.in/accounts/${address}`);
+      return `https://zcha.in/accounts/${address}`;
     }
   };
 
@@ -66,17 +68,20 @@ const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKe
             </div>
 
             <div>
+            { /*
               <button
                 className={[cstyles.primarybutton, cstyles.margintoplarge].join(' ')}
                 type="button"
                 onClick={() => {
-                  clipboard.writeText(address);
+                  // TODO(web)
+                  // clipboard.writeText(address);
                   setCopied(true);
                   setTimeout(() => setCopied(false), 5000);
                 }}
               >
                 {copied ? <span>Copied!</span> : <span>Copy Address</span>}
               </button>
+            */ }
               {!privateKey && (
                 <button
                   className={[cstyles.primarybutton].join(' ')}
@@ -87,8 +92,10 @@ const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKe
                 </button>
               )}
               {Utils.isTransparent(address) && (
-                <button className={[cstyles.primarybutton].join(' ')} type="button" onClick={() => openAddress()}>
-                  View on explorer <i className={['fas', 'fa-external-link-square-alt'].join(' ')} />
+                <button className={[cstyles.primarybutton].join(' ')} type="button">
+                  <a href={getAddressLink()} target="_blank">
+                    View on explorer <i className={['fas', 'fa-external-link-square-alt'].join(' ')} />
+                  </a>
                 </button>
               )}
             </div>
@@ -103,6 +110,7 @@ const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKe
 };
 
 type Props = {
+  history: PropTypes.object.isRequired,
   addresses: string[],
   addressesWithBalance: AddressBalance[],
   addressBook: AddressBookEntry[],
@@ -113,7 +121,14 @@ type Props = {
   rerenderKey: number
 };
 
-export default class Receive extends Component<Props> {
+class Receive extends Component<Props> {
+  componentDidMount() {
+    const { info, history } = this.props;
+    if (!(info && info.version)) {
+      history.push(routes.LOADING);
+    }
+  };
+
   render() {
     const {
       addresses,
@@ -145,7 +160,7 @@ export default class Receive extends Component<Props> {
 
       // move this address to the front, since the scrollbar will reset when we re-render
       zaddrs.sort((x, y) => {
-        // eslint-disable-next-line prettier/prettier, no-nested-ternary
+        // eslint-disable-next-line no-nested-ternary
         return x.address === defaultZaddr ? -1 : y.address === defaultZaddr ? 1 : 0
       });
     }
@@ -161,7 +176,7 @@ export default class Receive extends Component<Props> {
 
       // move this address to the front, since the scrollbar will reset when we re-render
       taddrs.sort((x, y) => {
-        // eslint-disable-next-line prettier/prettier, no-nested-ternary
+        // eslint-disable-next-line no-nested-ternary
         return x.address === defaultTaddr ? -1 : y.address === defaultTaddr ? 1 : 0
       });
     }
@@ -241,3 +256,5 @@ export default class Receive extends Component<Props> {
     );
   }
 }
+
+export default withRouter(Receive);

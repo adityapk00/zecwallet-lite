@@ -8,7 +8,7 @@ import {
   AccordionItemPanel,
   Accordion
 } from 'react-accessible-accordion';
-import styles from './Addressbook.module.css';
+import styles from './Addressbook.css';
 import cstyles from './Common.module.css';
 import { AddressBookEntry } from './AppState';
 import ScrollPane from './ScrollPane';

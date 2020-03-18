@@ -2,15 +2,15 @@
 /* eslint-disable max-classes-per-file */
 import React, { Component } from 'react';
 import { Redirect, withRouter } from 'react-router';
-import { ipcRenderer } from 'electron';
 import TextareaAutosize from 'react-textarea-autosize';
-import native from '../../native/index.node';
 import routes from '../constants/routes.json';
 import { RPCConfig, Info } from './AppState';
 import RPC from '../rpc';
 import cstyles from './Common.module.css';
 import styles from './LoadingScreen.module.css';
 import Logo from '../assets/img/logobig.png';
+
+
 
 type Props = {
   setRPCConfig: (rpcConfig: RPCConfig) => void,
@@ -60,7 +60,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     this.state = state;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { rescanning } = this.props;
 
     if (rescanning) {
@@ -68,21 +68,22 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     } else {
       this.doFirstTimeSetup();
     }
+
+
   }
 
   doFirstTimeSetup = async () => {
     // Try to load the light client
     const { url } = this.state;
 
-    // First, set up the exit handler
-    this.setupExitHandler();
+    // Test to see if the wallet exists.
+    const walletHex = RPC.readWalletFromLocalStorage();
 
-    // Test to see if the wallet exists
-    if (!native.litelib_wallet_exists('main')) {
+    if (!walletHex) {
       // Show the wallet creation screen
       this.setState({ walletScreen: 1 });
     } else {
-      const result = native.litelib_initialize_existing(false, url);
+      const result = await RPC.doReadExistingWallet(walletHex);
       console.log(`Intialization: ${result}`);
       if (result !== 'OK') {
         this.setState({
@@ -102,15 +103,6 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     }
   };
 
-  setupExitHandler = () => {
-    // App is quitting, make sure to save the wallet properly.
-    ipcRenderer.on('appquitting', () => {
-      RPC.doSave();
-
-      // And reply that we're all done.
-      ipcRenderer.send('appquitdone');
-    });
-  };
 
   getInfo() {
     // Try getting the info.
@@ -118,33 +110,31 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
       // Do a sync at start
       this.setState({ currentStatus: 'Syncing...' });
 
-      // This will do the sync in another thread, so we have to check for sync status
+      // This method is async, so we'll just let it run without await-ing it.
       RPC.doSync();
 
       this.runSyncStatusPoller();
     } catch (err) {
+      console.log("Error: ", err);
       // Not yet finished loading. So update the state, and setup the next refresh
       this.setState({ currentStatus: err });
     }
   }
 
-  runSyncStatusPoller = () => {
+  runSyncStatusPoller = async () => {
     const me = this;
 
     const { setRPCConfig, setInfo, setRescanning } = this.props;
     const { url } = this.state;
 
-    const info = RPC.getInfoObject();
+    const info = await RPC.getInfoObject();
 
     // And after a while, check the sync status.
-    const poller = setInterval(() => {
-      const syncstatus = RPC.doSyncStatus();
+    const poller = setInterval(async () => {
+      const syncstatus = await RPC.doSyncStatus();
       const ss = JSON.parse(syncstatus);
 
       if (ss.syncing === 'false') {
-        // First, save the wallet so we don't lose the just-synced data
-        RPC.doSave();
-
         // Set the info object, so the sidebar will show
         console.log(info);
         setInfo(info);
@@ -159,6 +149,9 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
         rpcConfig.url = url;
         setRPCConfig(rpcConfig);
 
+        // Save the wallet into local storage
+        RPC.saveWalletToLocalStorage();
+
         // And cancel the updater
         clearInterval(poller);
       } else {
@@ -172,9 +165,8 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     }, 1000);
   };
 
-  createNewWallet = () => {
-    const { url } = this.state;
-    const result = native.litelib_initialize_new(false, url);
+  createNewWallet = async () => {
+    const result = await RPC.doNewWallet();
 
     if (result.startsWith('Error')) {
       this.setState({ newWalletError: result });
@@ -207,11 +199,12 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     this.setState({ seed: '', birthday: 0, newWalletError: null, walletScreen: 3 });
   };
 
-  doRestoreWallet = () => {
+  doRestoreWallet = async () => {
     const { seed, birthday, url } = this.state;
     console.log(`Restoring ${seed} with ${birthday}`);
 
-    const result = native.litelib_initialize_new_from_phrase(false, url, seed, parseInt(birthday));
+    const result = await RPC.doRestoreWallet(seed, parseInt(birthday));
+
     if (result.startsWith('Error')) {
       this.setState({ newWalletError: result });
     } else {

@@ -1,8 +1,8 @@
+// @flow
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-plusplus */
 /* eslint-disable react/prop-types */
-// @flow
 import React, { Component } from 'react';
 import {
   AccordionItemButton,
@@ -17,6 +17,9 @@ import { TotalBalance, Info, AddressBalance } from './AppState';
 import Utils from '../utils/utils';
 import ScrollPane from './ScrollPane';
 import { BalanceBlockHighlight, BalanceBlock } from './BalanceBlocks';
+import { withRouter } from 'react-router';
+import routes from '../constants/routes.json';
+import PropTypes from 'prop-types';
 
 const AddressBalanceItem = ({ currencyName, zecPrice, item }) => {
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(Math.abs(item.balance));
@@ -54,12 +57,20 @@ const AddressBalanceItem = ({ currencyName, zecPrice, item }) => {
 };
 
 type Props = {
+  history: PropTypes.object.isRequired,
   totalBalance: TotalBalance,
   info: Info,
   addressesWithBalance: AddressBalance[]
 };
 
-export default class Home extends Component<Props> {
+class Home extends Component<Props> {
+  componentDidMount() {
+    const { info, history } = this.props;
+    if (!(info && info.version)) {
+      history.push(routes.LOADING);
+    }
+  };
+
   render() {
     const { totalBalance, info, addressesWithBalance } = this.props;
 
@@ -127,3 +138,5 @@ export default class Home extends Component<Props> {
     );
   }
 }
+
+export default withRouter(Home);

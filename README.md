@@ -1,40 +1,54 @@
-## ZecWallet Lite
-Zecwallet-Lite is z-Addr first, Sapling compatible lightwallet client for Zcash. It has full support for all Zcash features:
-- Send + Receive fully shielded transactions
-- Supports transparent addresses and transactions
-- Full support for incoming and outgoing memos
-- Fully encrypt your private keys, using viewkeys to sync the blockchain
-
-## Download
-Download compiled binaries from our [release page](https://github.com/adityapk00/zecwallet-lite/releases)
-
-## Privacy 
-* While all the keys and transaction detection happens on the client, the server can learn what blocks contain your shielded transactions.
-* The server also learns other metadata about you like your ip address etc...
-* Also remember that t-addresses don't provide any privacy protection.
+**Experimental**
 
 
-### Note Management
-Zecwallet-Lite does automatic note and utxo management, which means it doesn't allow you to manually select which address to send outgoing transactions from. It follows these principles:
-* Defaults to sending shielded transactions, even if you're sending to a transparent address
-* Sapling funds need at least 5 confirmations before they can be spent
-* Can select funds from multiple shielded addresses in the same transaction
-* Will automatically shield your transparent funds at the first opportunity
-    * When sending an outgoing transaction to a shielded address, Zecwallet-Lite can decide to use the transaction to additionally shield your transparent funds (i.e., send your transparent funds to your own shielded address in the same transaction)
+Zecwallet Web is the Zecwallet Lite client compiled to run inside a browser. __Please read privacy section below before using it__.
 
-## Compiling from source
-* ZecWallet is written in C++ 14, and can be compiled with g++/clang++/visual c++. 
-* It also depends on Qt5, which you can get from [here](https://www.qt.io/download). 
-* You'll need Rust v1.37 +
+## Running locally
 
-### Building on Linux
+#### Pre-requisites
+You'll need several prerequisites to run Zecwallet Web locally:
+1. [Install nodejs v13](https://nodejs.org/en/download/package-manager/)
+2. [Rust v1.40 or higher](https://www.rust-lang.org/tools/install)
+3. [Wasm Pack](https://rustwasm.github.io/wasm-pack/installer/)
 
+#### Setup
+Clone the git repository
 ```
-git clone https://github.com/adityapk00/zecwallet-lite.git
+git clone https://github.com/adityapk00/zecwallet-lite
 cd zecwallet-lite
-/path/to/qt5/bin/qmake zecwallet-lite.pro CONFIG+=debug
-make -j$(nproc)
-
-./zecwallet-lite
+git checkout wasm
 ```
-_PS: Zecwallet-Lite is NOT an official wallet, and is not affiliated with the Electric Coin Company in any way._
+
+Build the wasm packge + node files
+```
+npm install
+npm run build
+```
+
+Run!
+```
+npx serve -s build
+```
+
+You can now view the wallet at `http://localhost:5000`
+
+## Run envoy proxy locally
+Since web browsers can't make gRPC calls, we need to route the requests through the Envoy proxy. Normally, you'd use the one running at `lightwalletd.zecwallet.co`, but you can use your own as well
+
+First, [Install docker](https://doc.owncloud.com/server/admin_manual/installation/docker/)
+
+Then, 
+```
+cd envoy
+docker build . --tag zecwallet/envoyproxy:latest
+docker run -it --rm -p 8080:8080 -p 9901:9901 zecwallet/envoyproxy:latest
+```
+
+This will start the envoy proxy on `localhost:8080`. Press `CTRL+C` to stop it
+
+You'll need to edit `app/wasm/wasmbridge.js` and edit the `ENVOY_PROXY` variable to point to `http://localhost:8080`. 
+
+## Run lightwalletd locally
+You can also run the light client server, lightwalletd locally. Please see the [lightwalletd page](http://github.com/adityapk00/lightwalletd)
+
+You'll need to edit the envoy proxy config file in `envoy/envoy.yaml` to point to your lightwalletd server, and rebuild the docker image and run it. 

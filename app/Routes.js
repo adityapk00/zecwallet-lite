@@ -5,11 +5,10 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 import { Switch, Route } from 'react-router';
-import native from '../native/index.node';
 import { ErrorModal, ErrorModalData } from './components/ErrorModal';
 import cstyles from './components/Common.module.css';
 import routes from './constants/routes.json';
-import App from './containers/App';
+import App from './App';
 import Dashboard from './components/Dashboard';
 import Send from './components/Send';
 import Receive from './components/Receive';
@@ -36,6 +35,7 @@ import Transactions from './components/Transactions';
 import PasswordModal from './components/PasswordModal';
 import CompanionAppListener from './companion';
 import WormholeConnection from './components/WormholeConnection';
+import {Empty, LightdInfo, CompactTxStreamerPromiseClient} from './grpc/service_grpc_web_pb';
 
 type Props = {};
 
@@ -44,7 +44,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
   companionAppListener: CompanionAppListener;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -71,8 +71,6 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
     // Set the Modal's app element
     ReactModal.setAppElement('#root');
-
-    console.log(native.litelib_wallet_exists('main'));
   }
 
   componentDidMount() {
@@ -317,9 +315,9 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ info: newInfo });
   };
 
-  sendTransaction = (sendJson: []): string => {
+  sendTransaction = async (sendJson: []): string => {
     try {
-      const txid = this.rpc.sendTransaction(sendJson);
+      const txid = await this.rpc.sendTransaction(sendJson);
       return txid;
     } catch (err) {
       console.log('route sendtx error', err);
@@ -367,7 +365,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
   createNewAddress = async (zaddress: boolean) => {
     // Create a new address
-    const newaddress = RPC.createNewAddress(zaddress);
+    const newaddress = await RPC.createNewAddress(zaddress);
     console.log(`Created new Address ${newaddress}`);
 
     // And then fetch the list of addresses again to refresh (totalBalance gets all addresses)
@@ -515,8 +513,8 @@ export default class RouteApp extends React.Component<Props, AppState> {
               />
 
               <Route
-                path={routes.ZCASHD}
-                render={() => <Zcashd info={info} rpcConfig={rpcConfig} refresh={this.doRefresh} />}
+                path={routes.CONNECTION}
+                render={() => <Zcashd info={info} rpcConfig={rpcConfig} refresh={this.doRefresh} setInfo={this.setInfo} setRescanning={this.setRescanning} {...standardProps} />}
               />
 
               <Route

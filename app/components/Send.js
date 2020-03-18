@@ -1,3 +1,4 @@
+// @flow
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-else-return */
 /* eslint-disable radix */
@@ -5,7 +6,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-classes-per-file */
-// @flow
 import React, { PureComponent } from 'react';
 import Modal from 'react-modal';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -19,6 +19,7 @@ import ArrowUpLight from '../assets/img/arrow_up_dark.png';
 import { ErrorModal } from './ErrorModal';
 import { BalanceBlockHighlight } from './BalanceBlocks';
 import routes from '../constants/routes.json';
+import PropTypes from 'prop-types';
 
 type OptionType = {
   value: string,
@@ -29,7 +30,6 @@ const Spacer = () => {
   return <div style={{ marginTop: '24px' }} />;
 };
 
-// $FlowFixMe
 const ToAddrBox = ({
   toaddr,
   zecPrice,
@@ -238,7 +238,7 @@ const ConfirmModalInternal = ({
           let txid = '';
 
           try {
-            txid = sendTransaction(sendJson);
+            txid = await sendTransaction(sendJson);
 
             openErrorModal(
               'Successfully Broadcast Transaction',
@@ -315,6 +315,7 @@ const ConfirmModalInternal = ({
 const ConfirmModal = withRouter(ConfirmModalInternal);
 
 type Props = {
+  history: PropTypes.object.isRequired,
   addresses: string[],
   totalBalance: TotalBalance,
   addressBook: AddressBookEntry[],
@@ -347,12 +348,20 @@ class SendState {
   }
 }
 
-export default class Send extends PureComponent<Props, SendState> {
+class Send extends PureComponent<Props, SendState> {
   constructor(props: Props) {
     super(props);
 
     this.state = new SendState();
   }
+
+  componentDidMount() {
+    const { info, history } = this.props;
+    if (!(info && info.version)) {
+      history.push(routes.LOADING);
+    }
+  };
+
 
   addToAddr = () => {
     const { sendPageState, setSendPageState } = this.props;
@@ -583,3 +592,5 @@ export default class Send extends PureComponent<Props, SendState> {
     );
   }
 }
+
+export default withRouter(Send);

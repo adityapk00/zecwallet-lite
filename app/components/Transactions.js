@@ -1,11 +1,10 @@
+// @flow
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { Component } from 'react';
 import Modal from 'react-modal';
 import dateformat from 'dateformat';
-import { shell } from 'electron';
-import { withRouter } from 'react-router';
 import { BalanceBlockHighlight } from './BalanceBlocks';
 import styles from './Transactions.module.css';
 import cstyles from './Common.module.css';
@@ -13,7 +12,9 @@ import { Transaction, Info } from './AppState';
 import ScrollPane from './ScrollPane';
 import Utils from '../utils/utils';
 import AddressBook from './Addressbook';
+import { withRouter } from 'react-router';
 import routes from '../constants/routes.json';
+import PropTypes from 'prop-types';
 
 const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, setSendTo, history }) => {
   let txid = '';
@@ -45,16 +46,18 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
     amount = Math.abs(tx.amount);
   }
 
-  const openTxid = () => {
+  const getTxidLink = () => {
     if (currencyName === 'TAZ') {
-      shell.openExternal(`https://chain.so/tx/ZECTEST/${txid}`);
+      return `https://chain.so/tx/ZECTEST/${txid}`;
     } else {
-      shell.openExternal(`https://zcha.in/transactions/${txid}`);
+      return `https://zcha.in/transactions/${txid}`;
     }
   };
 
-  const doReply = (address: string) => {
-    setSendTo(address, 0.0001, null);
+  const doReply = (address: string | null) => {
+    if (address) {
+      setSendTo(address, 0.0001, null);
+    }
     closeModal();
 
     history.push(routes.SEND);
@@ -104,9 +107,11 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
             <div>{txid}</div>
           </div>
 
-          <div className={cstyles.primarybutton} onClick={openTxid}>
-            View TXID &nbsp;
-            <i className={['fas', 'fa-external-link-square-alt'].join(' ')} />
+          <div className={cstyles.primarybutton}>
+            <a href={getTxidLink()} target="_blank">
+              View TXID &nbsp;
+              <i className={['fas', 'fa-external-link-square-alt'].join(' ')} />
+            </a>
           </div>
         </div>
 
@@ -126,6 +131,7 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
           let replyTo = null;
           if (tx.type === 'receive' && memo) {
             const split = memo.split(/[ :\n\r\t]+/);
+            console.log(split);
             if (split && split.length > 0 && Utils.isSapling(split[split.length - 1])) {
               replyTo = split[split.length - 1];
             }
@@ -242,6 +248,7 @@ const TxItemBlock = ({ transaction, currencyName, zecPrice, txClicked, addressBo
 };
 
 type Props = {
+  history: PropTypes.object.isRequired,
   transactions: Transaction[],
   addressBook: AddressBook[],
   info: Info,
@@ -253,12 +260,19 @@ type State = {
   modalIsOpen: boolean
 };
 
-export default class Transactions extends Component<Props, State> {
+class Transactions extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = { clickedTx: null, modalIsOpen: false };
   }
+
+  componentDidMount() {
+    const { info, history } = this.props;
+    if (!(info && info.version)) {
+      history.push(routes.LOADING);
+    }
+  };
 
   txClicked = (tx: Transaction) => {
     // Show the modal
@@ -320,3 +334,5 @@ export default class Transactions extends Component<Props, State> {
     );
   }
 }
+
+export default withRouter(Transactions);

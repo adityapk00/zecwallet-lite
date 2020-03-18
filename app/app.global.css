@@ -89,6 +89,10 @@ input[disabled] {
   cursor: default;
 }
 
+input:focus {
+  outline: none !important;
+}
+
 .react-tabs__tab:focus {
   box-shadow: 0 0 5px hsl(208, 99%, 50%);
   border-color: hsl(208, 99%, 50%);

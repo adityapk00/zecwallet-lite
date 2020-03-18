@@ -8,7 +8,6 @@ import querystring from 'querystring';
 import Modal from 'react-modal';
 import { withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
 import TextareaAutosize from 'react-textarea-autosize';
 import PropTypes from 'prop-types';
 import styles from './Sidebar.module.css';
@@ -141,12 +140,7 @@ type Props = {
   getPrivKeyAsString: (address: string) => string,
   history: PropTypes.object.isRequired,
   openErrorModal: (title: string, body: string | Element<'div'> | Element<'span'>) => void,
-  openPassword: (
-    boolean,
-    (string) => void | Promise<void>,
-    () => void,
-    null | string | Element<'div'> | Element<'span'>
-  ) => void,
+  openPassword: (boolean, (string) => void | Promise<void>, () => void, string | null | Element<"div">) => void,
   openPasswordAndUnlockIfNeeded: (successCallback: () => void | Promise<void>) => void,
   lockWallet: () => void,
   encryptWallet: string => void,
@@ -173,167 +167,14 @@ class Sidebar extends PureComponent<Props, State> {
     this.setupMenuHandlers();
   }
 
+
   // Handle menu items
   setupMenuHandlers = async () => {
-    const { setSendTo, setInfo, setRescanning, history, openErrorModal, openPasswordAndUnlockIfNeeded } = this.props;
+    const { history } = this.props;
 
-    // About
-    ipcRenderer.on('about', () => {
-      openErrorModal(
-        'Zecwallet Lite',
-        <div className={cstyles.verticalflex}>
-          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.1.1</div>
-          <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2020, Aditya Kulkarni.</div>
-          <div className={cstyles.margintoplarge}>
-            The MIT License (MIT) Copyright (c) 2018-2020 Zecwallet
-            <br />
-            <br />
-            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-            documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including
-            without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
-            following conditions:
-            <br />
-            <br />
-            The above copyright notice and this permission notice shall be included in all copies or substantial
-            portions of the Software.
-            <br />
-            <br />
-            THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-            NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-            NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-            IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-            USE OR OTHER DEALINGS IN THE SOFTWARE.
-          </div>
-        </div>
-      );
-    });
+    const exportAllMenu = async () => {
+      const { openPasswordAndUnlockIfNeeded } = this.props;
 
-    // Donate button
-    ipcRenderer.on('donate', () => {
-      const { info } = this.props;
-
-      setSendTo(
-        Utils.getDonationAddress(info.testnet),
-        Utils.getDefaultDonationAmount(info.testnet),
-        Utils.getDefaultDonationMemo(info.testnet)
-      );
-
-      history.push(routes.SEND);
-    });
-
-    // Pay URI
-    ipcRenderer.on('payuri', (event, uri) => {
-      this.openURIModal(uri);
-    });
-
-    // Export Seed
-    ipcRenderer.on('seed', () => {
-      openPasswordAndUnlockIfNeeded(() => {
-        const seed = RPC.fetchSeed();
-
-        openErrorModal(
-          'Wallet Seed',
-          <div className={cstyles.verticalflex}>
-            <div>
-              This is your wallet&rsquo;s seed phrase. It can be used to recover your entire wallet.
-              <br />
-              PLEASE KEEP IT SAFE!
-            </div>
-            <hr />
-            <div style={{ wordBreak: 'break-word', fontFamily: 'monospace, Roboto' }}>{seed}</div>
-            <hr />
-          </div>
-        );
-      });
-    });
-
-    // Encrypt wallet
-    ipcRenderer.on('encrypt', async () => {
-      const { info, lockWallet, encryptWallet, openPassword } = this.props;
-
-      if (info.encrypted && info.locked) {
-        openErrorModal('Already Encrypted', 'Your wallet is already encrypted and locked.');
-      } else if (info.encrypted && !info.locked) {
-        await lockWallet();
-        openErrorModal('Locked', 'Your wallet has been locked. A password will be needed to spend funds.');
-      } else {
-        // Encrypt the wallet
-        openPassword(
-          true,
-          async password => {
-            await encryptWallet(password);
-            openErrorModal('Encrypted', 'Your wallet has been encrypted. The password will be needed to spend funds.');
-          },
-          () => {
-            openErrorModal('Cancelled', 'Your wallet was not encrypted.');
-          },
-          <div>
-            Please enter a password to encrypt your wallet. <br />
-            WARNING: If you forget this password, the only way to recover your wallet is from the seed phrase.
-          </div>
-        );
-      }
-    });
-
-    // Remove wallet encryption
-    ipcRenderer.on('decrypt', async () => {
-      const { info, decryptWallet, openPassword } = this.props;
-
-      if (!info.encrypted) {
-        openErrorModal('Not Encrypted', 'Your wallet is not encrypted and ready for spending.');
-      } else {
-        // Remove the wallet remove the wallet encryption
-        openPassword(
-          false,
-          async password => {
-            const success = await decryptWallet(password);
-            if (success) {
-              openErrorModal(
-                'Decrypted',
-                `Your wallet's encryption has been removed. A password will no longer be needed to spend funds.`
-              );
-            } else {
-              openErrorModal('Decryption Failed', 'Wallet decryption failed. Do you have the right password?');
-            }
-          },
-          () => {
-            openErrorModal('Cancelled', 'Your wallet is still encrypted.');
-          },
-          null
-        );
-      }
-    });
-
-    // Unlock wallet
-    ipcRenderer.on('unlock', () => {
-      const { info } = this.props;
-      if (!info.encrypted || !info.locked) {
-        openErrorModal('Already Unlocked', 'Your wallet is already unlocked for spending');
-      } else {
-        openPasswordAndUnlockIfNeeded(async () => {
-          openErrorModal('Unlocked', 'Your wallet is unlocked for spending');
-        });
-      }
-    });
-
-    // Rescan
-    ipcRenderer.on('rescan', () => {
-      // To rescan, we reset the wallet loading
-      // So set info the default, and redirect to the loading screen
-      RPC.doRescan();
-
-      // Set the rescanning global state to true
-      setRescanning(true);
-
-      // Reset the info object, it will be refetched
-      setInfo(new Info());
-
-      history.push(routes.LOADING);
-    });
-
-    // Export all private keys
-    ipcRenderer.on('exportall', async () => {
       // Get all the addresses and run export key on each of them.
       const { addresses, getPrivKeyAsString } = this.props;
       openPasswordAndUnlockIfNeeded(async () => {
@@ -345,17 +186,12 @@ class Sidebar extends PureComponent<Props, State> {
 
         this.setState({ exportPrivKeysModalIsOpen: true, exportedPrivKeys });
       });
-    });
-
-    // View zcashd
-    ipcRenderer.on('zcashd', () => {
-      history.push(routes.ZCASHD);
-    });
+    };
 
     // Connect mobile app
-    ipcRenderer.on('connectmobile', () => {
+    const connectMobile = () => {
       history.push(routes.CONNECTMOBILE);
-    });
+    };
   };
 
   closeExportPrivKeysModal = () => {
@@ -380,13 +216,13 @@ class Sidebar extends PureComponent<Props, State> {
     const { openErrorModal, setSendTo, history } = this.props;
 
     const errTitle = 'URI Error';
-    const errBody = (
+    const errBody =
       <span>
         The URI &quot;{escape(uri)}&quot; was not recognized.
         <br />
         Please type in a valid URI of the form &quot; zcash:address?amout=xx&memo=yy &quot;
       </span>
-    );
+    ;
 
     if (!uri || uri === '') {
       openErrorModal(errTitle, errBody);
@@ -483,10 +319,10 @@ class Sidebar extends PureComponent<Props, State> {
             iconname="fa-list"
           />
           <SidebarMenuItem
-            name="Address Book"
-            routeName={routes.ADDRESSBOOK}
+            name="Connection"
+            routeName={routes.CONNECTION}
             currentRoute={location.pathname}
-            iconname="fa-address-book"
+            iconname="fa-server"
           />
         </div>
 
@@ -518,5 +354,4 @@ class Sidebar extends PureComponent<Props, State> {
   }
 }
 
-// $FlowFixMe
 export default withRouter(Sidebar);

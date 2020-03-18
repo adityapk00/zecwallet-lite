@@ -3,7 +3,6 @@
 /* eslint-disable class-methods-use-this */
 
 import _sodium from 'libsodium-wrappers-sumo';
-import Store from 'electron-store';
 import WebSocket from 'ws';
 import AppState, { ConnectedCompanionApp } from './components/AppState';
 import Utils from './utils/utils';
@@ -37,9 +36,10 @@ class WormholeClient {
     this.sodium = sodium;
     this.listner = listner;
 
-    this.wormholeCode = getWormholeCode(keyHex, this.sodium);
+    // TODO(web)
+    // this.wormholeCode = getWormholeCode(keyHex, this.sodium);
 
-    this.connect();
+    // this.connect();
   }
 
   connect() {
@@ -117,24 +117,25 @@ export default class CompanionAppListener {
     await _sodium.ready;
     this.sodium = _sodium;
 
+    // TODO(web)
     // Create a new wormhole listner
-    const permKeyHex = this.getEncKey();
-    if (permKeyHex) {
-      this.permWormholeClient = new WormholeClient(permKeyHex, this.sodium, this);
-    }
+    // const permKeyHex = this.getEncKey();
+    // if (permKeyHex) {
+    //   this.permWormholeClient = new WormholeClient(permKeyHex, this.sodium, this);
+    // }
 
-    // At startup, set the last client name/time by loading it
-    const store = new Store();
-    const name = store.get('companion/name');
-    const lastSeen = store.get('companion/lastseen');
+    // // At startup, set the last client name/time by loading it
+    // const store = {}; // TODO(web) new Store();
+    // const name = store.get('companion/name');
+    // const lastSeen = store.get('companion/lastseen');
 
-    if (name && lastSeen) {
-      const o = new ConnectedCompanionApp();
-      o.name = name;
-      o.lastSeen = lastSeen;
+    // if (name && lastSeen) {
+    //   const o = new ConnectedCompanionApp();
+    //   o.name = name;
+    //   o.lastSeen = lastSeen;
 
-      this.fnUpdateConnectedClient(o);
-    }
+    //   this.fnUpdateConnectedClient(o);
+    // }
   }
 
   createTmpClient(keyHex: string) {
@@ -164,7 +165,7 @@ export default class CompanionAppListener {
     this.setEncKey(this.permWormholeClient.getKeyHex());
 
     // Reset local nonce
-    const store = new Store();
+    const store = {}; // TODO(web) new Store();
     store.delete('companion/localnonce');
   }
 
@@ -244,7 +245,7 @@ export default class CompanionAppListener {
 
   getEncKey(): string {
     // Get the nonce. Increment and store the nonce for next use
-    const store = new Store();
+    const store = {}; // TODO(web) new Store();
     const keyHex = store.get('companion/key');
 
     return keyHex;
@@ -252,13 +253,13 @@ export default class CompanionAppListener {
 
   setEncKey(keyHex: string) {
     // Get the nonce. Increment and store the nonce for next use
-    const store = new Store();
+    const store = {}; // TODO(web) new Store();
     store.set('companion/key', keyHex);
   }
 
   saveLastClientName(name: string) {
     // Save the last client name
-    const store = new Store();
+    const store = {}; // TODO(web) new Store();
     store.set('companion/name', name);
 
     if (name) {
@@ -286,7 +287,7 @@ export default class CompanionAppListener {
   }
 
   getRemoteNonce(): string {
-    const store = new Store();
+    const store = {}; // TODO(web) new Store();
     const nonceHex = store.get('companion/remotenonce');
 
     return nonceHex;
@@ -294,14 +295,14 @@ export default class CompanionAppListener {
 
   updateRemoteNonce(nonce: string) {
     if (nonce) {
-      const store = new Store();
+      const store = {}; // TODO(web) new Store();
       store.set('companion/remotenonce', nonce);
     }
   }
 
   getLocalNonce(): string {
     // Get the nonce. Increment and store the nonce for next use
-    const store = new Store();
+    const store = {}; // TODO(web) new Store();
     const nonceHex = store.get('companion/localnonce', `01${'00'.repeat(this.sodium.crypto_secretbox_NONCEBYTES - 1)}`);
 
     // Increment nonce
@@ -431,7 +432,7 @@ export default class CompanionAppListener {
     return JSON.stringify(resp);
   }
 
-  doSendTransaction(cmd: any, ws: WebSocket): string {
+  async doSendTransaction(cmd: any, ws: WebSocket): string {
     // "command":"sendTx","tx":{"amount":"0.00019927","to":"zs1pzr7ee53jwa3h3yvzdjf7meruujq84w5rsr5kuvye9qg552kdyz5cs5ywy5hxkxcfvy9wln94p6","memo":""}}
     const inpTx = cmd.tx;
     const appState = this.fnGetState();
@@ -469,7 +470,7 @@ export default class CompanionAppListener {
     let resp;
 
     try {
-      const txid = this.fnSendTransaction(sendJSON);
+      const txid = await this.fnSendTransaction(sendJSON);
 
       // After the transaction is submitted, we return an intermediate success.
       resp = {

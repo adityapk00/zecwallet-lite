@@ -1,5 +1,5 @@
 {
-  "files.associations": {
+    "files.associations": {
     ".babelrc": "jsonc",
     ".eslintrc": "jsonc",
     ".prettierrc": "jsonc",
@@ -32,9 +32,9 @@
     "test/**/__snapshots__": true,
     "yarn.lock": true
   },
-  "workbench.colorCustomizations": {
-    "activityBar.background": "#49212F",
-    "titleBar.activeBackground": "#662E42",
-    "titleBar.activeForeground": "#FCF8FA"
-  }
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#3B2A15",
+        "titleBar.activeBackground": "#533B1E",
+        "titleBar.activeForeground": "#FCFAF7"
+    }
 }
