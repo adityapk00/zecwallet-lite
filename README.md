@@ -1,7 +1,7 @@
 **Experimental**
 
 
-Zecwallet Web is the Zecwallet Lite client compiled to run inside a browser. __Please read privacy section below before using it__.
+Zecwallet Web is the Zecwallet Lite client compiled to run inside a browser. __Please read [privacy section](##Privacy) below before using it__.
 
 ## Running locally
 
@@ -52,3 +52,11 @@ You'll need to edit `app/wasm/wasmbridge.js` and edit the `ENVOY_PROXY` variable
 You can also run the light client server, lightwalletd locally. Please see the [lightwalletd page](http://github.com/adityapk00/lightwalletd)
 
 You'll need to edit the envoy proxy config file in `envoy/envoy.yaml` to point to your lightwalletd server, and rebuild the docker image and run it. 
+
+## Privacy
+Using a web wallet is generally not a good idea, since your private keys live in the browser and might get stolen. Please only use Zecwallet Web with small amounts of money, and don't use it on machines and browsers you don't trust. 
+
+* Zecwallet Web has *not been audited*, so it likely has bugs and other vulnerabilities
+* Your wallet, it's private keys and your seed phrase are all stored inside the browser. If your browser is compromised, you will likely lose your private keys and probably your funds. 
+* While you get blockchain privacy if you use z-addresses, using Zecwallet Web likely exposes your IP address to malilcious attackers and might be used to link your on-chain transactions
+* Currently, WASM is limited by a single thread, so some operations, like sending transactions, might be very slow. 
