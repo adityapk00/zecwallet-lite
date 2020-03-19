@@ -9,6 +9,7 @@ import RPC from '../rpc';
 import cstyles from './Common.module.css';
 import styles from './LoadingScreen.module.css';
 import Logo from '../assets/img/logobig.png';
+import ScrollPane from './ScrollPane';
 
 
 
@@ -230,53 +231,55 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
               <div>
                 <img src={Logo} width="200px;" alt="Logo" />
               </div>
-              <div className={[cstyles.well, styles.newwalletcontainer].join(' ')}>
-                <div className={cstyles.verticalflex}>
-                  <div className={cstyles.flexspacebetween}>
-                    <div>
-                      <i className={['fas', 'fa-exclamation-triangle', 'fa-2x', cstyles.red].join(' ')} />
+              <ScrollPane offsetHeight={250}>
+                <div className={[cstyles.well, styles.newwalletcontainer].join(' ')}>
+                  <div className={cstyles.verticalflex}>
+                    <div className={cstyles.flexspacebetween}>
+                      <div>
+                        <i className={['fas', 'fa-exclamation-triangle', 'fa-2x', cstyles.red].join(' ')} />
+                      </div>
+                      <div className={cstyles.xlarge}>Experimental</div>
+                      <div>
+                        <i className={['fas', 'fa-exclamation-triangle', 'fa-2x', cstyles.red].join(' ')} />
+                      </div>
                     </div>
-                    <div className={cstyles.xlarge}>Experimental</div>
-                    <div>
-                      <i className={['fas', 'fa-exclamation-triangle', 'fa-2x', cstyles.red].join(' ')} />
+                    <div className={cstyles.margintoplarge}>
+                      Zecwallet Web is experimental software. Your private keys are stored in the browser, and if your
+                      browser is compromised, you&lsquo;ll likely lose your funds.
                     </div>
-                  </div>
-                  <div className={cstyles.margintoplarge}>
-                    Zecwallet Web is experimental software. Your private keys are stored in the browser, and if your
-                    browser is compromised, you&lsquo;ll likely lose your funds.
-                  </div>
-                  <div className={cstyles.margintoplarge}>
-                    Please only use Zecwallet Web with small amounts of money, and don&lsquo;t use it on machines and
-                    browsers you don&lsquo;t trust.
-                  </div>
-                  <div className={cstyles.margintoplarge}>
-                    For a more stable Zcash Lightclient, please{' '}
-                    <a href="http://www.zecwallet.co" target="_blank" className={cstyles.highlight}>
-                      download Zecwallet Lite
-                    </a>
-                  </div>
-                  <div className={cstyles.margintoplarge}>
-                    <ul>
-                      <li className={styles.circlebullet}>
-                        Zecwallet Web has not been audited, so it likely has bugs and other vulnerabilities
-                      </li>
-                      <li className={styles.circlebullet}>
-                        While you get blockchain privacy if you use z-addresses, using Zecwallet Web likely exposes your
-                        IP address and might be used to link your on-chain transactions
-                      </li>
-                      <li className={styles.circlebullet}>
-                        Zecwallet Web uses a custom fork of librustzcash that replaces some libraries with their
-                        pure-rust implementations. This might cause unexpected bugs or security issues.
-                      </li>
-                    </ul>
-                  </div>
-                  <div className={[cstyles.buttoncontainer].join(' ')}>
-                    <button type="button" className={cstyles.primarybutton} onClick={this.closeWarning}>
-                      I Understand
-                    </button>
+                    <div className={cstyles.margintoplarge}>
+                      Please only use Zecwallet Web with small amounts of money, and don&lsquo;t use it on machines and
+                      browsers you don&lsquo;t trust.
+                    </div>
+                    <div className={cstyles.margintoplarge}>
+                      For a more stable Zcash Lightclient, please{' '}
+                      <a href="http://www.zecwallet.co" target="_blank" className={cstyles.highlight}>
+                        download Zecwallet Lite
+                      </a>
+                    </div>
+                    <div className={cstyles.margintoplarge}>
+                      <ul>
+                        <li className={styles.circlebullet}>
+                          Zecwallet Web has not been audited, so it likely has bugs and other vulnerabilities
+                        </li>
+                        <li className={styles.circlebullet}>
+                          While you get blockchain privacy if you use z-addresses, using Zecwallet Web likely exposes your
+                          IP address and might be used to link your on-chain transactions
+                        </li>
+                        <li className={styles.circlebullet}>
+                          Zecwallet Web uses a custom fork of librustzcash that replaces some libraries with their
+                          pure-rust implementations. This might cause unexpected bugs or security issues.
+                        </li>
+                      </ul>
+                    </div>
+                    <div className={[cstyles.buttoncontainer].join(' ')}>
+                      <button type="button" className={cstyles.primarybutton} onClick={this.closeWarning}>
+                        I Understand
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </ScrollPane>
             </div>
           )}
 
