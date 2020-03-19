@@ -28,7 +28,7 @@ class LoadingScreenState {
 
   url: string;
 
-  walletScreen: number; // 0 -> no wallet, load existing wallet 1 -> show option 2-> create new 3 -> restore existing
+  walletScreen: number; // -1 -> warning 0 -> no wallet, load existing wallet 1 -> show option 2-> create new 3 -> restore existing
 
   newWalletError: null | string; // Any errors when creating/restoring wallet
 
@@ -44,7 +44,7 @@ class LoadingScreenState {
     this.rpcConfig = null;
     this.url = '';
     this.getinfoRetryCount = 0;
-    this.walletScreen = 0;
+    this.walletScreen = -1;
     this.newWalletError = null;
     this.seed = '';
     this.birthday = 0;
@@ -66,11 +66,19 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     if (rescanning) {
       this.runSyncStatusPoller();
     } else {
-      this.doFirstTimeSetup();
+      const { walletScreen } = this.state;
+      if (walletScreen !== -1) {
+        this.doFirstTimeSetup();
+      }
     }
 
 
   }
+
+  closeWarning = () => {
+    this.setState({ walletScreen: 0 });
+    this.doFirstTimeSetup();
+  };
 
   doFirstTimeSetup = async () => {
     // Try to load the light client
@@ -135,8 +143,6 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
       const ss = JSON.parse(syncstatus);
 
       if (ss.syncing === 'false') {
-        // Set the info object, so the sidebar will show
-        console.log(info);
         setInfo(info);
 
         // This will cause a redirect to the dashboard
@@ -201,7 +207,6 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
 
   doRestoreWallet = async () => {
     const { seed, birthday, url } = this.state;
-    console.log(`Restoring ${seed} with ${birthday}`);
 
     const result = await RPC.doRestoreWallet(seed, parseInt(birthday));
 
@@ -220,6 +225,61 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     if (!loadingDone) {
       return (
         <div className={[cstyles.verticalflex, cstyles.center, styles.loadingcontainer].join(' ')}>
+          {walletScreen === -1 && (
+            <div>
+              <div>
+                <img src={Logo} width="200px;" alt="Logo" />
+              </div>
+              <div className={[cstyles.well, styles.newwalletcontainer].join(' ')}>
+                <div className={cstyles.verticalflex}>
+                  <div className={cstyles.flexspacebetween}>
+                    <div>
+                      <i className={['fas', 'fa-exclamation-triangle', 'fa-2x', cstyles.red].join(' ')} />
+                    </div>
+                    <div className={cstyles.xlarge}>Experimental</div>
+                    <div>
+                      <i className={['fas', 'fa-exclamation-triangle', 'fa-2x', cstyles.red].join(' ')} />
+                    </div>
+                  </div>
+                  <div className={cstyles.margintoplarge}>
+                    Zecwallet Web is experimental software. Your private keys are stored in the browser, and if your
+                    browser is compromised, you&lsquo;ll likely lose your funds.
+                  </div>
+                  <div className={cstyles.margintoplarge}>
+                    Please only use Zecwallet Web with small amounts of money, and don&lsquo;t use it on machines and
+                    browsers you don&lsquo;t trust.
+                  </div>
+                  <div className={cstyles.margintoplarge}>
+                    For a more stable Zcash Lightclient, please{' '}
+                    <a href="http://www.zecwallet.co" target="_blank" className={cstyles.highlight}>
+                      download Zecwallet Lite
+                    </a>
+                  </div>
+                  <div className={cstyles.margintoplarge}>
+                    <ul>
+                      <li className={styles.circlebullet}>
+                        Zecwallet Web has not been audited, so it likely has bugs and other vulnerabilities
+                      </li>
+                      <li className={styles.circlebullet}>
+                        While you get blockchain privacy if you use z-addresses, using Zecwallet Web likely exposes your
+                        IP address and might be used to link your on-chain transactions
+                      </li>
+                      <li className={styles.circlebullet}>
+                        Zecwallet Web uses a custom fork of librustzcash that replaces some libraries with their
+                        pure-rust implementations. This might cause unexpected bugs or security issues.
+                      </li>
+                    </ul>
+                  </div>
+                  <div className={[cstyles.buttoncontainer].join(' ')}>
+                    <button type="button" className={cstyles.primarybutton} onClick={this.closeWarning}>
+                      I Understand
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {walletScreen === 0 && (
             <div>
               <div style={{ marginTop: '100px' }}>

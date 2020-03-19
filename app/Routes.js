@@ -285,7 +285,6 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
   setRPCConfig = (rpcConfig: RPCConfig) => {
     this.setState({ rpcConfig });
-    console.log(rpcConfig);
     this.rpc.configure(rpcConfig);
   };
 

@@ -75,7 +75,7 @@ export default class RPC {
     await initNative();
 
     const result = await native.litelib_initialize_new(randomHex);
-    console.log("Litelib init result", result);
+    // console.log("Litelib init result", result);
 
     return result;
   }
@@ -141,7 +141,6 @@ export default class RPC {
     await initNative();
 
     const syncstr = await native.litelib_execute('syncstatus', '');
-    console.log(`syncstatus: ${syncstr}`);
     return syncstr;
   }
 

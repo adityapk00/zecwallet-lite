@@ -8,3 +8,8 @@
   margin-right: 10%;
   text-align: left;
 }
+
+.circlebullet {
+  list-style: circle;
+  margin-top: 8px;
+}
