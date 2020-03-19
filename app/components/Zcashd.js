@@ -200,4 +200,5 @@ class ZcashdInternal extends Component<Props> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(ZcashdInternal);

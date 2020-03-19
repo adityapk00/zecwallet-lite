@@ -139,4 +139,5 @@ class Home extends Component<Props> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(Home);

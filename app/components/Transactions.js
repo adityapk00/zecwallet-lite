@@ -129,7 +129,7 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
           }
 
           let replyTo = null;
-          if (tx.type === 'receive' && memo) {
+          if (tx && tx.type === 'receive' && memo) {
             const split = memo.split(/[ :\n\r\t]+/);
             console.log(split);
             if (split && split.length > 0 && Utils.isSapling(split[split.length - 1])) {
@@ -335,4 +335,5 @@ class Transactions extends Component<Props, State> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(Transactions);

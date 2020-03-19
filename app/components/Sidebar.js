@@ -354,4 +354,5 @@ class Sidebar extends PureComponent<Props, State> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(Sidebar);
