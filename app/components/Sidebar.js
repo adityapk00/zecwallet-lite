@@ -324,6 +324,12 @@ class Sidebar extends PureComponent<Props, State> {
             currentRoute={location.pathname}
             iconname="fa-server"
           />
+          <SidebarMenuItem
+            name="Companion App"
+            routeName={routes.CONNECTMOBILE}
+            currentRoute={location.pathname}
+            iconname="fa-mobile"
+          />
         </div>
 
         <div className={cstyles.center}>

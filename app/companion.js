@@ -3,7 +3,6 @@
 /* eslint-disable class-methods-use-this */
 
 import _sodium from 'libsodium-wrappers-sumo';
-import WebSocket from 'ws';
 import AppState, { ConnectedCompanionApp } from './components/AppState';
 import Utils from './utils/utils';
 
@@ -36,16 +35,14 @@ class WormholeClient {
     this.sodium = sodium;
     this.listner = listner;
 
-    // TODO(web)
-    // this.wormholeCode = getWormholeCode(keyHex, this.sodium);
-
-    // this.connect();
+    this.wormholeCode = getWormholeCode(keyHex, this.sodium);
+    this.connect();
   }
 
   connect() {
     this.wss = new WebSocket('wss://wormhole.zecqtwallet.com:443');
 
-    this.wss.on('open', () => {
+    this.wss.onopen = () => {
       // On open, register ourself
       const reg = { register: getWormholeCode(this.keyHex, this.sodium) };
 
@@ -57,19 +54,19 @@ class WormholeClient {
         const ping = { ping: 'ping' };
         this.wss.send(JSON.stringify(ping));
       }, 4 * 60 * 1000);
-    });
+    };
 
-    this.wss.on('message', data => {
-      this.listner.processIncoming(data, this.keyHex, this.wss);
-    });
+    this.wss.onmessage = (event) => {
+      this.listner.processIncoming(event.data, this.keyHex, this.wss);
+    };
 
-    this.wss.on('close', (code, reason) => {
-      console.log('Socket closed for ', this.keyHex, code, reason);
-    });
+    this.wss.onclose = (event) => {
+      console.log('Socket closed for ', this.keyHex, event.code, event.reason);
+    };
 
-    this.wss.on('error', (ws, err) => {
-      console.log('ws error', err);
-    });
+    this.wss.onerror = (err) => {
+      console.log('ws error', err.message);
+    };
   }
 
   getKeyHex(): string {
@@ -117,25 +114,24 @@ export default class CompanionAppListener {
     await _sodium.ready;
     this.sodium = _sodium;
 
-    // TODO(web)
     // Create a new wormhole listner
-    // const permKeyHex = this.getEncKey();
-    // if (permKeyHex) {
-    //   this.permWormholeClient = new WormholeClient(permKeyHex, this.sodium, this);
-    // }
+    const permKeyHex = this.getEncKey();
+    if (permKeyHex) {
+      this.permWormholeClient = new WormholeClient(permKeyHex, this.sodium, this);
+    }
 
-    // // At startup, set the last client name/time by loading it
-    // const store = {}; // TODO(web) new Store();
-    // const name = store.get('companion/name');
-    // const lastSeen = store.get('companion/lastseen');
+    // At startup, set the last client name/time by loading it
+    const localStorage = window.localStorage;
+    const name = localStorage.getItem('companion/name');
+    const lastSeen = localStorage.getItem('companion/lastseen');
 
-    // if (name && lastSeen) {
-    //   const o = new ConnectedCompanionApp();
-    //   o.name = name;
-    //   o.lastSeen = lastSeen;
+    if (name && lastSeen) {
+      const o = new ConnectedCompanionApp();
+      o.name = name;
+      o.lastSeen = lastSeen;
 
-    //   this.fnUpdateConnectedClient(o);
-    // }
+      this.fnUpdateConnectedClient(o);
+    }
   }
 
   createTmpClient(keyHex: string) {
@@ -165,8 +161,8 @@ export default class CompanionAppListener {
     this.setEncKey(this.permWormholeClient.getKeyHex());
 
     // Reset local nonce
-    const store = {}; // TODO(web) new Store();
-    store.delete('companion/localnonce');
+    const localStorage = window.localStorage;
+    localStorage.removeItem('companion/localnonce');
   }
 
   processIncoming(data: string, keyHex: string, ws: Websocket) {
@@ -245,26 +241,26 @@ export default class CompanionAppListener {
 
   getEncKey(): string {
     // Get the nonce. Increment and store the nonce for next use
-    const store = {}; // TODO(web) new Store();
-    const keyHex = store.get('companion/key');
+    const localStorage = window.localStorage;
+    const keyHex = localStorage.getItem('companion/key');
 
     return keyHex;
   }
 
   setEncKey(keyHex: string) {
     // Get the nonce. Increment and store the nonce for next use
-    const store = {}; // TODO(web) new Store();
-    store.set('companion/key', keyHex);
+    const localStorage = window.localStorage;
+    localStorage.setItem('companion/key', keyHex);
   }
 
   saveLastClientName(name: string) {
     // Save the last client name
-    const store = {}; // TODO(web) new Store();
-    store.set('companion/name', name);
+    const localStorage = window.localStorage;
+    localStorage.setItem('companion/name', name);
 
     if (name) {
       const now = Date.now();
-      store.set('companion/lastseen', now);
+      localStorage.setItem('companion/lastseen', now);
 
       const o = new ConnectedCompanionApp();
       o.name = name;
@@ -287,30 +283,34 @@ export default class CompanionAppListener {
   }
 
   getRemoteNonce(): string {
-    const store = {}; // TODO(web) new Store();
-    const nonceHex = store.get('companion/remotenonce');
+    const localStorage = window.localStorage;
+    const nonceHex = localStorage.getItem('companion/remotenonce');
 
     return nonceHex;
   }
 
   updateRemoteNonce(nonce: string) {
     if (nonce) {
-      const store = {}; // TODO(web) new Store();
-      store.set('companion/remotenonce', nonce);
+      const localStorage = window.localStorage;
+      localStorage.setItem('companion/remotenonce', nonce);
     }
   }
 
   getLocalNonce(): string {
     // Get the nonce. Increment and store the nonce for next use
-    const store = {}; // TODO(web) new Store();
-    const nonceHex = store.get('companion/localnonce', `01${'00'.repeat(this.sodium.crypto_secretbox_NONCEBYTES - 1)}`);
+    const localStorage = window.localStorage;
+    let nonceHex = localStorage.getItem('companion/localnonce');
+    if (!nonceHex) {
+      nonceHex = `01${'00'.repeat(this.sodium.crypto_secretbox_NONCEBYTES - 1)}`;
+    }
 
     // Increment nonce
     const newNonce = this.sodium.from_hex(nonceHex);
 
     this.sodium.increment(newNonce);
     this.sodium.increment(newNonce);
-    store.set('companion/localnonce', this.sodium.to_hex(newNonce));
+
+    localStorage.setItem('companion/localnonce', this.sodium.to_hex(newNonce));
 
     return nonceHex;
   }
@@ -340,7 +340,7 @@ export default class CompanionAppListener {
 
   decryptIncoming(msg: string, keyHex: string, checkNonce: boolean): any {
     const msgJson = JSON.parse(msg);
-    console.log('trying to decrypt', msgJson);
+    // console.log('trying to decrypt', msgJson);
 
     if (!keyHex) {
       console.log('No secret key');

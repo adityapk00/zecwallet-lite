@@ -54,7 +54,7 @@ export default class WormholeConnection extends PureComponent<Props, State> {
     let timePart = null;
 
     if (lastSeen) {
-      const txDate = new Date(lastSeen);
+      const txDate = new Date(parseInt(lastSeen));
       datePart = dateformat(txDate, 'mmm dd, yyyy');
       timePart = dateformat(txDate, 'hh:MM tt');
     }

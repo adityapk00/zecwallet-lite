@@ -68,20 +68,6 @@ const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKe
             </div>
 
             <div>
-            { /*
-              <button
-                className={[cstyles.primarybutton, cstyles.margintoplarge].join(' ')}
-                type="button"
-                onClick={() => {
-                  // TODO(web)
-                  // clipboard.writeText(address);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 5000);
-                }}
-              >
-                {copied ? <span>Copied!</span> : <span>Copy Address</span>}
-              </button>
-            */ }
               {!privateKey && (
                 <button
                   className={[cstyles.primarybutton].join(' ')}
