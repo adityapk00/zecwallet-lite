@@ -1,3 +1,4 @@
+// @flow
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 import React, { PureComponent } from 'react';
@@ -10,8 +11,8 @@ import { Link } from 'react-router-dom';
 import { ipcRenderer } from 'electron';
 import TextareaAutosize from 'react-textarea-autosize';
 import PropTypes from 'prop-types';
-import styles from './Sidebar.css';
-import cstyles from './Common.css';
+import styles from './Sidebar.module.css';
+import cstyles from './Common.module.css';
 import routes from '../constants/routes.json';
 import Logo from '../assets/img/logobig.png';
 import { Info } from './AppState';
@@ -131,6 +132,7 @@ const SidebarMenuItem = ({ name, routeName, currentRoute, iconname }) => {
 };
 
 type Props = {
+  location: PropTypes.object.isRequired,
   info: Info,
   setRescanning: boolean => void,
   addresses: string[],
@@ -138,9 +140,14 @@ type Props = {
   setSendTo: (address: string, amount: number | null, memo: string | null) => void,
   getPrivKeyAsString: (address: string) => string,
   history: PropTypes.object.isRequired,
-  openErrorModal: (title: string, body: string | Element<'div'>) => void,
-  openPassword: (boolean, (string) => void, () => void, string) => void,
-  openPasswordAndUnlockIfNeeded: (successCallback: () => void) => void,
+  openErrorModal: (title: string, body: string | Element<'div'> | Element<'span'>) => void,
+  openPassword: (
+    boolean,
+    (string) => void | Promise<void>,
+    () => void,
+    null | string | Element<'div'> | Element<'span'>
+  ) => void,
+  openPasswordAndUnlockIfNeeded: (successCallback: () => void | Promise<void>) => void,
   lockWallet: () => void,
   encryptWallet: string => void,
   decryptWallet: string => void
@@ -175,7 +182,7 @@ class Sidebar extends PureComponent<Props, State> {
       openErrorModal(
         'Zecwallet Lite',
         <div className={cstyles.verticalflex}>
-          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.1.1</div>
+          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.1.2</div>
           <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2020, Aditya Kulkarni.</div>
           <div className={cstyles.margintoplarge}>
             The MIT License (MIT) Copyright (c) 2018-2020 Zecwallet
@@ -292,7 +299,8 @@ class Sidebar extends PureComponent<Props, State> {
           },
           () => {
             openErrorModal('Cancelled', 'Your wallet is still encrypted.');
-          }
+          },
+          null
         );
       }
     });
@@ -510,4 +518,5 @@ class Sidebar extends PureComponent<Props, State> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(Sidebar);

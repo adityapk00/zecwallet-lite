@@ -10,8 +10,8 @@ import React, { PureComponent } from 'react';
 import Modal from 'react-modal';
 import TextareaAutosize from 'react-textarea-autosize';
 import { withRouter } from 'react-router-dom';
-import styles from './Send.css';
-import cstyles from './Common.css';
+import styles from './Send.module.css';
+import cstyles from './Common.module.css';
 import { ToAddr, AddressBalance, SendPageState, Info, AddressBookEntry, TotalBalance } from './AppState';
 import Utils from '../utils/utils';
 import ScrollPane from './ScrollPane';
@@ -119,6 +119,7 @@ const ToAddrBox = ({
         <div className={[cstyles.flexspacebetween].join(' ')}>
           <input
             type="number"
+            step="any"
             className={cstyles.inputbox}
             value={toaddr.amount}
             onChange={e => updateToField(toaddr.id, null, e, null)}

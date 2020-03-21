@@ -23,18 +23,30 @@ Zecwallet-Lite does automatic note and utxo management, which means it doesn't a
     * When sending an outgoing transaction to a shielded address, Zecwallet-Lite can decide to use the transaction to additionally shield your transparent funds (i.e., send your transparent funds to your own shielded address in the same transaction)
 
 ## Compiling from source
-* ZecWallet is written in C++ 14, and can be compiled with g++/clang++/visual c++. 
-* It also depends on Qt5, which you can get from [here](https://www.qt.io/download). 
-* You'll need Rust v1.37 +
+Zecwallet Lite is written in Electron/Javascript and can be build from source. Note that if you are compiling from source, you won't get the embedded zcashd by default. You can either run an external zcashd, or compile zcashd as well.
+Pre-Requisits
 
-### Building on Linux
+You need to have the following software installed before you can build Zecwallet Fullnode
+
+* [Nodejs v12.16.1 or higher](https://nodejs.org)
+* [Yarn](https://yarnpkg.com)
+* [Rust v1.40+](https://www.rust-lang.org/tools/install)
 
 ```
 git clone https://github.com/adityapk00/zecwallet-lite.git
 cd zecwallet-lite
-/path/to/qt5/bin/qmake zecwallet-lite.pro CONFIG+=debug
-make -j$(nproc)
 
-./zecwallet-lite
+yarn install
+yarn build
 ```
+
+To start in development mode, run
+```
+yarn dev
+```
+To start in production mode, run
+```
+yarn start
+```
+
 _PS: Zecwallet-Lite is NOT an official wallet, and is not affiliated with the Electric Coin Company in any way._

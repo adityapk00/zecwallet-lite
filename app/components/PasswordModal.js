@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react';
 import Modal from 'react-modal';
-import cstyles from './Common.css';
+import cstyles from './Common.module.css';
 
 type Props = {
   modalIsOpen: boolean,
