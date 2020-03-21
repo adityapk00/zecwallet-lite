@@ -142,7 +142,7 @@ jobs:
           APP_VERSION: ${{ env.VERSION }}
         run: |
           bin/signbinaries.sh
-          tar -cf artifacts.tar.gz release/signatures*.zip release/Zecwallet*
+          tar -cf artifacts-$APP_VERSION.tar.gz release/signatures*.zip release/Zecwallet*
       - name: Upload final artifacts
         uses: actions/upload-artifact@v1
         with:
