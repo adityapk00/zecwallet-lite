@@ -165,7 +165,7 @@ export default class CompanionAppListener {
     localStorage.removeItem('companion/localnonce');
   }
 
-  processIncoming(data: string, keyHex: string, ws: Websocket) {
+  async processIncoming(data: string, keyHex: string, ws: Websocket) {
     const dataJson = JSON.parse(data);
 
     // If the wormhole sends some messages, we ignore them
@@ -227,7 +227,7 @@ export default class CompanionAppListener {
       const response = this.doGetTransactions();
       ws.send(this.encryptOutgoing(response, keyHex));
     } else if (cmd.command === 'sendTx') {
-      const response = this.doSendTransaction(cmd, ws);
+      const response = await this.doSendTransaction(cmd, ws);
       ws.send(this.encryptOutgoing(response, keyHex));
     }
   }
@@ -438,7 +438,7 @@ export default class CompanionAppListener {
     const appState = this.fnGetState();
 
     // eslint-disable-next-line radix
-    const sendingAmount = parseInt((parseFloat(inpTx.amount) * 10 ** 8).toFixed(0));
+    let sendingAmount = parseFloat(inpTx.amount);
     const buildError = (reason: string): string => {
       const resp = {
         errorCode: -1,
@@ -456,6 +456,9 @@ export default class CompanionAppListener {
     }
 
     const memo = !inpTx.memo || inpTx.memo.trim() === '' ? null : inpTx.memo;
+
+    // The lightclient expects zats (and not ZEC)
+    sendingAmount = parseInt(sendingAmount * 10 ** 8);
 
     // Build a sendJSON object
     const sendJSON = [];
