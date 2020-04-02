@@ -84,18 +84,19 @@ export default class RPC {
 
       // We need to wait for the sync to finish. The way we know the sync is done is
       // if the height matches the latestBlockHeight
+      let retryCount = 0;
       const pollerID = setInterval(async () => {
         const walletHeight = RPC.fetchWalletHeight();
-        if (walletHeight >= latestBlockHeight) {
+        retryCount += 1;
+
+        // Wait a max of 30 retries (30 secs)
+        if (walletHeight >= latestBlockHeight || retryCount > 30) {
           // We are synced. Cancel the poll timer
           clearTimeout(pollerID);
 
           // And fetch the rest of the data.
-          const balP = this.fetchTotalBalance();
-          const txns = this.fetchTandZTransactions(latestBlockHeight);
-
-          await balP;
-          await txns;
+          this.fetchTotalBalance();
+          this.fetchTandZTransactions(latestBlockHeight);
 
           // All done, set up next fetch
           console.log(`Finished full refresh at ${latestBlockHeight}`);
@@ -141,7 +142,7 @@ export default class RPC {
   }
 
   // This method will get the total balances
-  async fetchTotalBalance() {
+  fetchTotalBalance() {
     const balanceStr = native.litelib_execute('balance', '');
     const balanceJSON = JSON.parse(balanceStr);
 
@@ -233,7 +234,7 @@ export default class RPC {
   }
 
   // Fetch all T and Z transactions
-  async fetchTandZTransactions(latestBlockHeight: number) {
+  fetchTandZTransactions(latestBlockHeight: number) {
     const listStr = native.litelib_execute('list', '');
     const listJSON = JSON.parse(listStr);
 
