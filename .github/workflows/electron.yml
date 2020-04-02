@@ -25,6 +25,7 @@ jobs:
         with:
           toolchain: 1.41.0
           override: true
+          components: rustfmt
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
