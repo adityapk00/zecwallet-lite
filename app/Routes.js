@@ -323,6 +323,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       return txid;
     } catch (err) {
       console.log('route sendtx error', err);
+      throw err;
     }
   };
 
