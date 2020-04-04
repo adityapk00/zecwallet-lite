@@ -207,6 +207,8 @@ pub async fn litelib_execute(cmd: String, args_list: String) -> String {
         resp = lightclient.do_info().await;
       } else if cmd == "balance" {
         resp = format!("{}", lightclient.do_balance().pretty(2));
+      } else if cmd == "height" {
+        resp = format!("{}", object!{"height" => lightclient.last_scanned_height()}.pretty(2));
       } else if cmd == "notes" {
         resp = format!("{}", lightclient.do_list_notes(false).pretty(2));
       } else if cmd == "export" {

@@ -16,8 +16,8 @@ import { withRouter } from 'react-router';
 const DetailLine = ({ label, value }) => {
   return (
     <div className={styles.detailline}>
-      <div className={cstyles.sublight}>{label} :</div>
-      <div>{value}</div>
+      <div className={[cstyles.sublight].join(' ')}>{label} :</div>
+      <div className={cstyles.breakword}>{value}</div>
     </div>
   );
 };

@@ -148,23 +148,36 @@ export default class RPC {
     const latestBlockHeight = await this.fetchInfo();
 
     if (!lastBlockHeight || lastBlockHeight < latestBlockHeight) {
-      // If the latest block height has changed, make sure to sync
-      await RPC.doSync();
+      // If the latest block height has changed, make sure to sync. This will happen in a new thread
+      RPC.doSync();
 
-      const balP = this.fetchTotalBalance();
-      const txns = this.fetchTandZTransactions(latestBlockHeight);
+      // We need to wait for the sync to finish. The way we know the sync is done is
+      // if the height matches the latestBlockHeight
+      let retryCount = 0;
+      const pollerID = setInterval(async () => {
+        const walletHeight = await RPC.fetchWalletHeight();
+        retryCount += 1;
 
-      await balP;
-      await txns;
+        // Wait a max of 30 retries (30 secs)
+        if (walletHeight >= latestBlockHeight || retryCount > 30) {
+          // We are synced. Cancel the poll timer
+          clearTimeout(pollerID);
 
-      // All done, set up next fetch
-      console.log(`Finished full refresh at ${latestBlockHeight}`);
+          // And fetch the rest of the data.
+          this.fetchTotalBalance();
+          this.fetchTandZTransactions(latestBlockHeight);
+
+          // All done, set up next fetch
+          console.log(`Finished full refresh at ${latestBlockHeight}`);
+
+          this.setupNextFetch(latestBlockHeight);
+        }
+      }, 1000);
     } else {
-      // Still at the latest block
+      // Already at the latest block
       console.log('Already have latest block, waiting for next refresh');
+      this.setupNextFetch(latestBlockHeight);
     }
-
-    this.setupNextFetch(latestBlockHeight);
   }
 
   // Special method to get the Info object. This is used both internally and by the Loading screen
@@ -291,6 +304,15 @@ export default class RPC {
     return seedJSON.seed;
   }
 
+  static async fetchWalletHeight(): number {
+    await initNative();
+
+    const heightStr = await native.litelib_execute('height', '');
+    const heightJSON = JSON.parse(heightStr);
+
+    return heightJSON.height;
+  }
+
   // Fetch all T and Z transactions
   async fetchTandZTransactions(latestBlockHeight: number) {
     await initNative();
@@ -298,7 +320,7 @@ export default class RPC {
     const listStr = await native.litelib_execute('list', '');
     const listJSON = JSON.parse(listStr);
 
-    const txlist = listJSON.map(tx => {
+    let txlist = listJSON.map(tx => {
       const transaction = new Transaction();
 
       const type = tx.outgoing_metadata ? 'sent' : 'receive';
@@ -330,6 +352,10 @@ export default class RPC {
       return transaction;
     });
 
+    // There's an issue where there are "blank" sent transactions, filter them out.
+    txlist = txlist.filter(tx => !(tx.type === 'sent' && tx.amount < 0 && tx.detailedTxns.length === 0));
+
+    // Sort the list by confirmations
     txlist.sort((t1, t2) => t1.confirmations - t2.confirmations);
 
     this.fnSetTransactionsList(txlist);

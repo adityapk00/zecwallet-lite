@@ -137,8 +137,6 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
             }
           }
 
-          console.log('replyto is', replyTo);
-
           return (
             <div key={address} className={cstyles.verticalflex}>
               <div className={[cstyles.sublight].join(' ')}>Address</div>

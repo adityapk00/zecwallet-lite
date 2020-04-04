@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import {
   Accordion,
@@ -22,6 +22,16 @@ const AddressBlock = ({ addressBalance, label, currencyName, zecPrice, privateKe
   const { address } = addressBalance;
 
   const [copied, setCopied] = useState(false);
+  const [timerID, setTimerID] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerID) {
+        clearTimeout(timerID);
+      }
+    };
+  });
+
   const balance = addressBalance.balance || 0;
 
   const getAddressLink = () => {
