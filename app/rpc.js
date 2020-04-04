@@ -238,7 +238,7 @@ export default class RPC {
     const listStr = native.litelib_execute('list', '');
     const listJSON = JSON.parse(listStr);
 
-    const txlist = listJSON.map(tx => {
+    let txlist = listJSON.map(tx => {
       const transaction = new Transaction();
 
       const type = tx.outgoing_metadata ? 'sent' : 'receive';
@@ -270,6 +270,10 @@ export default class RPC {
       return transaction;
     });
 
+    // There's an issue where there are "blank" sent transactions transactions, filter them out.
+    txlist = txlist.filter(tx => !(tx.type === 'sent' && tx.amount < 0 && tx.detailedTxns.length === 0));
+
+    // Sort the list by confirmations
     txlist.sort((t1, t2) => t1.confirmations - t2.confirmations);
 
     this.fnSetTransactionsList(txlist);

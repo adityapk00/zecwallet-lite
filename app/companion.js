@@ -457,7 +457,7 @@ export default class CompanionAppListener {
     const memo = !inpTx.memo || inpTx.memo.trim() === '' ? null : inpTx.memo;
 
     // The lightclient expects zats (and not ZEC)
-    sendingAmount = parseInt(sendingAmount * 10 ** 8);
+    sendingAmount = parseInt(sendingAmount * 10 ** 8, 10);
 
     // Build a sendJSON object
     const sendJSON = [];
