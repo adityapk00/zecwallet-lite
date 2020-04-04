@@ -270,7 +270,7 @@ export default class RPC {
       return transaction;
     });
 
-    // There's an issue where there are "blank" sent transactions transactions, filter them out.
+    // There's an issue where there are "blank" sent transactions, filter them out.
     txlist = txlist.filter(tx => !(tx.type === 'sent' && tx.amount < 0 && tx.detailedTxns.length === 0));
 
     // Sort the list by confirmations
