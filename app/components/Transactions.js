@@ -255,14 +255,15 @@ type Props = {
 
 type State = {
   clickedTx: Transaction | null,
-  modalIsOpen: boolean
+  modalIsOpen: boolean,
+  numTxnsToShow: number
 };
 
 class Transactions extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = { clickedTx: null, modalIsOpen: false };
+    this.state = { clickedTx: null, modalIsOpen: false, numTxnsToShow: 100 };
   }
 
   componentDidMount() {
@@ -282,9 +283,17 @@ class Transactions extends Component<Props, State> {
     this.setState({ clickedTx: null, modalIsOpen: false });
   };
 
+  show100MoreTxns = () => {
+    const { numTxnsToShow } = this.state;
+
+    this.setState({ numTxnsToShow: numTxnsToShow + 100 });
+  };
+
   render() {
     const { transactions, info, addressBook, setSendTo } = this.props;
-    const { clickedTx, modalIsOpen } = this.state;
+    const { clickedTx, modalIsOpen, numTxnsToShow } = this.state;
+
+    const isLoadMoreEnabled = numTxnsToShow < transactions.length;
 
     const addressBookMap = addressBook.reduce((map, obj) => {
       // eslint-disable-next-line no-param-reassign
@@ -305,7 +314,7 @@ class Transactions extends Component<Props, State> {
             <div className={[cstyles.center, cstyles.margintoplarge].join(' ')}>No Transactions Yet</div>
           )}
           {transactions &&
-            transactions.map(t => {
+            transactions.slice(0, numTxnsToShow).map(t => {
               const key = t.type + t.txid + t.address;
               return (
                 <TxItemBlock
@@ -318,6 +327,16 @@ class Transactions extends Component<Props, State> {
                 />
               );
             })}
+
+          {isLoadMoreEnabled && (
+            <div
+              style={{ marginLeft: '45%', width: '100px' }}
+              className={cstyles.primarybutton}
+              onClick={this.show100MoreTxns}
+            >
+              Load more
+            </div>
+          )}
         </ScrollPane>
 
         <TxModal
