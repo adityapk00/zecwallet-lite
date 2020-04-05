@@ -293,7 +293,7 @@ class Transactions extends Component<Props, State> {
     const { transactions, info, addressBook, setSendTo } = this.props;
     const { clickedTx, modalIsOpen, numTxnsToShow } = this.state;
 
-    const isLoadMoreEnabled = numTxnsToShow < transactions.length;
+    const isLoadMoreEnabled = transactions && numTxnsToShow < transactions.length;
 
     const addressBookMap = addressBook.reduce((map, obj) => {
       // eslint-disable-next-line no-param-reassign
