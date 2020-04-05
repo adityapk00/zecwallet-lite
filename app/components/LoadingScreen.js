@@ -66,7 +66,8 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     if (rescanning) {
       this.runSyncStatusPoller();
     } else {
-      this.doFirstTimeSetup();
+      // Do it in a timeout, so the window has a chance to load.
+      setTimeout(() => this.doFirstTimeSetup(), 100);
     }
   }
 
