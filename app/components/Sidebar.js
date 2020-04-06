@@ -137,6 +137,7 @@ type Props = {
   setRescanning: boolean => void,
   addresses: string[],
   setInfo: Info => void,
+  clearTimers: () => void,
   setSendTo: (address: string, amount: number | null, memo: string | null) => void,
   getPrivKeyAsString: (address: string) => string,
   history: PropTypes.object.isRequired,
@@ -175,7 +176,15 @@ class Sidebar extends PureComponent<Props, State> {
 
   // Handle menu items
   setupMenuHandlers = async () => {
-    const { setSendTo, setInfo, setRescanning, history, openErrorModal, openPasswordAndUnlockIfNeeded } = this.props;
+    const {
+      clearTimers,
+      setSendTo,
+      setInfo,
+      setRescanning,
+      history,
+      openErrorModal,
+      openPasswordAndUnlockIfNeeded
+    } = this.props;
 
     // About
     ipcRenderer.on('about', () => {
@@ -321,6 +330,7 @@ class Sidebar extends PureComponent<Props, State> {
     ipcRenderer.on('rescan', () => {
       // To rescan, we reset the wallet loading
       // So set info the default, and redirect to the loading screen
+      clearTimers();
       RPC.doRescan();
 
       // Set the rescanning global state to true

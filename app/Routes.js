@@ -392,6 +392,10 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.rpc.refresh(0, false);
   };
 
+  clearTimers = () => {
+    this.rpc.clearTimers();
+  };
+
   render() {
     const {
       totalBalance,
@@ -449,6 +453,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 encryptWallet={this.encryptWallet}
                 decryptWallet={this.decryptWallet}
                 openPassword={this.openPassword}
+                clearTimers={this.clearTimers}
                 {...standardProps}
               />
             </div>

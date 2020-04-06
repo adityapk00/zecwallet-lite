@@ -1,6 +1,8 @@
+// @flow
 /* eslint-disable max-classes-per-file */
 import axios from 'axios';
 import { TotalBalance, AddressBalance, Transaction, RPCConfig, TxDetail, Info } from './components/AppState';
+// $FlowFixMe
 import native from '../native/index.node';
 
 export default class RPC {
@@ -16,11 +18,13 @@ export default class RPC {
 
   fnSetAllAddresses: (string[]) => void;
 
-  fnSetZecPrice: number => void;
+  fnSetZecPrice: (number | null) => void;
 
-  refreshTimerID: TimerID;
+  refreshTimerID: IntervalID | null;
 
-  priceTimerID: TimerID;
+  priceTimerID: TimeoutID | null;
+
+  lastBlockHeight: number;
 
   constructor(
     fnSetTotalBalance: TotalBalance => void,
@@ -28,7 +32,7 @@ export default class RPC {
     fnSetTransactionsList: (Transaction[]) => void,
     fnSetAllAddresses: (string[]) => void,
     fnSetInfo: Info => void,
-    fnSetZecPrice: number => void
+    fnSetZecPrice: (number | null) => void
   ) {
     this.fnSetTotalBalance = fnSetTotalBalance;
     this.fnSetAddressesWithBalance = fnSetAddressesWithBalance;
@@ -36,22 +40,36 @@ export default class RPC {
     this.fnSetAllAddresses = fnSetAllAddresses;
     this.fnSetInfo = fnSetInfo;
     this.fnSetZecPrice = fnSetZecPrice;
+
+    this.refreshTimerID = null;
+    this.priceTimerID = null;
   }
 
   async configure(rpcConfig: RPCConfig) {
     this.rpcConfig = rpcConfig;
 
     if (!this.refreshTimerID) {
-      this.refreshTimerID = setTimeout(() => this.refresh(0, true), 1000);
+      this.refreshTimerID = setInterval(() => this.refresh(false), 60 * 1000);
     }
 
     if (!this.priceTimerID) {
-      this.priceTimerID = setTimeout(() => this.getZecPrice(), 1000);
+      this.priceTimerID = setTimeout(() => this.getZecPrice(0), 1000);
     }
+
+    // Immediately call the refresh after configure to update the UI
+    this.refresh(true);
   }
 
-  setupNextFetch(lastBlockHeight: number) {
-    this.refreshTimerID = setTimeout(() => this.refresh(lastBlockHeight, true), 60 * 1000);
+  clearTimers() {
+    if (this.refreshTimerID) {
+      clearInterval(this.refreshTimerID);
+      this.refreshTimerID = null;
+    }
+
+    if (this.priceTimerID) {
+      clearTimeout(this.priceTimerID);
+      this.priceTimerID = null;
+    }
   }
 
   static doSync() {
@@ -75,10 +93,10 @@ export default class RPC {
     console.log(`Sync status: ${savestr}`);
   }
 
-  async refresh(lastBlockHeight: number, setupNextOne: boolean) {
+  async refresh(fullRefresh: boolean) {
     const latestBlockHeight = await this.fetchInfo();
 
-    if (!lastBlockHeight || lastBlockHeight < latestBlockHeight) {
+    if (fullRefresh || !this.lastBlockHeight || this.lastBlockHeight < latestBlockHeight) {
       // If the latest block height has changed, make sure to sync. This will happen in a new thread
       RPC.doSync();
 
@@ -92,26 +110,20 @@ export default class RPC {
         // Wait a max of 30 retries (30 secs)
         if (walletHeight >= latestBlockHeight || retryCount > 30) {
           // We are synced. Cancel the poll timer
-          clearTimeout(pollerID);
+          clearInterval(pollerID);
 
           // And fetch the rest of the data.
           this.fetchTotalBalance();
           this.fetchTandZTransactions(latestBlockHeight);
 
+          this.lastBlockHeight = latestBlockHeight;
           // All done, set up next fetch
           console.log(`Finished full refresh at ${latestBlockHeight}`);
-
-          if (setupNextOne) {
-            this.setupNextFetch(latestBlockHeight);
-          }
         }
       }, 1000);
     } else {
       // Already at the latest block
       console.log('Already have latest block, waiting for next refresh');
-      if (setupNextOne) {
-        this.setupNextFetch(latestBlockHeight);
-      }
     }
   }
 
@@ -137,8 +149,8 @@ export default class RPC {
     return info;
   }
 
-  async fetchInfo(): number {
-    const info = RPC.getInfoObject(this.rpcConfig);
+  async fetchInfo(): Promise<number> {
+    const info = RPC.getInfoObject();
 
     this.fnSetInfo(info);
 
@@ -309,13 +321,13 @@ export default class RPC {
       throw error;
     } else {
       // And refresh data (full refresh)
-      this.refresh(0, false);
+      this.refresh(true);
 
       return txid;
     }
   }
 
-  async encryptWallet(password): boolean {
+  async encryptWallet(password: string): Promise<boolean> {
     const resultStr = native.litelib_execute('encrypt', password);
     const resultJSON = JSON.parse(resultStr);
 
@@ -328,7 +340,7 @@ export default class RPC {
     return resultJSON.result === 'success';
   }
 
-  async decryptWallet(password): boolean {
+  async decryptWallet(password: string): Promise<boolean> {
     const resultStr = native.litelib_execute('decrypt', password);
     const resultJSON = JSON.parse(resultStr);
 
@@ -341,7 +353,7 @@ export default class RPC {
     return resultJSON.result === 'success';
   }
 
-  async lockWallet(): boolean {
+  async lockWallet(): Promise<boolean> {
     const resultStr = native.litelib_execute('lock', '');
     const resultJSON = JSON.parse(resultStr);
 
@@ -351,7 +363,7 @@ export default class RPC {
     return resultJSON.result === 'success';
   }
 
-  async unlockWallet(password: string): boolean {
+  async unlockWallet(password: string): Promise<boolean> {
     const resultStr = native.litelib_execute('unlock', password);
     const resultJSON = JSON.parse(resultStr);
 
