@@ -389,7 +389,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
   };
 
   doRefresh = () => {
-    this.rpc.refresh();
+    this.rpc.refresh(0, false);
   };
 
   render() {

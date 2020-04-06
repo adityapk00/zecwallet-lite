@@ -42,7 +42,7 @@ export default class RPC {
     this.rpcConfig = rpcConfig;
 
     if (!this.refreshTimerID) {
-      this.refreshTimerID = setTimeout(() => this.refresh(), 1000);
+      this.refreshTimerID = setTimeout(() => this.refresh(0, true), 1000);
     }
 
     if (!this.priceTimerID) {
@@ -51,7 +51,7 @@ export default class RPC {
   }
 
   setupNextFetch(lastBlockHeight: number) {
-    this.refreshTimerID = setTimeout(() => this.refresh(lastBlockHeight), 60 * 1000);
+    this.refreshTimerID = setTimeout(() => this.refresh(lastBlockHeight, true), 60 * 1000);
   }
 
   static doSync() {
@@ -75,7 +75,7 @@ export default class RPC {
     console.log(`Sync status: ${savestr}`);
   }
 
-  async refresh(lastBlockHeight: number) {
+  async refresh(lastBlockHeight: number, setupNextOne: boolean) {
     const latestBlockHeight = await this.fetchInfo();
 
     if (!lastBlockHeight || lastBlockHeight < latestBlockHeight) {
@@ -101,13 +101,17 @@ export default class RPC {
           // All done, set up next fetch
           console.log(`Finished full refresh at ${latestBlockHeight}`);
 
-          this.setupNextFetch(latestBlockHeight);
+          if (setupNextOne) {
+            this.setupNextFetch(latestBlockHeight);
+          }
         }
       }, 1000);
     } else {
       // Already at the latest block
       console.log('Already have latest block, waiting for next refresh');
-      this.setupNextFetch(latestBlockHeight);
+      if (setupNextOne) {
+        this.setupNextFetch(latestBlockHeight);
+      }
     }
   }
 
@@ -248,7 +252,7 @@ export default class RPC {
         type === 'sent' ? (tx.outgoing_metadata.length > 0 ? tx.outgoing_metadata[0].address : '') : tx.address;
       transaction.type = type;
       transaction.amount = tx.amount / 10 ** 8;
-      transaction.confirmations = latestBlockHeight - tx.block_height + 1;
+      transaction.confirmations = tx.unconfirmed ? 0 : latestBlockHeight - tx.block_height + 1;
       transaction.txid = tx.txid;
       transaction.time = tx.datetime;
       if (tx.outgoing_metadata) {
@@ -304,7 +308,7 @@ export default class RPC {
       throw error;
     } else {
       // And refresh data (full refresh)
-      this.refresh(null);
+      this.refresh(0, false);
 
       return txid;
     }
