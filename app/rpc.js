@@ -274,7 +274,8 @@ export default class RPC {
       return transaction;
     });
 
-    // There's an issue where there are "blank" sent transactions, filter them out.
+    // If you send yourself transactions, the underlying SDK doesn't handle it very well, so
+    // we supress these in the UI to make things a bit clearer.
     txlist = txlist.filter(tx => !(tx.type === 'sent' && tx.amount < 0 && tx.detailedTxns.length === 0));
 
     // Sort the list by confirmations
