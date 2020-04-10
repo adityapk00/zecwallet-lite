@@ -130,23 +130,27 @@ export default class RPC {
   // Special method to get the Info object. This is used both internally and by the Loading screen
   static getInfoObject() {
     const infostr = native.litelib_execute('info', '');
-    const infoJSON = JSON.parse(infostr);
+    try {
+      const infoJSON = JSON.parse(infostr);
 
-    const info = new Info();
-    info.testnet = infoJSON.chain_name === 'test';
-    info.latestBlock = infoJSON.latest_block_height;
-    info.connections = 1;
-    info.version = infoJSON.version;
-    info.verificationProgress = 1;
-    info.currencyName = info.testnet ? 'TAZ' : 'ZEC';
-    info.solps = 0;
+      const info = new Info();
+      info.testnet = infoJSON.chain_name === 'test';
+      info.latestBlock = infoJSON.latest_block_height;
+      info.connections = 1;
+      info.version = infoJSON.version;
+      info.verificationProgress = 1;
+      info.currencyName = info.testnet ? 'TAZ' : 'ZEC';
+      info.solps = 0;
 
-    const encStatus = native.litelib_execute('encryptionstatus', '');
-    const encJSON = JSON.parse(encStatus);
-    info.encrypted = encJSON.encrypted;
-    info.locked = encJSON.locked;
+      const encStatus = native.litelib_execute('encryptionstatus', '');
+      const encJSON = JSON.parse(encStatus);
+      info.encrypted = encJSON.encrypted;
+      info.locked = encJSON.locked;
 
-    return info;
+      return info;
+    } catch (err) {
+      console.log('Failed to parse info', err);
+    }
   }
 
   async fetchInfo(): Promise<number> {
