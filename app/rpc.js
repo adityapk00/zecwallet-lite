@@ -128,7 +128,7 @@ export default class RPC {
   }
 
   // Special method to get the Info object. This is used both internally and by the Loading screen
-  static getInfoObject() {
+  static getInfoObject(): Info {
     const infostr = native.litelib_execute('info', '');
     try {
       const infoJSON = JSON.parse(infostr);
@@ -271,6 +271,8 @@ export default class RPC {
       transaction.confirmations = tx.unconfirmed ? 0 : latestBlockHeight - tx.block_height + 1;
       transaction.txid = tx.txid;
       transaction.time = tx.datetime;
+      transaction.position = tx.position;
+
       if (tx.outgoing_metadata) {
         transaction.detailedTxns = tx.outgoing_metadata.map(o => {
           const detail = new TxDetail();

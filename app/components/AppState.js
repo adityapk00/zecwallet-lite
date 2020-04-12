@@ -55,6 +55,8 @@ export class Transaction {
 
   amount: number;
 
+  position: string;
+
   confirmations: number;
 
   txid: string;
