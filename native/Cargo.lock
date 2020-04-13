@@ -2496,7 +2496,7 @@ dependencies = [
 [[package]]
 name = "zecwalletlitelib"
 version = "0.1.0"
-source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=d0e7a5f635f7eb8f7c9ccd53d66680f2d5b00635#d0e7a5f635f7eb8f7c9ccd53d66680f2d5b00635"
+source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=796663c971f422ab3f848962df2e479f74cc021a#796663c971f422ab3f848962df2e479f74cc021a"
 dependencies = [
  "base58 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bellman 0.1.0 (git+https://github.com/adityapk00/librustzcash.git?rev=98f9bda32957a6d7f0011c9a6adec13b5b80ea94)",
@@ -2508,6 +2508,7 @@ dependencies = [
  "http 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "json 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libflate 0.1.27 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "log4rs 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "pairing 0.14.2 (git+https://github.com/adityapk00/librustzcash.git?rev=98f9bda32957a6d7f0011c9a6adec13b5b80ea94)",
@@ -2542,7 +2543,7 @@ dependencies = [
  "neon-build 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "neon-serde 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
- "zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=d0e7a5f635f7eb8f7c9ccd53d66680f2d5b00635)",
+ "zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=796663c971f422ab3f848962df2e479f74cc021a)",
 ]
 
 [metadata]
@@ -2833,4 +2834,4 @@ dependencies = [
 "checksum zcash_client_backend 0.0.0 (git+https://github.com/adityapk00/librustzcash.git?rev=98f9bda32957a6d7f0011c9a6adec13b5b80ea94)" = "<none>"
 "checksum zcash_primitives 0.0.0 (git+https://github.com/adityapk00/librustzcash.git?rev=98f9bda32957a6d7f0011c9a6adec13b5b80ea94)" = "<none>"
 "checksum zcash_proofs 0.0.0 (git+https://github.com/adityapk00/librustzcash.git?rev=98f9bda32957a6d7f0011c9a6adec13b5b80ea94)" = "<none>"
-"checksum zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=d0e7a5f635f7eb8f7c9ccd53d66680f2d5b00635)" = "<none>"
+"checksum zecwalletlitelib 0.1.0 (git+https://github.com/adityapk00/zecwallet-light-cli?rev=796663c971f422ab3f848962df2e479f74cc021a)" = "<none>"
