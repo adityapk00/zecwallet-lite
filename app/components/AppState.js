@@ -139,6 +139,10 @@ export class Info {
   locked: boolean;
 }
 
+export class ServerSelectState {
+  modalIsOpen: boolean;
+}
+
 export class PasswordState {
   showPassword: boolean;
 

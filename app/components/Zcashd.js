@@ -1,6 +1,7 @@
+// @flow
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react';
-import { Info } from './AppState';
+import { Info, RPCConfig } from './AppState';
 import cstyles from './Common.module.css';
 import styles from './Zcashd.module.css';
 import ScrollPane from './ScrollPane';
@@ -17,12 +18,14 @@ const DetailLine = ({ label, value }) => {
 
 type Props = {
   info: Info,
-  refresh: PropTypes.object.isRequired
+  refresh: () => void,
+  rpcConfig: RPCConfig,
+  openServerSelectModal: () => void
 };
 
 export default class Zcashd extends Component<Props> {
   render() {
-    const { info, rpcConfig, refresh } = this.props;
+    const { info, rpcConfig, refresh, openServerSelectModal } = this.props;
     const { url } = rpcConfig;
 
     if (!info || !info.version) {
@@ -62,6 +65,9 @@ export default class Zcashd extends Component<Props> {
               </div>
 
               <div className={cstyles.buttoncontainer}>
+                <button className={cstyles.primarybutton} type="button" onClick={openServerSelectModal}>
+                  Switch LightwalletD Server
+                </button>
                 <button className={cstyles.primarybutton} type="button" onClick={refresh}>
                   Refresh All Data
                 </button>

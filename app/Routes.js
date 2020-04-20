@@ -24,7 +24,8 @@ import AppState, {
   Info,
   ReceivePageState,
   AddressBookEntry,
-  PasswordState
+  PasswordState,
+  ServerSelectState
 } from './components/AppState';
 import RPC from './rpc';
 import Utils from './utils/utils';
@@ -34,6 +35,7 @@ import AddressbookImpl from './utils/AddressbookImpl';
 import Sidebar from './components/Sidebar';
 import Transactions from './components/Transactions';
 import PasswordModal from './components/PasswordModal';
+import ServerSelectModal from './components/ServerSelectModal';
 import CompanionAppListener from './companion';
 import WormholeConnection from './components/WormholeConnection';
 
@@ -62,6 +64,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       location: null,
       errorModalData: new ErrorModalData(),
       passwordState: new PasswordState(),
+      serverSelectState: new ServerSelectState(),
       connectedCompanionApp: null
     };
 
@@ -124,6 +127,20 @@ export default class RouteApp extends React.Component<Props, AppState> {
     errorModalData.modalIsOpen = false;
 
     this.setState({ errorModalData });
+  };
+
+  openServerSelectModal = () => {
+    const serverSelectState = new ServerSelectState();
+    serverSelectState.modalIsOpen = true;
+
+    this.setState({ serverSelectState });
+  };
+
+  closeServerSelectModal = () => {
+    const serverSelectState = new ServerSelectState();
+    serverSelectState.modalIsOpen = false;
+
+    this.setState({ serverSelectState });
   };
 
   openPassword = (
@@ -410,6 +427,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       info,
       rescanning,
       errorModalData,
+      serverSelectState,
       passwordState,
       connectedCompanionApp
     } = this.state;
@@ -437,6 +455,12 @@ export default class RouteApp extends React.Component<Props, AppState> {
           passwordCallback={passwordState.passwordCallback}
           closeCallback={passwordState.closeCallback}
           helpText={passwordState.helpText}
+        />
+
+        <ServerSelectModal
+          modalIsOpen={serverSelectState.modalIsOpen}
+          closeModal={this.closeServerSelectModal}
+          openErrorModal={this.openErrorModal}
         />
 
         <div style={{ overflow: 'hidden' }}>
@@ -522,7 +546,14 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
               <Route
                 path={routes.ZCASHD}
-                render={() => <Zcashd info={info} rpcConfig={rpcConfig} refresh={this.doRefresh} />}
+                render={() => (
+                  <Zcashd
+                    info={info}
+                    rpcConfig={rpcConfig}
+                    refresh={this.doRefresh}
+                    openServerSelectModal={this.openServerSelectModal}
+                  />
+                )}
               />
 
               <Route
@@ -542,6 +573,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                     rescanning={rescanning}
                     setRescanning={this.setRescanning}
                     setInfo={this.setInfo}
+                    openServerSelectModal={this.openServerSelectModal}
                   />
                 )}
               />

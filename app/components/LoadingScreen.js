@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Redirect, withRouter } from 'react-router';
 import { ipcRenderer } from 'electron';
 import TextareaAutosize from 'react-textarea-autosize';
+import Store from 'electron-store';
 import native from '../../native/index.node';
 import routes from '../constants/routes.json';
 import { RPCConfig, Info } from './AppState';
@@ -16,11 +17,14 @@ type Props = {
   setRPCConfig: (rpcConfig: RPCConfig) => void,
   rescanning: boolean,
   setRescanning: boolean => void,
-  setInfo: (info: Info) => void
+  setInfo: (info: Info) => void,
+  openServerSelectModal: () => void
 };
 
 class LoadingScreenState {
   currentStatus: string;
+
+  currentStatusIsError: boolean;
 
   loadingDone: boolean;
 
@@ -40,6 +44,7 @@ class LoadingScreenState {
 
   constructor() {
     this.currentStatus = 'Loading...';
+    this.currentStatusIsError = false;
     this.loadingDone = false;
     this.rpcConfig = null;
     this.url = '';
@@ -56,7 +61,6 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     super(props);
 
     const state = new LoadingScreenState();
-    state.url = 'https://lightwalletd.zecwallet.co:1443';
     this.state = state;
   }
 
@@ -71,7 +75,21 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     }
   }
 
+  loadServerURI = () => {
+    // Try to read the default server
+    const store = new Store();
+    const server = store.get('lightd/serveruri', 'https://lightwalletd.zecwallet.co:1443');
+
+    const newstate = new LoadingScreenState();
+    Object.assign(newstate, this.state);
+
+    newstate.url = server;
+    this.setState(newstate);
+  };
+
   doFirstTimeSetup = async () => {
+    this.loadServerURI();
+
     // Try to load the light client
     const { url } = this.state;
 
@@ -83,23 +101,38 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
       // Show the wallet creation screen
       this.setState({ walletScreen: 1 });
     } else {
-      const result = native.litelib_initialize_existing(false, url);
-      console.log(`Intialization: ${result}`);
-      if (result !== 'OK') {
+      try {
+        const result = native.litelib_initialize_existing(false, url);
+        console.log(`Intialization: ${result}`);
+        if (result !== 'OK') {
+          this.setState({
+            currentStatus: (
+              <span>
+                Error Initializing Lightclient
+                <br />
+                {result}
+              </span>
+            ),
+            currentStatusIsError: true
+          });
+
+          return;
+        }
+
+        this.getInfo();
+      } catch (e) {
+        console.log('Error initializing', e);
         this.setState({
           currentStatus: (
             <span>
               Error Initializing Lightclient
               <br />
-              {result}
+              {`${e}`}
             </span>
-          )
+          ),
+          currentStatusIsError: true
         });
-
-        return;
       }
-
-      this.getInfo();
     }
   };
 
@@ -140,35 +173,44 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     // And after a while, check the sync status.
     const poller = setInterval(() => {
       const syncstatus = RPC.doSyncStatus();
-      const ss = JSON.parse(syncstatus);
 
-      if (ss.syncing === 'false') {
-        // First, save the wallet so we don't lose the just-synced data
-        RPC.doSave();
-
-        // Set the info object, so the sidebar will show
-        console.log(info);
-        setInfo(info);
-
-        // This will cause a redirect to the dashboard
-        me.setState({ loadingDone: true });
-
-        setRescanning(false);
-
-        // Configure the RPC, which will setup the refresh
-        const rpcConfig = new RPCConfig();
-        rpcConfig.url = url;
-        setRPCConfig(rpcConfig);
+      if (syncstatus.startsWith('Error')) {
+        // Something went wrong
+        this.setState({ currentStatus: syncstatus, currentStatusIsError: true });
 
         // And cancel the updater
         clearInterval(poller);
       } else {
-        // Still syncing, grab the status and update the status
-        const p = ss.synced_blocks;
-        const t = ss.total_blocks;
-        const currentStatus = `Syncing ${p} / ${t}`;
+        const ss = JSON.parse(syncstatus);
 
-        me.setState({ currentStatus });
+        if (ss.syncing === 'false') {
+          // First, save the wallet so we don't lose the just-synced data
+          RPC.doSave();
+
+          // Set the info object, so the sidebar will show
+          console.log(info);
+          setInfo(info);
+
+          // This will cause a redirect to the dashboard
+          me.setState({ loadingDone: true });
+
+          setRescanning(false);
+
+          // Configure the RPC, which will setup the refresh
+          const rpcConfig = new RPCConfig();
+          rpcConfig.url = url;
+          setRPCConfig(rpcConfig);
+
+          // And cancel the updater
+          clearInterval(poller);
+        } else {
+          // Still syncing, grab the status and update the status
+          const p = ss.synced_blocks;
+          const t = ss.total_blocks;
+          const currentStatus = `Syncing ${p} / ${t}`;
+
+          me.setState({ currentStatus });
+        }
       }
     }, 1000);
   };
@@ -222,7 +264,17 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
   };
 
   render() {
-    const { loadingDone, currentStatus, walletScreen, newWalletError, seed, birthday } = this.state;
+    const {
+      loadingDone,
+      currentStatus,
+      currentStatusIsError,
+      walletScreen,
+      newWalletError,
+      seed,
+      birthday
+    } = this.state;
+
+    const { openServerSelectModal } = this.props;
 
     // If still loading, show the status
     if (!loadingDone) {
@@ -234,6 +286,13 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
                 <img src={Logo} width="200px;" alt="Logo" />
               </div>
               <div>{currentStatus}</div>
+              {currentStatusIsError && (
+                <div className={cstyles.buttoncontainer}>
+                  <button type="button" className={cstyles.primarybutton} onClick={openServerSelectModal}>
+                    Switch LightwalletD Server
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
