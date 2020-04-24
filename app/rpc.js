@@ -283,44 +283,7 @@ export default class RPC {
           return detail;
         });
 
-        // We combine detailed transactions if they are sent to the same outgoing address in the same txid. This
-        // is usually done to split long memos.
-        // Remember to add up both amounts and combine memos
-
-        // First, group by outgoing address.
-        const m = new Map();
-        dts.forEach(i => {
-          const coll = m.get(i.address);
-          if (!coll) {
-            m.set(i.address, [i]);
-          } else {
-            coll.push(i);
-          }
-        });
-
-        // Reduce the groups to a single TxDetail, combining memos and summing amounts
-        const reducedDetailedTxns = [];
-        m.forEach((txns, toaddr) => {
-          const totalAmount = txns.reduce((sum, i) => sum + i.amount, 0);
-          const memos = txns
-            .filter(i => i.memo)
-            .map(i => {
-              const rex = /\((\d+)\/(\d+)\)((.|[\r\n])*)/;
-              const tags = i.memo.match(rex);
-              return { num: tags[1], memo: tags[3] };
-            })
-            .sort((a, b) => a.num - b.num)
-            .map(a => a.memo);
-
-          const detail = new TxDetail();
-          detail.address = toaddr;
-          detail.amount = totalAmount;
-          detail.memo = memos.length > 0 ? memos.join('') : null;
-
-          reducedDetailedTxns.push(detail);
-        });
-
-        transaction.detailedTxns = reducedDetailedTxns;
+        transaction.detailedTxns = RPC.combineTxDetails(dts);
       } else {
         transaction.detailedTxns = [new TxDetail()];
         transaction.detailedTxns[0].address = tx.address;
@@ -335,10 +298,81 @@ export default class RPC {
     // we supress these in the UI to make things a bit clearer.
     txlist = txlist.filter(tx => !(tx.type === 'sent' && tx.amount < 0 && tx.detailedTxns.length === 0));
 
-    // Sort the list by confirmations
-    txlist.sort((t1, t2) => t1.confirmations - t2.confirmations);
+    // We need to group transactions that have the same (txid and send/recive), for multi-part memos
+    const m = new Map();
+    txlist.forEach(tx => {
+      const key = tx.txid + tx.type;
+      const coll = m.get(key);
+      if (!coll) {
+        m.set(key, [tx]);
+      } else {
+        coll.push(tx);
+      }
+    });
 
-    this.fnSetTransactionsList(txlist);
+    // Now, combine the amounts and memos
+    const combinedTxList = [];
+    m.forEach(txns => {
+      // Get all the txdetails and merge them
+
+      // Clone the first tx into a new one
+      // eslint-disable-next-line prefer-object-spread
+      const combinedTx = Object.assign({}, txns[0]);
+      combinedTx.detailedTxns = RPC.combineTxDetails(txns.flatMap(tx => tx.detailedTxns));
+
+      combinedTxList.push(combinedTx);
+    });
+
+    // Sort the list by confirmations
+    combinedTxList.sort((t1, t2) => t1.confirmations - t2.confirmations);
+
+    this.fnSetTransactionsList(combinedTxList);
+  }
+
+  // We combine detailed transactions if they are sent to the same outgoing address in the same txid. This
+  // is usually done to split long memos.
+  // Remember to add up both amounts and combine memos
+  static combineTxDetails(txdetails: TxDetail[]): TxDetail[] {
+    // First, group by outgoing address.
+    const m = new Map();
+    txdetails.forEach(i => {
+      const coll = m.get(i.address);
+      if (!coll) {
+        m.set(i.address, [i]);
+      } else {
+        coll.push(i);
+      }
+    });
+
+    // Reduce the groups to a single TxDetail, combining memos and summing amounts
+    const reducedDetailedTxns = [];
+    m.forEach((txns, toaddr) => {
+      const totalAmount = txns.reduce((sum, i) => sum + i.amount, 0);
+
+      const memos = txns
+        .filter(i => i.memo)
+        .map(i => {
+          const rex = /\((\d+)\/(\d+)\)((.|[\r\n])*)/;
+          const tags = i.memo.match(rex);
+          if (tags && tags.length >= 4) {
+            return { num: parseInt(tags[1], 10), memo: tags[3] };
+          }
+
+          // Just return as is
+          return { num: 0, memo: i.memo };
+        })
+        .sort((a, b) => a.num - b.num)
+        .map(a => a.memo);
+
+      const detail = new TxDetail();
+      detail.address = toaddr;
+      detail.amount = totalAmount;
+      detail.memo = memos.length > 0 ? memos.join('') : null;
+
+      reducedDetailedTxns.push(detail);
+    });
+
+    return reducedDetailedTxns;
   }
 
   // Send a transaction using the already constructed sendJson structure
