@@ -138,7 +138,7 @@ const ToAddrBox = ({
           <div>
             <div className={[cstyles.flexspacebetween].join(' ')}>
               <div className={cstyles.sublight}>Memo</div>
-              <div className={cstyles.validationerror}>{toaddr.memo.length} / 512</div>
+              <div className={cstyles.validationerror}>{toaddr.memo.length}</div>
             </div>
             <TextareaAutosize
               className={cstyles.inputbox}
