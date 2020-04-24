@@ -274,7 +274,7 @@ export default class RPC {
       transaction.position = tx.position;
 
       if (tx.outgoing_metadata) {
-        transaction.detailedTxns = tx.outgoing_metadata.map(o => {
+        const dts = tx.outgoing_metadata.map(o => {
           const detail = new TxDetail();
           detail.address = o.address;
           detail.amount = o.value / 10 ** 8;
@@ -282,6 +282,45 @@ export default class RPC {
 
           return detail;
         });
+
+        // We combine detailed transactions if they are sent to the same outgoing address in the same txid. This
+        // is usually done to split long memos.
+        // Remember to add up both amounts and combine memos
+
+        // First, group by outgoing address.
+        const m = new Map();
+        dts.forEach(i => {
+          const coll = m.get(i.address);
+          if (!coll) {
+            m.set(i.address, [i]);
+          } else {
+            coll.push(i);
+          }
+        });
+
+        // Reduce the groups to a single TxDetail, combining memos and summing amounts
+        const reducedDetailedTxns = [];
+        m.forEach((txns, toaddr) => {
+          const totalAmount = txns.reduce((sum, i) => sum + i.amount, 0);
+          const memos = txns
+            .filter(i => i.memo)
+            .map(i => {
+              const rex = /\((\d+)\/(\d+)\)((.|[\r\n])*)/;
+              const tags = i.memo.match(rex);
+              return { num: tags[1], memo: tags[3] };
+            })
+            .sort((a, b) => a.num - b.num)
+            .map(a => a.memo);
+
+          const detail = new TxDetail();
+          detail.address = toaddr;
+          detail.amount = totalAmount;
+          detail.memo = memos.length > 0 ? memos.join('') : null;
+
+          reducedDetailedTxns.push(detail);
+        });
+
+        transaction.detailedTxns = reducedDetailedTxns;
       } else {
         transaction.detailedTxns = [new TxDetail()];
         transaction.detailedTxns[0].address = tx.address;
