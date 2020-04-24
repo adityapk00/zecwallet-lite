@@ -152,7 +152,7 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
                 <div>
                   <div className={[cstyles.sublight].join(' ')}>Memo</div>
                   <div className={[cstyles.flexspacebetween].join(' ')}>
-                    <div>{memo}</div>
+                    <div className={[cstyles.memodiv].join(' ')}>{memo}</div>
                     {replyTo && (
                       <div className={cstyles.primarybutton} onClick={() => doReply(replyTo)}>
                         Reply
@@ -215,7 +215,15 @@ const TxItemBlock = ({ transaction, currencyName, zecPrice, txClicked, addressBo
                 <div className={styles.txaddress}>
                   <div className={cstyles.highlight}>{label}</div>
                   <div>{Utils.splitStringIntoChunks(address, 6).join(' ')}</div>
-                  <div className={[cstyles.small, cstyles.sublight, cstyles.padtopsmall, styles.txmemo].join(' ')}>
+                  <div
+                    className={[
+                      cstyles.small,
+                      cstyles.sublight,
+                      cstyles.padtopsmall,
+                      cstyles.memodiv,
+                      styles.txmemo
+                    ].join(' ')}
+                  >
                     {memo}
                   </div>
                 </div>

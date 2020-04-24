@@ -215,3 +215,7 @@
 .containermargin {
   margin: 16px;
 }
+
+.memodiv {
+  white-space: pre-wrap;
+}

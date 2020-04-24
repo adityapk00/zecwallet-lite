@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-else-return */
 /* eslint-disable radix */
@@ -43,7 +44,6 @@ const ToAddrBox = ({
   const isMemoDisabled = !Utils.isZaddr(toaddr.to);
 
   const addressIsValid = toaddr.to === '' || Utils.isZaddr(toaddr.to) || Utils.isTransparent(toaddr.to);
-  const memoIsValid = toaddr.memo.length <= 512;
 
   let amountError = null;
   if (toaddr.amount) {
@@ -65,14 +65,7 @@ const ToAddrBox = ({
   }
 
   let buttonstate;
-  if (
-    !addressIsValid ||
-    amountError ||
-    !memoIsValid ||
-    toaddr.to === '' ||
-    parseFloat(toaddr.amount) === 0 ||
-    fromAmount === 0
-  ) {
+  if (!addressIsValid || amountError || toaddr.to === '' || parseFloat(toaddr.amount) === 0 || fromAmount === 0) {
     buttonstate = false;
   } else {
     buttonstate = true;
@@ -145,9 +138,7 @@ const ToAddrBox = ({
           <div>
             <div className={[cstyles.flexspacebetween].join(' ')}>
               <div className={cstyles.sublight}>Memo</div>
-              <div className={cstyles.validationerror}>
-                {memoIsValid ? toaddr.memo.length : <span className={cstyles.red}>{toaddr.memo.length}</span>} / 512
-              </div>
+              <div className={cstyles.validationerror}>{toaddr.memo.length}</div>
             </div>
             <TextareaAutosize
               className={cstyles.inputbox}
@@ -167,14 +158,29 @@ const ToAddrBox = ({
 };
 
 function getSendManyJSON(sendPageState: SendPageState): [] {
-  const json = sendPageState.toaddrs.map(to => {
+  const json = sendPageState.toaddrs.flatMap(to => {
     const memo = to.memo || '';
     const amount = parseInt((parseFloat(to.amount) * 10 ** 8).toFixed(0));
 
     if (memo === '') {
       return { address: to.to, amount };
-    } else {
+    } else if (memo.length <= 512) {
       return { address: to.to, amount, memo };
+    } else {
+      // If the memo is more than 512 bytes, then we split it into multiple transactions.
+      // Each memo will be `(xx/yy)memo_part`. The prefix "(xx/yy)" is 7 bytes long, so
+      // we'll split the memo into 512-7 = 505 bytes length
+      const splits = Utils.utf16Split(memo, 505);
+      const tos = [];
+
+      // The first one contains all the tx value
+      tos.push({ address: to.to, amount, memo: `(1/${splits.length})${splits[0]}` });
+
+      for (let i = 1; i < splits.length; i++) {
+        tos.push({ address: to.to, amount: 0, memo: `(${i + 1}/${splits.length})${splits[i]}` });
+      }
+
+      return tos;
     }
   });
 
@@ -207,7 +213,7 @@ const ConfirmModalToAddr = ({ toaddr, info }) => {
           <div>{Utils.getZecToUsdString(info.zecPrice, toaddr.amount)}</div>
         </div>
       </div>
-      <div className={[cstyles.sublight, cstyles.breakword].join(' ')}>{memo}</div>
+      <div className={[cstyles.sublight, cstyles.breakword, cstyles.memodiv].join(' ')}>{memo}</div>
     </div>
   );
 };
@@ -297,13 +303,14 @@ const ConfirmModalInternal = ({
           </div>
         </div>
 
-        <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(' ')}>
-          {sendPageState.toaddrs.map(t => (
-            <ConfirmModalToAddr key={t.to} toaddr={t} info={info} />
-          ))}
-        </div>
-
-        <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: 0.0001, memo: null }} info={info} />
+        <ScrollPane offsetHeight={400}>
+          <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(' ')}>
+            {sendPageState.toaddrs.map(t => (
+              <ConfirmModalToAddr key={t.to} toaddr={t} info={info} />
+            ))}
+          </div>
+          <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: 0.0001, memo: null }} info={info} />
+        </ScrollPane>
 
         <div className={cstyles.buttoncontainer}>
           <button type="button" className={cstyles.primarybutton} onClick={() => sendButton()}>
