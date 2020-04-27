@@ -109,4 +109,32 @@ export default class Utils {
 
     return `USD ${(price * zecValue).toFixed(2)}`;
   }
+
+  static utf16Split(s: string, chunksize: number): string[] {
+    const ans = [];
+
+    let current = '';
+    let currentLen = 0;
+    const a = [...s];
+    for (let i = 0; i < a.length; i++) {
+      // Each UTF-16 char will take 6 bytes when encoded (2 bytes each for UTF-16 * 3 bytes in UTF-8)
+      const utf8len = a[i].length > 1 ? 6 : 1;
+
+      // Test if adding it will exceed the size
+      if (currentLen + utf8len > chunksize) {
+        ans.push(current);
+        current = '';
+        currentLen = 0;
+      }
+
+      current += a[i];
+      currentLen += utf8len;
+    }
+
+    if (currentLen > 0) {
+      ans.push(current);
+    }
+
+    return ans;
+  }
 }

@@ -170,7 +170,7 @@ function getSendManyJSON(sendPageState: SendPageState): [] {
       // If the memo is more than 512 bytes, then we split it into multiple transactions.
       // Each memo will be `(xx/yy)memo_part`. The prefix "(xx/yy)" is 7 bytes long, so
       // we'll split the memo into 512-7 = 505 bytes length
-      const splits = memo.match(/(.|[\r\n]){1,505}/g);
+      const splits = Utils.utf16Split(memo, 505);
       const tos = [];
 
       // The first one contains all the tx value
@@ -303,13 +303,14 @@ const ConfirmModalInternal = ({
           </div>
         </div>
 
-        <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(' ')}>
-          {sendPageState.toaddrs.map(t => (
-            <ConfirmModalToAddr key={t.to} toaddr={t} info={info} />
-          ))}
-        </div>
-
-        <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: 0.0001, memo: null }} info={info} />
+        <ScrollPane offsetHeight={400}>
+          <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(' ')}>
+            {sendPageState.toaddrs.map(t => (
+              <ConfirmModalToAddr key={t.to} toaddr={t} info={info} />
+            ))}
+          </div>
+          <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: 0.0001, memo: null }} info={info} />
+        </ScrollPane>
 
         <div className={cstyles.buttoncontainer}>
           <button type="button" className={cstyles.primarybutton} onClick={() => sendButton()}>
