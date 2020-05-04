@@ -289,6 +289,7 @@
     "electron-store": "^5.1.1",
     "history": "^4.10.1",
     "libsodium-wrappers-sumo": "^0.7.6",
+    "progress": "^2.0.3",
     "qrcode.react": "^1.0.0",
     "react": "^16.12.0",
     "react-accessible-accordion": "^3.0.1",
@@ -299,6 +300,7 @@
     "react-router-dom": "^5.1.2",
     "react-tabs": "^3.1.0",
     "react-textarea-autosize": "^7.1.2",
+    "request": "^2.88.2",
     "source-map-support": "^0.5.16",
     "typeface-roboto": "^0.0.75",
     "ws": "^7.2.1"

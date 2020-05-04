@@ -2,9 +2,15 @@
 /* eslint-disable max-classes-per-file */
 import React, { Component } from 'react';
 import { Redirect, withRouter } from 'react-router';
-import { ipcRenderer } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import TextareaAutosize from 'react-textarea-autosize';
 import Store from 'electron-store';
+import request from 'request';
+import progress from 'progress-stream';
+import path from 'path';
+import os from 'os';
+import fs from 'fs';
+import { promisify } from 'util';
 import native from '../../native/index.node';
 import routes from '../constants/routes.json';
 import { RPCConfig, Info } from './AppState';
@@ -12,6 +18,18 @@ import RPC from '../rpc';
 import cstyles from './Common.module.css';
 import styles from './LoadingScreen.module.css';
 import Logo from '../assets/img/logobig.png';
+
+const locateZcashParamsDir = () => {
+  if (os.platform() === 'darwin') {
+    return path.join(remote.app.getPath('appData'), 'ZcashParams');
+  }
+
+  if (os.platform() === 'linux') {
+    return path.join(remote.app.getPath('home'), '.zcash-params');
+  }
+
+  return path.join(remote.app.getPath('appData'), 'ZcashParams');
+};
 
 type Props = {
   setRPCConfig: (rpcConfig: RPCConfig) => void,
@@ -70,10 +88,88 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     if (rescanning) {
       this.runSyncStatusPoller();
     } else {
-      // Do it in a timeout, so the window has a chance to load.
-      setTimeout(() => this.doFirstTimeSetup(), 100);
+      (async () => {
+        const success = await this.ensureZcashParams();
+        if (success) {
+          // Do it in a timeout, so the window has a chance to load.
+          setTimeout(() => this.doFirstTimeSetup(), 100);
+        }
+      })();
     }
   }
+
+  download = (url, dest, name, cb) => {
+    const file = fs.createWriteStream(dest);
+    const sendReq = request.get(url);
+
+    // verify response code
+    sendReq.on('response', response => {
+      if (response.statusCode !== 200) {
+        return cb(`Response status was ${response.statusCode}`);
+      }
+
+      const totalSize = (parseInt(response.headers['content-length'], 10) / 1024 / 1024).toFixed(0);
+
+      const str = progress({ time: 1000 }, pgrs => {
+        this.setState({
+          currentStatus: `Downloading ${name}... (${(pgrs.transferred / 1024 / 1024).toFixed(0)} MB / ${totalSize} MB)`
+        });
+      });
+
+      sendReq.pipe(str).pipe(file);
+    });
+
+    // close() is async, call cb after close completes
+    file.on('finish', () => file.close(cb));
+
+    // check for request errors
+    sendReq.on('error', err => {
+      fs.unlink(dest);
+      return cb(err.message);
+    });
+
+    file.on('error', err => {
+      // Handle errors
+      fs.unlink(dest); // Delete the file async. (But we don't check the result)
+      return cb(err.message);
+    });
+  };
+
+  ensureZcashParams = async () => {
+    // Check if the zcash params dir exists and if the params files are present
+    const dir = locateZcashParamsDir();
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+
+    // Check for the params
+    const params = [
+      { name: 'sapling-output.params', url: 'https://z.cash/downloads/sapling-output.params' },
+      { name: 'sapling-spend.params', url: 'https://z.cash/downloads/sapling-spend.params' }
+    ];
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < params.length; i++) {
+      const p = params[i];
+
+      const fileName = path.join(dir, p.name);
+      if (!fs.existsSync(fileName)) {
+        // Download and save this file
+        this.setState({ currentStatus: `Downloading ${p.name}...` });
+
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await promisify(this.download)(p.url, fileName, p.name);
+        } catch (err) {
+          console.log(`error: ${err}`);
+          this.setState({ currentStatus: `Error downloading ${p.name}. The error was: ${err}` });
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
 
   loadServerURI = () => {
     // Try to read the default server
