@@ -144,8 +144,8 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
 
     // Check for the params
     const params = [
-      { name: 'sapling-output.params', url: 'https://z.cash/downloads/sapling-output.params' },
-      { name: 'sapling-spend.params', url: 'https://z.cash/downloads/sapling-spend.params' }
+      { name: 'sapling-output.params', url: 'https://params.zecwallet.co/params/sapling-output.params' },
+      { name: 'sapling-spend.params', url: 'https://params.zecwallet.co/params/sapling-spend.params' }
     ];
 
     // eslint-disable-next-line no-plusplus
