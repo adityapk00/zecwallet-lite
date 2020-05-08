@@ -90,7 +90,7 @@ export default class RPC {
 
   static doSave() {
     const savestr = native.litelib_execute('save', '');
-    console.log(`Sync status: ${savestr}`);
+    console.log(`Save status: ${savestr}`);
   }
 
   async refresh(fullRefresh: boolean) {
