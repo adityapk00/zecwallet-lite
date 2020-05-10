@@ -1,1 +1,1 @@
-echo "::set-env name=VERSION::1.1.10"
+echo "::set-env name=VERSION::1.1.11"
