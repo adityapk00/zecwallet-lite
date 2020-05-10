@@ -350,7 +350,9 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     const { seed, birthday, url } = this.state;
     console.log(`Restoring ${seed} with ${birthday}`);
 
-    const result = native.litelib_initialize_new_from_phrase(false, url, seed, parseInt(birthday));
+    const allowOverwrite = true;
+
+    const result = native.litelib_initialize_new_from_phrase(false, url, seed, parseInt(birthday), allowOverwrite);
     if (result.startsWith('Error')) {
       this.setState({ newWalletError: result });
     } else {
@@ -386,6 +388,17 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
                 <div className={cstyles.buttoncontainer}>
                   <button type="button" className={cstyles.primarybutton} onClick={openServerSelectModal}>
                     Switch LightwalletD Server
+                  </button>
+                  <button
+                    type="button"
+                    className={cstyles.primarybutton}
+                    onClick={() => {
+                      this.setState({ walletScreen: 1 });
+                      this.setState({ currentStatus: '', currentStatusIsError: false });
+                      this.restoreExistingWallet();
+                    }}
+                  >
+                    Restore Wallet From Seed
                   </button>
                 </div>
               )}
@@ -503,7 +516,11 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
                       />
 
                       <div className={cstyles.margintoplarge}>
-                        <button type="button" className={cstyles.primarybutton} onClick={this.doRestoreWallet}>
+                        <button
+                          type="button"
+                          className={cstyles.primarybutton}
+                          onClick={() => this.doRestoreWallet(false)}
+                        >
                           Restore Wallet
                         </button>
                       </div>
