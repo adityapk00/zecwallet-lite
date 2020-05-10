@@ -1,4 +1,4 @@
 #!/bin/bash
-VERSION="1.1.0"
+VERSION="1.1.10"
 
 echo "::set-env name=VERSION::$VERSION"
