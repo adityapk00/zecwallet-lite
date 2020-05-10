@@ -113,14 +113,14 @@ const createWindow = async () => {
     // $FlowFixMe
     mainWindow.webContents.send('appquitting');
 
-    // Failsafe, timeout after 3 seconds
+    // Failsafe, timeout after 5 seconds
     setTimeout(() => {
       waitingForClose = false;
       proceedToClose = true;
       console.log('Timeout, quitting');
 
       app.quit();
-    }, 3 * 1000);
+    }, 5 * 1000);
   });
 
   mainWindow.on('closed', () => {

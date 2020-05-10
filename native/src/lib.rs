@@ -61,7 +61,7 @@ export! {
 
   /// Restore a wallet from the seed phrase
   fn litelib_initialize_new_from_phrase(dangerous: bool, server_uri: String,
-              seed: String, birthday: u64) -> String {
+              seed: String, birthday: u64, overwrite: bool) -> String {
       let server = LightClientConfig::get_server_or_default(Some(server_uri));
       let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
           Ok((c, h)) => (c, h),
@@ -70,7 +70,7 @@ export! {
           }
       };
 
-      let lightclient = match LightClient::new_from_phrase(seed, &config, birthday) {
+      let lightclient = match LightClient::new_from_phrase(seed, &config, birthday, overwrite) {
           Ok(l) => l,
           Err(e) => {
             return format!("Error: {}", e);
