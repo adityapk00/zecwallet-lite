@@ -254,7 +254,6 @@
     "jest": "^24.9.0",
     "lint-staged": "^9.5.0",
     "mini-css-extract-plugin": "^0.8.0",
-    "neon": "^2.0.0",
     "neon-cli": "^0.3.3",
     "node-sass": "^4.13.1",
     "opencollective-postinstall": "^2.0.2",
