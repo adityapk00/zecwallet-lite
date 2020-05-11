@@ -473,6 +473,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 setRescanning={this.setRescanning}
                 getPrivKeyAsString={this.getPrivKeyAsString}
                 addresses={addresses}
+                transactions={transactions}
                 lockWallet={this.lockWallet}
                 encryptWallet={this.encryptWallet}
                 decryptWallet={this.decryptWallet}
