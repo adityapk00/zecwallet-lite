@@ -8947,11 +8947,6 @@ neon-cli@^0.3.3:
     validate-npm-package-license "^3.0.1"
     validate-npm-package-name "^3.0.0"
 
-neon@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/neon/-/neon-2.0.0.tgz#eb70092c57fb03e2201c3682aed5b54ab9ed1316"
-  integrity sha1-63AJLFf7A+IgHDaCrtW1SrntExY=
-
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
