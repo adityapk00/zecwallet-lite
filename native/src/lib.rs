@@ -27,9 +27,9 @@ export! {
   }
 
   /// Create a new wallet and return the seed for the newly created wallet.
-  fn litelib_initialize_new(dangerous: bool, server_uri: String) -> String {
+  fn litelib_initialize_new(server_uri: String) -> String {
       let server = LightClientConfig::get_server_or_default(Some(server_uri));
-      let (config, latest_block_height) = match LightClientConfig::create(server, dangerous) {
+      let (config, latest_block_height) = match LightClientConfig::create(server) {
           Ok((c, h)) => (c, h),
           Err(e) => {
               return format!("Error: {}", e);
@@ -60,10 +60,10 @@ export! {
   }
 
   /// Restore a wallet from the seed phrase
-  fn litelib_initialize_new_from_phrase(dangerous: bool, server_uri: String,
+  fn litelib_initialize_new_from_phrase(server_uri: String,
               seed: String, birthday: u64, overwrite: bool) -> String {
       let server = LightClientConfig::get_server_or_default(Some(server_uri));
-      let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
+      let (config, _latest_block_height) = match LightClientConfig::create(server) {
           Ok((c, h)) => (c, h),
           Err(e) => {
             return format!("Error: {}", e);
@@ -86,9 +86,9 @@ export! {
   }
 
   // Initialize a new lightclient and store its value
-  fn litelib_initialize_existing(dangerous: bool, server_uri: String) -> String {
+  fn litelib_initialize_existing(server_uri: String) -> String {
       let server = LightClientConfig::get_server_or_default(Some(server_uri));
-      let (config, _latest_block_height) = match LightClientConfig::create(server, dangerous) {
+      let (config, _latest_block_height) = match LightClientConfig::create(server) {
           Ok((c, h)) => (c, h),
           Err(e) => {
             return format!("Error: {}", e);
@@ -108,6 +108,12 @@ export! {
       LIGHTCLIENT.lock().unwrap().replace(Some(Arc::new(lightclient)));
 
       format!("OK")
+  }
+
+  fn litelib_deinitialize() -> String {
+    LIGHTCLIENT.lock().unwrap().replace(None);
+
+    format!("OK")
   }
 
   fn litelib_execute(cmd: String, args_list: String) -> String {

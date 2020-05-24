@@ -93,6 +93,11 @@ export default class RPC {
     console.log(`Save status: ${savestr}`);
   }
 
+  static deinitialize() {
+    const str = native.litelib_deinitialize();
+    console.log(`Deinitialize status: ${str}`);
+  }
+
   async refresh(fullRefresh: boolean) {
     const latestBlockHeight = await this.fetchInfo();
 

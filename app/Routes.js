@@ -227,10 +227,6 @@ export default class RouteApp extends React.Component<Props, AppState> {
     return success;
   };
 
-  setInfo = (info: Info) => {
-    this.setState({ info });
-  };
-
   setTotalBalance = (totalBalance: TotalBalance) => {
     this.setState({ totalBalance });
   };

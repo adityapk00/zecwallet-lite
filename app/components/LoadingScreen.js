@@ -198,7 +198,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
       this.setState({ walletScreen: 1 });
     } else {
       try {
-        const result = native.litelib_initialize_existing(false, url);
+        const result = native.litelib_initialize_existing(url);
         console.log(`Intialization: ${result}`);
         if (result !== 'OK') {
           this.setState({
@@ -236,9 +236,12 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     // App is quitting, make sure to save the wallet properly.
     ipcRenderer.on('appquitting', () => {
       RPC.doSave();
+      RPC.deinitialize();
 
-      // And reply that we're all done.
-      ipcRenderer.send('appquitdone');
+      // And reply that we're all done after 100ms, to allow cleanup of the rust stuff.
+      setTimeout(() => {
+        ipcRenderer.send('appquitdone');
+      }, 100);
     });
   };
 
@@ -287,9 +290,6 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
           console.log(info);
           setInfo(info);
 
-          // This will cause a redirect to the dashboard
-          me.setState({ loadingDone: true });
-
           setRescanning(false);
 
           // Configure the RPC, which will setup the refresh
@@ -299,6 +299,9 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
 
           // And cancel the updater
           clearInterval(poller);
+
+          // This will cause a redirect to the dashboard screen
+          me.setState({ loadingDone: true });
         } else {
           // Still syncing, grab the status and update the status
           const p = ss.synced_blocks;
@@ -313,7 +316,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
 
   createNewWallet = () => {
     const { url } = this.state;
-    const result = native.litelib_initialize_new(false, url);
+    const result = native.litelib_initialize_new(url);
 
     if (result.startsWith('Error')) {
       this.setState({ newWalletError: result });
@@ -352,7 +355,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
 
     const allowOverwrite = true;
 
-    const result = native.litelib_initialize_new_from_phrase(false, url, seed, parseInt(birthday), allowOverwrite);
+    const result = native.litelib_initialize_new_from_phrase(url, seed, parseInt(birthday), allowOverwrite);
     if (result.startsWith('Error')) {
       this.setState({ newWalletError: result });
     } else {
