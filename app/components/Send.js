@@ -233,7 +233,8 @@ const ConfirmModalInternal = ({
   openPasswordAndUnlockIfNeeded,
   history
 }) => {
-  const sendingTotal = sendPageState.toaddrs.reduce((s, t) => parseFloat(s) + parseFloat(t.amount), 0.0) + 0.0001;
+  const sendingTotal =
+    sendPageState.toaddrs.reduce((s, t) => parseFloat(s) + parseFloat(t.amount), 0.0) + Utils.getDefaultFee();
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(sendingTotal);
 
   const sendButton = () => {
