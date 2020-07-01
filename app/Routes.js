@@ -380,21 +380,23 @@ export default class RouteApp extends React.Component<Props, AppState> {
   };
 
   createNewAddress = async (zaddress: boolean) => {
-    // Create a new address
-    const newaddress = RPC.createNewAddress(zaddress);
-    console.log(`Created new Address ${newaddress}`);
+    this.openPasswordAndUnlockIfNeeded(async () => {
+      // Create a new address
+      const newaddress = RPC.createNewAddress(zaddress);
+      console.log(`Created new Address ${newaddress}`);
 
-    // And then fetch the list of addresses again to refresh (totalBalance gets all addresses)
-    this.rpc.fetchTotalBalance();
+      // And then fetch the list of addresses again to refresh (totalBalance gets all addresses)
+      this.rpc.fetchTotalBalance();
 
-    const { receivePageState } = this.state;
-    const newRerenderKey = receivePageState.rerenderKey + 1;
+      const { receivePageState } = this.state;
+      const newRerenderKey = receivePageState.rerenderKey + 1;
 
-    const newReceivePageState = new ReceivePageState();
-    newReceivePageState.newAddress = newaddress;
-    newReceivePageState.rerenderKey = newRerenderKey;
+      const newReceivePageState = new ReceivePageState();
+      newReceivePageState.newAddress = newaddress;
+      newReceivePageState.rerenderKey = newRerenderKey;
 
-    this.setState({ receivePageState: newReceivePageState });
+      this.setState({ receivePageState: newReceivePageState });
+    });
   };
 
   updateConnectedCompanionApp = (connectedCompanionApp: ConnectedCompanionApp | null) => {
