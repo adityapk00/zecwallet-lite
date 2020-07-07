@@ -53,6 +53,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       totalBalance: new TotalBalance(),
       addressesWithBalance: [],
       addressPrivateKeys: {},
+      addressViewKeys: {},
       addresses: [],
       addressBook: [],
       transactions: null,
@@ -358,6 +359,14 @@ export default class RouteApp extends React.Component<Props, AppState> {
     });
   };
 
+  fetchAndSetSingleViewKey = async (address: string) => {
+    const key = await this.rpc.getViewKeyAsString(address);
+    const addressViewKeys = {};
+    addressViewKeys[address] = key;
+
+    this.setState({ addressViewKeys });
+  };
+
   addAddressBookEntry = (label: string, address: string) => {
     // Add an entry into the address book
     const { addressBook } = this.state;
@@ -417,6 +426,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       transactions,
       addressesWithBalance,
       addressPrivateKeys,
+      addressViewKeys,
       addresses,
       addressBook,
       sendPageState,
@@ -505,10 +515,12 @@ export default class RouteApp extends React.Component<Props, AppState> {
                     addresses={addresses}
                     addressesWithBalance={addressesWithBalance}
                     addressPrivateKeys={addressPrivateKeys}
+                    addressViewKeys={addressViewKeys}
                     receivePageState={receivePageState}
                     addressBook={addressBook}
                     {...standardProps}
                     fetchAndSetSinglePrivKey={this.fetchAndSetSinglePrivKey}
+                    fetchAndSetSingleViewKey={this.fetchAndSetSingleViewKey}
                     createNewAddress={this.createNewAddress}
                   />
                 )}

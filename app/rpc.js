@@ -237,6 +237,13 @@ export default class RPC {
     return privKeyJSON[0].private_key;
   }
 
+  static getViewKeyAsString(address: string): string {
+    const privKeyStr = native.litelib_execute('export', address);
+    const privKeyJSON = JSON.parse(privKeyStr);
+
+    return privKeyJSON[0].viewing_key;
+  }
+
   static createNewAddress(zaddress: boolean) {
     const addrStr = native.litelib_execute('new', zaddress ? 'z' : 't');
     const addrJSON = JSON.parse(addrStr);
