@@ -130,7 +130,7 @@ export! {
               lightclient = lc.borrow().as_ref().unwrap().clone();
           };
 
-          if cmd == "sync".to_string() || cmd == "rescan".to_string() {
+          if cmd == "sync".to_string() || cmd == "rescan".to_string() || cmd == "import".to_string() {
             thread::spawn(move || {
               let args = if args_list.is_empty() { vec![] } else { vec![args_list.as_ref()] };
               commands::do_user_command(&cmd, &args, lightclient.as_ref());

@@ -117,6 +117,12 @@ export default class MenuBuilder {
           }
         },
         {
+          label: '&Import Private Keys',
+          click: () => {
+            mainWindow.webContents.send('import');
+          }
+        },
+        {
           label: '&Export All Private Keys',
           click: () => {
             mainWindow.webContents.send('exportall');
@@ -183,6 +189,12 @@ export default class MenuBuilder {
           label: 'Wallet Seed',
           click: () => {
             mainWindow.webContents.send('seed');
+          }
+        },
+        {
+          label: '&Import Private Keys',
+          click: () => {
+            mainWindow.webContents.send('import');
           }
         },
         {
@@ -309,6 +321,12 @@ export default class MenuBuilder {
             label: 'Wallet Seed',
             click: () => {
               mainWindow.webContents.send('seed');
+            }
+          },
+          {
+            label: '&Import Private Keys',
+            click: () => {
+              mainWindow.webContents.send('import');
             }
           },
           {

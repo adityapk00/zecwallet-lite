@@ -158,6 +158,12 @@ export default class RPC {
     }
   }
 
+  static doImportPrivKey(key: string, birthday: string): string {
+    const address = native.litelib_execute('import', birthday);
+
+    return address;
+  }
+
   async fetchInfo(): Promise<number> {
     const info = RPC.getInfoObject();
 

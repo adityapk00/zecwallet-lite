@@ -277,6 +277,33 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ sendPageState });
   };
 
+  importPrivKeys = async (keys: string[]): boolean => {
+    console.log(keys);
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < keys.length; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      const result = await RPC.doImportPrivKey(keys[i], '0');
+      if (result === 'OK') {
+        return true;
+        // eslint-disable-next-line no-else-return
+      } else {
+        this.openErrorModal(
+          'Failed to import key',
+          <span>
+            A private key failed to import.
+            <br />
+            The error was:
+            <br />
+            {result}
+          </span>
+        );
+
+        return false;
+      }
+    }
+  };
+
   setSendTo = (address: string, amount: number | null, memo: string | null) => {
     // Clear the existing send page state and set up the new one
     const { sendPageState } = this.state;
@@ -483,6 +510,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 setRescanning={this.setRescanning}
                 getPrivKeyAsString={this.getPrivKeyAsString}
                 addresses={addresses}
+                importPrivKeys={this.importPrivKeys}
                 transactions={transactions}
                 lockWallet={this.lockWallet}
                 encryptWallet={this.encryptWallet}
