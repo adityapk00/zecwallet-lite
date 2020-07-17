@@ -360,11 +360,13 @@ export default class RouteApp extends React.Component<Props, AppState> {
   };
 
   fetchAndSetSingleViewKey = async (address: string) => {
-    const key = await this.rpc.getViewKeyAsString(address);
-    const addressViewKeys = {};
-    addressViewKeys[address] = key;
+    this.openPasswordAndUnlockIfNeeded(async () => {
+      const key = await RPC.getViewKeyAsString(address);
+      const addressViewKeys = {};
+      addressViewKeys[address] = key;
 
-    this.setState({ addressViewKeys });
+      this.setState({ addressViewKeys });
+    });
   };
 
   addAddressBookEntry = (label: string, address: string) => {
