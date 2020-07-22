@@ -277,13 +277,13 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ sendPageState });
   };
 
-  importPrivKeys = async (keys: string[]): boolean => {
+  importPrivKeys = async (keys: string[], birthday: string): boolean => {
     console.log(keys);
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < keys.length; i++) {
       // eslint-disable-next-line no-await-in-loop
-      const result = await RPC.doImportPrivKey(keys[i], '0');
+      const result = await RPC.doImportPrivKey(keys[i], birthday);
       if (result === 'OK') {
         return true;
         // eslint-disable-next-line no-else-return
@@ -378,7 +378,10 @@ export default class RouteApp extends React.Component<Props, AppState> {
   // Getter methods, which are called by the components to update the state
   fetchAndSetSinglePrivKey = async (address: string) => {
     this.openPasswordAndUnlockIfNeeded(async () => {
-      const key = await RPC.getPrivKeyAsString(address);
+      let key = await RPC.getPrivKeyAsString(address);
+      if (key === '') {
+        key = '<No Key Available>';
+      }
       const addressPrivateKeys = {};
       addressPrivateKeys[address] = key;
 

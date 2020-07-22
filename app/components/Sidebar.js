@@ -2,7 +2,7 @@
 // @flow
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState } from 'react';
 import type { Element } from 'react';
 import url from 'url';
 import querystring from 'querystring';
@@ -53,7 +53,10 @@ const ExportPrivKeyModal = ({ modalIsOpen, exportedPrivKeys, closeModal }) => {
   );
 };
 
-const ImportPrivKeyModal = ({ modalIsOpen, modalInput, setModalInput, closeModal, doImportPrivKeys }) => {
+const ImportPrivKeyModal = ({ modalIsOpen, closeModal, doImportPrivKeys }) => {
+  const [pkey, setPKey] = useState('');
+  const [birthday, setBirthday] = useState('0');
+
   return (
     <Modal
       isOpen={modalIsOpen}
@@ -70,12 +73,25 @@ const ImportPrivKeyModal = ({ modalIsOpen, modalInput, setModalInput, closeModal
           Please paste your private key here (spending key or viewing key).
         </div>
 
-        <div className={cstyles.well} style={{ textAlign: 'center' }}>
+        <div className={[cstyles.well].join(' ')} style={{ textAlign: 'center' }}>
           <TextareaAutosize
             className={cstyles.inputbox}
             placeholder="Spending or Viewing Key"
-            value={modalInput}
-            onChange={e => setModalInput(e.target.value)}
+            value={pkey}
+            onChange={e => setPKey(e.target.value)}
+          />
+        </div>
+
+        <div className={cstyles.marginbottomlarge} />
+        <div className={cstyles.marginbottomlarge}>
+          Birthday (The earliest block height where this key was used. Ok to enter &lsquo;0&rsquo;)
+        </div>
+        <div className={cstyles.well}>
+          <input
+            type="number"
+            className={cstyles.inputbox}
+            value={birthday}
+            onChange={e => setBirthday(e.target.value)}
           />
         </div>
       </div>
@@ -85,7 +101,7 @@ const ImportPrivKeyModal = ({ modalIsOpen, modalInput, setModalInput, closeModal
           type="button"
           className={cstyles.primarybutton}
           onClick={() => {
-            doImportPrivKeys();
+            doImportPrivKeys(pkey, birthday);
             closeModal();
           }}
         >
@@ -190,7 +206,7 @@ type Props = {
   clearTimers: () => void,
   setSendTo: (address: string, amount: number | null, memo: string | null) => void,
   getPrivKeyAsString: (address: string) => string,
-  importPrivKeys: (keys: string[]) => void,
+  importPrivKeys: (keys: string[], birthday: string) => void,
   history: PropTypes.object.isRequired,
   openErrorModal: (title: string, body: string | Element<'div'> | Element<'span'>) => void,
   openPassword: (
@@ -485,14 +501,13 @@ class Sidebar extends PureComponent<Props, State> {
     this.setState({ uriModalIsOpen: true, uriModalInputValue });
   };
 
-  doImportPrivKeys = async () => {
+  doImportPrivKeys = async (key: string, birthday: string) => {
     const { importPrivKeys, openErrorModal, setInfo, setRescanning, history } = this.props;
-    const { privKeyInputValue } = this.state;
 
     // eslint-disable-next-line no-control-regex
-    if (privKeyInputValue) {
+    if (key) {
       // eslint-disable-next-line no-control-regex
-      let keys = privKeyInputValue.split(new RegExp('[\n\r]+'));
+      let keys = key.split(new RegExp('[\n\r]+'));
       if (!keys || keys.length === 0) {
         openErrorModal('No Keys Imported', 'No keys were specified, so none were imported');
         return;
@@ -521,7 +536,7 @@ class Sidebar extends PureComponent<Props, State> {
         return;
       }
 
-      const success = await importPrivKeys(keys);
+      const success = await importPrivKeys(keys, birthday);
       if (success) {
         // Set the rescanning global state to true
         setRescanning(true);

@@ -159,7 +159,7 @@ export default class RPC {
   }
 
   static doImportPrivKey(key: string, birthday: string): string {
-    const address = native.litelib_execute('import', birthday);
+    const address = native.litelib_execute('import', `${key},${birthday}`);
 
     return address;
   }
