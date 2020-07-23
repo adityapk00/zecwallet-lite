@@ -158,6 +158,12 @@ export default class RPC {
     }
   }
 
+  static doImportPrivKey(key: string, birthday: string): string {
+    const address = native.litelib_execute('import', `${key},${birthday}`);
+
+    return address;
+  }
+
   async fetchInfo(): Promise<number> {
     const info = RPC.getInfoObject();
 
@@ -235,6 +241,13 @@ export default class RPC {
     const privKeyJSON = JSON.parse(privKeyStr);
 
     return privKeyJSON[0].private_key;
+  }
+
+  static getViewKeyAsString(address: string): string {
+    const privKeyStr = native.litelib_execute('export', address);
+    const privKeyJSON = JSON.parse(privKeyStr);
+
+    return privKeyJSON[0].viewing_key;
   }
 
   static createNewAddress(zaddress: boolean) {

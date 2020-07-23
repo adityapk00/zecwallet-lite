@@ -53,6 +53,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       totalBalance: new TotalBalance(),
       addressesWithBalance: [],
       addressPrivateKeys: {},
+      addressViewKeys: {},
       addresses: [],
       addressBook: [],
       transactions: null,
@@ -276,6 +277,33 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ sendPageState });
   };
 
+  importPrivKeys = async (keys: string[], birthday: string): boolean => {
+    console.log(keys);
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < keys.length; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      const result = await RPC.doImportPrivKey(keys[i], birthday);
+      if (result === 'OK') {
+        return true;
+        // eslint-disable-next-line no-else-return
+      } else {
+        this.openErrorModal(
+          'Failed to import key',
+          <span>
+            A private key failed to import.
+            <br />
+            The error was:
+            <br />
+            {result}
+          </span>
+        );
+
+        return false;
+      }
+    }
+  };
+
   setSendTo = (address: string, amount: number | null, memo: string | null) => {
     // Clear the existing send page state and set up the new one
     const { sendPageState } = this.state;
@@ -350,11 +378,24 @@ export default class RouteApp extends React.Component<Props, AppState> {
   // Getter methods, which are called by the components to update the state
   fetchAndSetSinglePrivKey = async (address: string) => {
     this.openPasswordAndUnlockIfNeeded(async () => {
-      const key = await RPC.getPrivKeyAsString(address);
+      let key = await RPC.getPrivKeyAsString(address);
+      if (key === '') {
+        key = '<No Key Available>';
+      }
       const addressPrivateKeys = {};
       addressPrivateKeys[address] = key;
 
       this.setState({ addressPrivateKeys });
+    });
+  };
+
+  fetchAndSetSingleViewKey = async (address: string) => {
+    this.openPasswordAndUnlockIfNeeded(async () => {
+      const key = await RPC.getViewKeyAsString(address);
+      const addressViewKeys = {};
+      addressViewKeys[address] = key;
+
+      this.setState({ addressViewKeys });
     });
   };
 
@@ -417,6 +458,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       transactions,
       addressesWithBalance,
       addressPrivateKeys,
+      addressViewKeys,
       addresses,
       addressBook,
       sendPageState,
@@ -471,6 +513,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 setRescanning={this.setRescanning}
                 getPrivKeyAsString={this.getPrivKeyAsString}
                 addresses={addresses}
+                importPrivKeys={this.importPrivKeys}
                 transactions={transactions}
                 lockWallet={this.lockWallet}
                 encryptWallet={this.encryptWallet}
@@ -505,10 +548,12 @@ export default class RouteApp extends React.Component<Props, AppState> {
                     addresses={addresses}
                     addressesWithBalance={addressesWithBalance}
                     addressPrivateKeys={addressPrivateKeys}
+                    addressViewKeys={addressViewKeys}
                     receivePageState={receivePageState}
                     addressBook={addressBook}
                     {...standardProps}
                     fetchAndSetSinglePrivKey={this.fetchAndSetSinglePrivKey}
+                    fetchAndSetSingleViewKey={this.fetchAndSetSingleViewKey}
                     createNewAddress={this.createNewAddress}
                   />
                 )}
