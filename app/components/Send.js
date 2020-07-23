@@ -518,7 +518,7 @@ export default class Send extends PureComponent<Props, SendState> {
       openPasswordAndUnlockIfNeeded
     } = this.props;
 
-    const totalAmountAvailable = totalBalance.transparent + totalBalance.verifiedPrivate;
+    const totalAmountAvailable = totalBalance.transparent + totalBalance.spendablePrivate;
     const fromaddr = addresses.find(a => Utils.isSapling(a));
 
     return (
@@ -528,7 +528,7 @@ export default class Send extends PureComponent<Props, SendState> {
         <div className={styles.sendcontainer}>
           <div className={[cstyles.well, cstyles.balancebox, cstyles.containermargin].join(' ')}>
             <BalanceBlockHighlight
-              topLabel="Confirmed Funds"
+              topLabel="Spendable Funds"
               zecValue={totalAmountAvailable}
               usdValue={Utils.getZecToUsdString(info.zecPrice, totalAmountAvailable)}
               currencyName={info.currencyName}

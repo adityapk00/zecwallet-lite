@@ -14,7 +14,7 @@ crate-type = ["cdylib"]
 neon-build = "0.3.3"
 
 [dependencies]
-zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "49a91a9a29cd7b6ebc972893a0b70f943f2c73d6" }
+zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "c117c5d739354f67a6cd8fbb996e0cab2e389792" }
 #zecwalletlitelib = { path = "../../zecwallet-light-cli/lib" }
 neon = "0.3.3"
 lazy_static = "1.4.0"

@@ -159,7 +159,14 @@ export default class RPC {
   }
 
   static doImportPrivKey(key: string, birthday: string): string {
-    const address = native.litelib_execute('import', `${key},${birthday}`);
+    const args = { key, birthday: parseInt(birthday, 10) };
+
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(parseInt(birthday, 10))) {
+      return `Error: Couldn't parse ${birthday} as a number`;
+    }
+
+    const address = native.litelib_execute('import', JSON.stringify(args));
 
     return address;
   }
@@ -182,6 +189,7 @@ export default class RPC {
     balance.private = balanceJSON.zbalance / 10 ** 8;
     balance.transparent = balanceJSON.tbalance / 10 ** 8;
     balance.verifiedPrivate = balanceJSON.verified_zbalance / 10 ** 8;
+    balance.spendablePrivate = balanceJSON.spendable_zbalance / 10 ** 8;
     balance.total = balance.private + balance.transparent;
     this.fnSetTotalBalance(balance);
 
@@ -397,6 +405,7 @@ export default class RPC {
   sendTransaction(sendJson: []): string {
     let sendStr;
     try {
+      console.log(`Sending ${JSON.stringify(sendJson)}`);
       sendStr = native.litelib_execute('send', JSON.stringify(sendJson));
     } catch (err) {
       // TODO Show a modal with the error
