@@ -521,6 +521,12 @@ export default class Send extends PureComponent<Props, SendState> {
     const totalAmountAvailable = totalBalance.transparent + totalBalance.spendablePrivate;
     const fromaddr = addresses.find(a => Utils.isSapling(a));
 
+    // If there are unverified funds, then show a tooltip
+    let tooltip: string = '';
+    if (totalBalance.unverifiedPrivate) {
+      tooltip = `Waiting for confirmation of ZEC ${totalBalance.unverifiedPrivate} with 5 blocks (approx 6 minutes)`;
+    }
+
     return (
       <div>
         <div className={[cstyles.xlarge, cstyles.padall, cstyles.center].join(' ')}>Send</div>
@@ -532,6 +538,7 @@ export default class Send extends PureComponent<Props, SendState> {
               zecValue={totalAmountAvailable}
               usdValue={Utils.getZecToUsdString(info.zecPrice, totalAmountAvailable)}
               currencyName={info.currencyName}
+              tooltip={tooltip}
             />
             <BalanceBlockHighlight
               topLabel="All Funds"

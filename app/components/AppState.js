@@ -10,6 +10,9 @@ export class TotalBalance {
   // Total private, confirmed funds that have been verified
   verifiedPrivate: number;
 
+  // Total private that are waiting for confirmation
+  unverifiedPrivate: number;
+
   // Total private funds that are spendable
   spendablePrivate: number;
 
