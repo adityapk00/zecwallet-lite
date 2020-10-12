@@ -31,7 +31,8 @@
     "prestart": "yarn build",
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env START_HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js --remote-debugging-port=9223",
-    "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js"
+    "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js",
+    "test": "jest"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -251,7 +252,7 @@
     "flow-typed": "^2.6.2",
     "husky": "^3.1.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^24.9.0",
+    "jest": "^26.5.3",
     "lint-staged": "^9.5.0",
     "mini-css-extract-plugin": "^0.8.0",
     "neon-cli": "^0.3.3",
@@ -287,6 +288,7 @@
     "electron-log": "^4.0.0",
     "electron-store": "^5.1.1",
     "history": "^4.10.1",
+    "js-base64": "^3.5.2",
     "libsodium-wrappers-sumo": "^0.7.6",
     "progress": "^2.0.3",
     "qrcode.react": "^1.0.0",
