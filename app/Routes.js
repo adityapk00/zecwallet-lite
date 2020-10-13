@@ -319,9 +319,6 @@ export default class RouteApp extends React.Component<Props, AppState> {
       tgts = [targets];
     }
 
-    console.log('settings send to');
-    console.log(tgts);
-
     tgts.forEach(tgt => {
       const to = new ToAddr(Utils.getNextToAddrID());
       if (tgt.address) {
