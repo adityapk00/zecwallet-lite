@@ -145,5 +145,9 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
     ans[idx] = tgt;
   });
 
+  if (ans.includes(undefined)) {
+    return 'Some indexes were missing';
+  }
+
   return ans;
 };

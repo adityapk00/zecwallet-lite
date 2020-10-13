@@ -37,3 +37,47 @@ test('ZIP321 case 2', () => {
   expect(targets[1].amount).toBe(0.789);
   expect(targets[1].memoString).toBe('This is a unicode memo ✨🦄🏆🎉');
 });
+
+test('bad uris', () => {
+  // bad protocol
+  let error = parseZcashURI('badprotocol:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?amount=123.456');
+  expect(typeof error).toBe('string');
+
+  // bad address
+  error = parseZcashURI('zcash:badaddress?amount=123.456');
+  expect(typeof error).toBe('string');
+
+  // no address
+  error = parseZcashURI('zcash:?amount=123.456');
+  expect(typeof error).toBe('string');
+
+  // no amount
+  error = parseZcashURI('zcash:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU');
+  expect(typeof error).toBe('string');
+
+  // bad param name
+  error = parseZcashURI('zcash:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?badparam=3');
+  expect(typeof error).toBe('string');
+
+  // index=1 doesn't have amount
+  error = parseZcashURI(
+    'zcash:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?amount=2&address.1=tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU'
+  );
+  expect(typeof error).toBe('string');
+
+  // duplicate param
+  error = parseZcashURI('zcash:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?amount=3&amount=3');
+  expect(typeof error).toBe('string');
+
+  // bad index
+  error = parseZcashURI(
+    'zcash:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?amount=2&address.a=tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU&amount.a=3'
+  );
+  expect(typeof error).toBe('string');
+
+  // index=1 is missing
+  error = parseZcashURI(
+    'zcash:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?amount=0.1&address.2=tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU&amount.2=2'
+  );
+  expect(typeof error).toBe('string');
+});
