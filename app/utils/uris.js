@@ -10,17 +10,24 @@ import { Base64 } from 'js-base64';
 import Utils from './utils';
 
 export class ZcashURITarget {
-  address: string;
+  address: ?string;
 
-  amount: number;
+  amount: ?number;
 
-  label: string | null;
+  label: ?string;
 
-  message: string | null;
+  message: ?string;
 
-  memoBase64: string | null;
+  memoBase64: ?string;
 
-  memoString: string | null;
+  memoString: ?string;
+
+  // A default constructor that creates a basic Target
+  constructor(address: ?string, amount: ?number, memo: ?string) {
+    this.address = address;
+    this.amount = amount;
+    this.memoString = memo;
+  }
 }
 
 export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
