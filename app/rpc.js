@@ -72,6 +72,14 @@ export default class RPC {
     }
   }
 
+  static getDefaultFee(): number {
+    const feeStr = native.litelib_execute('defaultfee', '');
+    console.log(`Default fee result :${feeStr}`);
+    const fee = JSON.parse(feeStr);
+
+    return fee.defaultfee / 10 ** 8;
+  }
+
   static doSync() {
     const syncstr = native.litelib_execute('sync', '');
     console.log(`Sync exec result: ${syncstr}`);
