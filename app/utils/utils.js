@@ -114,10 +114,6 @@ export default class Utils {
     return Utils.nextToAddrID++;
   }
 
-  static getDefaultFee(): number {
-    return 0.0001;
-  }
-
   static getDonationAddress(testnet: boolean): string {
     if (testnet) {
       return 'ztestsapling1wn6889vznyu42wzmkakl2effhllhpe4azhu696edg2x6me4kfsnmqwpglaxzs7tmqsq7kudemp5';

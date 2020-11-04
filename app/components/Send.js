@@ -19,6 +19,7 @@ import ScrollPane from './ScrollPane';
 import ArrowUpLight from '../assets/img/arrow_up_dark.png';
 import { ErrorModal } from './ErrorModal';
 import { BalanceBlockHighlight } from './BalanceBlocks';
+import RPC from '../rpc';
 import routes from '../constants/routes.json';
 
 type OptionType = {
@@ -234,7 +235,7 @@ const ConfirmModalInternal = ({
   history
 }) => {
   const sendingTotal =
-    sendPageState.toaddrs.reduce((s, t) => parseFloat(s) + parseFloat(t.amount), 0.0) + Utils.getDefaultFee();
+    sendPageState.toaddrs.reduce((s, t) => parseFloat(s) + parseFloat(t.amount), 0.0) + RPC.getDefaultFee();
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(sendingTotal);
 
   const sendButton = () => {
@@ -455,7 +456,7 @@ export default class Send extends PureComponent<Props, SendState> {
       .reduce((s, a) => parseFloat(s) + parseFloat(a.amount), 0);
 
     // Add Fee
-    totalOtherAmount += Utils.getDefaultFee();
+    totalOtherAmount += RPC.getDefaultFee();
 
     // Find the correct toAddr
     const toAddr = newToAddrs.find(a => a.id === id);
