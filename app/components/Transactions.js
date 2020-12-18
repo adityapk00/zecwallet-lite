@@ -14,6 +14,7 @@ import ScrollPane from './ScrollPane';
 import Utils from '../utils/utils';
 import AddressBook from './Addressbook';
 import routes from '../constants/routes.json';
+import RPC from '../rpc';
 
 const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, setSendTo, history }) => {
   let txid = '';
@@ -54,7 +55,8 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
   };
 
   const doReply = (address: string) => {
-    setSendTo(new ZcashURITarget(address, 0.0001, null));
+    const defaultFee = RPC.getDefaultFee();
+    setSendTo(new ZcashURITarget(address, defaultFee, null));
     closeModal();
 
     history.push(routes.SEND);

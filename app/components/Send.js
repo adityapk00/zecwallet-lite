@@ -234,8 +234,8 @@ const ConfirmModalInternal = ({
   openPasswordAndUnlockIfNeeded,
   history
 }) => {
-  const sendingTotal =
-    sendPageState.toaddrs.reduce((s, t) => parseFloat(s) + parseFloat(t.amount), 0.0) + RPC.getDefaultFee();
+  const defaultFee = RPC.getDefaultFee();
+  const sendingTotal = sendPageState.toaddrs.reduce((s, t) => parseFloat(s) + parseFloat(t.amount), 0.0) + defaultFee;
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(sendingTotal);
 
   const sendButton = () => {
@@ -314,7 +314,7 @@ const ConfirmModalInternal = ({
               <ConfirmModalToAddr key={t.to} toaddr={t} info={info} />
             ))}
           </div>
-          <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: 0.0001, memo: null }} info={info} />
+          <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: defaultFee, memo: null }} info={info} />
         </ScrollPane>
 
         <div className={cstyles.buttoncontainer}>

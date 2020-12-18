@@ -675,7 +675,7 @@ checksum = "bb1f6b1ce1c140482ea30ddd3335fc0024ac7ee112895426e0a629a6c20adfe3"
 [[package]]
 name = "equihash"
 version = "0.1.0"
-source = "git+https://github.com/adityapk00/librustzcash?rev=e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf#e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf"
+source = "git+https://github.com/adityapk00/librustzcash?rev=b4f790a46710f0b7200a9f768e4653d5dacd35c7#b4f790a46710f0b7200a9f768e4653d5dacd35c7"
 dependencies = [
  "blake2b_simd",
  "byteorder",
@@ -3033,7 +3033,7 @@ dependencies = [
 [[package]]
 name = "zcash_client_backend"
 version = "0.4.0"
-source = "git+https://github.com/adityapk00/librustzcash?rev=e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf#e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf"
+source = "git+https://github.com/adityapk00/librustzcash?rev=b4f790a46710f0b7200a9f768e4653d5dacd35c7#b4f790a46710f0b7200a9f768e4653d5dacd35c7"
 dependencies = [
  "base64 0.12.3",
  "bech32",
@@ -3054,7 +3054,7 @@ dependencies = [
 [[package]]
 name = "zcash_primitives"
 version = "0.4.0"
-source = "git+https://github.com/adityapk00/librustzcash?rev=e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf#e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf"
+source = "git+https://github.com/adityapk00/librustzcash?rev=b4f790a46710f0b7200a9f768e4653d5dacd35c7#b4f790a46710f0b7200a9f768e4653d5dacd35c7"
 dependencies = [
  "aes",
  "bitvec",
@@ -3082,7 +3082,7 @@ dependencies = [
 [[package]]
 name = "zcash_proofs"
 version = "0.4.0"
-source = "git+https://github.com/adityapk00/librustzcash?rev=e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf#e12b463b7f7ac4f915a530f46f2dc4d0f9a24cbf"
+source = "git+https://github.com/adityapk00/librustzcash?rev=b4f790a46710f0b7200a9f768e4653d5dacd35c7#b4f790a46710f0b7200a9f768e4653d5dacd35c7"
 dependencies = [
  "bellman",
  "blake2b_simd",
@@ -3100,7 +3100,7 @@ dependencies = [
 [[package]]
 name = "zecwalletlitelib"
 version = "0.1.0"
-source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=b611753453140dbc8f748ec82f5b2cca54676b8e#b611753453140dbc8f748ec82f5b2cca54676b8e"
+source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=0c14287ec9ded76e9865730aa498bc289b1525ff#0c14287ec9ded76e9865730aa498bc289b1525ff"
 dependencies = [
  "base58",
  "base64 0.12.3",
