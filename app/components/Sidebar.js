@@ -506,7 +506,7 @@ class Sidebar extends PureComponent<Props, State> {
   };
 
   doImportPrivKeys = async (key: string, birthday: string) => {
-    const { importPrivKeys, openErrorModal, setInfo, setRescanning, history } = this.props;
+    const { importPrivKeys, openErrorModal, setInfo, setRescanning, history, info } = this.props;
 
     // eslint-disable-next-line no-control-regex
     if (key) {
@@ -536,6 +536,25 @@ class Sidebar extends PureComponent<Props, State> {
         openErrorModal(
           'Bad Key',
           'The input key was not recognized as either a sapling spending key or a sapling viewing key'
+        );
+        return;
+      }
+
+      // in order to import a viewing key, the wallet can be encrypted,
+      // but it must be unlocked
+      if (Utils.isValidSaplingViewingKey(keys[0]) && info.locked) {
+        openErrorModal(
+          'Wallet Is Locked',
+          'In order to import a Sapling viewing key, your wallet must be unlocked. If you wish to continue, unlock your wallet and try again.'
+        );
+        return;
+      }
+
+      // in order to import a private key, the wallet must be unencrypted
+      if (Utils.isValidSaplingPrivateKey(keys[0]) && info.encrypted) {
+        openErrorModal(
+          'Wallet Is Encrypted',
+          'In order to import a Sapling private key, your wallet cannot be encrypted. If you wish to continue, remove the encryption from your wallet and try again.'
         );
         return;
       }
