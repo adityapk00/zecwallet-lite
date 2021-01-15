@@ -12,6 +12,7 @@ import cstyles from './Common.module.css';
 import { Transaction, Info } from './AppState';
 import ScrollPane from './ScrollPane';
 import Utils from '../utils/utils';
+import { ZcashURITarget } from '../utils/uris';
 import AddressBook from './Addressbook';
 import routes from '../constants/routes.json';
 import RPC from '../rpc';
