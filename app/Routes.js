@@ -542,6 +542,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 render={() => (
                   <Send
                     addresses={addresses}
+                    setSendTo={this.setSendTo}
                     sendTransaction={this.sendTransaction}
                     sendPageState={sendPageState}
                     setSendPageState={this.setSendPageState}

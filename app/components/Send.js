@@ -21,6 +21,7 @@ import { ErrorModal } from './ErrorModal';
 import { BalanceBlockHighlight } from './BalanceBlocks';
 import RPC from '../rpc';
 import routes from '../constants/routes.json';
+import { parseZcashURI, ZcashURITarget } from '../utils/uris';
 
 type OptionType = {
   value: string,
@@ -337,6 +338,7 @@ type Props = {
   totalBalance: TotalBalance,
   addressBook: AddressBookEntry[],
   sendPageState: SendPageState,
+  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void,
   sendTransaction: (sendJson: []) => string,
   setSendPageState: (sendPageState: SendPageState) => void,
   openErrorModal: (title: string, body: string) => void,
@@ -408,12 +410,20 @@ export default class Send extends PureComponent<Props, SendState> {
   };
 
   updateToField = (id: number, address: Event | null, amount: Event | null, memo: Event | string | null) => {
-    const { sendPageState, setSendPageState } = this.props;
+    const { sendPageState, setSendPageState, setSendTo } = this.props;
 
     const newToAddrs = sendPageState.toaddrs.slice(0);
     // Find the correct toAddr
     const toAddr = newToAddrs.find(a => a.id === id);
     if (address) {
+      // First, check if this is a URI
+      // $FlowFixMe
+      const parsedUri = parseZcashURI(address.target.value);
+      if (Array.isArray(parsedUri)) {
+        setSendTo(parsedUri);
+        return;
+      }
+
       // $FlowFixMe
       toAddr.to = address.target.value.replace(/ /g, ''); // Remove spaces
     }
