@@ -262,9 +262,9 @@ class Sidebar extends PureComponent<Props, State> {
         'Zecwallet Lite',
         <div className={cstyles.verticalflex}>
           <div className={cstyles.margintoplarge}>Zecwallet Lite v1.4.2</div>
-          <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2020, Aditya Kulkarni.</div>
+          <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2021, Aditya Kulkarni.</div>
           <div className={cstyles.margintoplarge}>
-            The MIT License (MIT) Copyright (c) 2018-2020 Zecwallet
+            The MIT License (MIT) Copyright (c) 2018-2021 Zecwallet
             <br />
             <br />
             Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
