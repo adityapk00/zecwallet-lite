@@ -23,9 +23,9 @@ Zecwallet-Lite does automatic note and utxo management, which means it doesn't a
     * When sending an outgoing transaction to a shielded address, Zecwallet-Lite can decide to use the transaction to additionally shield your transparent funds (i.e., send your transparent funds to your own shielded address in the same transaction)
 
 ## Compiling from source
-Zecwallet Lite is written in Electron/Javascript and can be build from source. Note that if you are compiling from source, you won't get the embedded zcashd by default. You can either run an external zcashd, or compile zcashd as well.
-Pre-Requisits
+Zecwallet Lite is written in Electron/Javascript and can be build from source. It will also automatically compile the Rust SDK needed to run Zecwallet Lite. 
 
+#### Pre-Requisites
 You need to have the following software installed before you can build Zecwallet Fullnode
 
 * [Nodejs v12.16.1 or higher](https://nodejs.org)
