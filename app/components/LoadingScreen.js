@@ -171,10 +171,21 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     return true;
   };
 
+  // v1 LightwalletD
+  V1_LIGHTWALLETD: string = 'https://lightwalletd.zecwallet.co:1443';
+
+  // v2 lightwalletD
+  V2_LIGHTWALLETD: string = 'https://lwdv2.zecwallet.co:1443';
+
   loadServerURI = () => {
     // Try to read the default server
     const store = new Store();
-    const server = store.get('lightd/serveruri', 'https://lwdv2.zecwallet.co:1443');
+    let server = store.get('lightd/serveruri', this.V2_LIGHTWALLETD);
+
+    // Automatically upgrade to v2 server if you had the previous v1 server.
+    if (server === this.V1_LIGHTWALLETD) {
+      server = this.V2_LIGHTWALLETD;
+    }
 
     const newstate = new LoadingScreenState();
     Object.assign(newstate, this.state);
