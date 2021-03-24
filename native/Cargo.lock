@@ -331,7 +331,7 @@ checksum = "e3b5ca7a04898ad4bcd41c90c5285445ff5b791899bb1b0abdd2a2aa791211d7"
 
 [[package]]
 name = "byteorder"
-version = "1.4.2"
+version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae44d1a3d5a19df61dd0c8beb138458ac2a53a7ac09eba97d55592540004306b"
 
@@ -3130,7 +3130,7 @@ dependencies = [
 [[package]]
 name = "zecwalletlitelib"
 version = "0.1.0"
-source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=f051f4a996ea2899079ac23e4a716dc5c5cb6156#f051f4a996ea2899079ac23e4a716dc5c5cb6156"
+source = "git+https://github.com/adityapk00/zecwallet-light-cli?rev=422cddea4ca9b57a582806b99ec35ca30fcc3425#422cddea4ca9b57a582806b99ec35ca30fcc3425"
 dependencies = [
  "base58",
  "base64 0.12.3",
