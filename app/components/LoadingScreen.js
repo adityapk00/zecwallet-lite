@@ -174,7 +174,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
   loadServerURI = () => {
     // Try to read the default server
     const store = new Store();
-    const server = store.get('lightd/serveruri', 'https://lightwalletd.zecwallet.co:1443');
+    const server = store.get('lightd/serveruri', 'https://lwdv2.zecwallet.co:1443');
 
     const newstate = new LoadingScreenState();
     Object.assign(newstate, this.state);

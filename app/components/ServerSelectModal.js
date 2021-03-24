@@ -33,7 +33,7 @@ export default function ServerSelectModal({ modalIsOpen, closeModal, openErrorMo
   };
 
   const servers = [
-    { name: 'Zecwallet (Default)', uri: 'https://lightwalletd.zecwallet.co:1443' },
+    { name: 'Zecwallet (Default)', uri: 'https://lwdv2.zecwallet.co:1443' },
     { name: 'Zecwallet (Backup)', uri: 'https://lightd-main.zecwallet.co:443' },
     { name: 'ZcashFR (Community)', uri: 'https://lightd-main.zcashfr.io:443' }
   ];
