@@ -130,6 +130,13 @@ export default class MenuBuilder {
         },
         { type: 'separator' },
         {
+          label: '&Pay URI',
+          accelerator: 'Ctrl+P',
+          click: () => {
+            mainWindow.webContents.send('payuri');
+          }
+        },
+        {
           label: 'Export All &Transactions',
           click: () => {
             mainWindow.webContents.send('exportalltx');
@@ -204,6 +211,13 @@ export default class MenuBuilder {
           }
         },
         { type: 'separator' },
+        {
+          label: '&Pay URI',
+          accelerator: 'Ctrl+P',
+          click: () => {
+            mainWindow.webContents.send('payuri');
+          }
+        },
         {
           label: 'Export All &Transactions',
           click: () => {
