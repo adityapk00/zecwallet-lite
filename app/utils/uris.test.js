@@ -59,6 +59,7 @@ test('Plain URI', () => {
   expect(targets[0].memoString).toBeUndefined();
   expect(targets[0].memoBase64).toBeUndefined();
 });
+
 test('bad uris', () => {
   // bad protocol
   let error = parseZcashURI('badprotocol:tmEZhbWHTpdKMw5it8YDspUXSMGQyFwovpU?amount=123.456');
