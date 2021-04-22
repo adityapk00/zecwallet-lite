@@ -1,7 +1,7 @@
 {
   "name": "zecwallet-lite",
   "productName": "Zecwallet Lite",
-  "version": "1.4.6",
+  "version": "1.6.0",
   "description": "Zecwallet Lite (Electron version)",
   "scripts": {
     "build": "yarn neon && concurrently \"yarn build-main\" \"yarn build-renderer\"",
