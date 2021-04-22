@@ -18,6 +18,7 @@ import RPC from '../rpc';
 import cstyles from './Common.module.css';
 import styles from './LoadingScreen.module.css';
 import Logo from '../assets/img/logobig.png';
+import Utils from '../utils/utils';
 
 const locateZcashParamsDir = () => {
   if (os.platform() === 'darwin') {
@@ -171,23 +172,14 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     return true;
   };
 
-  // v1 LightwalletD
-  V1_LIGHTWALLETD: string = 'https://lightwalletd.zecwallet.co:1443';
-
-  // v2 LightwalletD
-  V2_LIGHTWALLETD: string = 'https://lwdv2.zecwallet.co:1443';
-
-  // v3 LightwalletD
-  V3_LIGHTWALLETD: string = 'https://lwdv3.zecwallet.co';
-
   loadServerURI = () => {
     // Try to read the default server
     const store = new Store();
-    let server = store.get('lightd/serveruri', this.V3_LIGHTWALLETD);
+    let server = store.get('lightd/serveruri', Utils.V3_LIGHTWALLETD);
 
     // Automatically upgrade to v2 server if you had the previous v1 server.
-    if (server === this.V1_LIGHTWALLETD || server === this.V2_LIGHTWALLETD) {
-      server = this.V3_LIGHTWALLETD;
+    if (server === Utils.V1_LIGHTWALLETD || server === Utils.V2_LIGHTWALLETD) {
+      server = Utils.V3_LIGHTWALLETD;
     }
 
     const newstate = new LoadingScreenState();

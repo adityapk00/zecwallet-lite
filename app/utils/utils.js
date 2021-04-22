@@ -4,6 +4,15 @@
 export const NO_CONNECTION: string = 'Could not connect to zcashd';
 
 export default class Utils {
+  // v1 LightwalletD
+  static V1_LIGHTWALLETD: string = 'https://lightwalletd.zecwallet.co:1443';
+
+  // v2 LightwalletD
+  static V2_LIGHTWALLETD: string = 'https://lwdv2.zecwallet.co:1443';
+
+  // v3 LightwalletD
+  static V3_LIGHTWALLETD: string = 'https://lwdv3.zecwallet.co';
+
   static isSapling(addr: string): boolean {
     if (!addr) return false;
     return new RegExp('^z[a-z0-9]{77}$').test(addr) || new RegExp('^ztestsapling[a-z0-9]{76}$').test(addr);

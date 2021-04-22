@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import React, { useState } from 'react';
 import Store from 'electron-store';
 import cstyles from './Common.module.css';
+import Utils from '../utils/utils';
 
 type ModalProps = {
   modalIsOpen: boolean,
@@ -33,8 +34,8 @@ export default function ServerSelectModal({ modalIsOpen, closeModal, openErrorMo
   };
 
   const servers = [
-    { name: 'Zecwallet (Default)', uri: 'https://lwdv2.zecwallet.co:1443' },
-    { name: 'Zecwallet (Backup)', uri: 'https://lightd-main.zecwallet.co:443' },
+    { name: 'Zecwallet (Default)', uri: Utils.V3_LIGHTWALLETD },
+    { name: 'Zecwallet (Backup)', uri: Utils.V2_LIGHTWALLETD },
     { name: 'ZcashFR (Community)', uri: 'https://lightd-main.zcashfr.io:443' }
   ];
 
