@@ -149,7 +149,7 @@ export default class RPC {
       info.testnet = infoJSON.chain_name === 'test';
       info.latestBlock = infoJSON.latest_block_height;
       info.connections = 1;
-      info.version = infoJSON.version;
+      info.version = `${infoJSON.vendor}/${infoJSON.git_commit.substring(0, 6)}/${infoJSON.version}`;
       info.verificationProgress = 1;
       info.currencyName = info.testnet ? 'TAZ' : 'ZEC';
       info.solps = 0;

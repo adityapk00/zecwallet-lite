@@ -28,7 +28,7 @@ export default class Zcashd extends Component<Props> {
     const { info, rpcConfig, refresh, openServerSelectModal } = this.props;
     const { url } = rpcConfig;
 
-    if (!info || !info.version) {
+    if (!info || !info.latestBlock) {
       return (
         <div>
           <div className={[cstyles.verticalflex, cstyles.center].join(' ')}>
@@ -57,7 +57,7 @@ export default class Zcashd extends Component<Props> {
 
               <div className={styles.detailcontainer}>
                 <div className={styles.detaillines}>
-                  <DetailLine label="version" value={info.version} />
+                  <DetailLine label="Version" value={info.version} />
                   <DetailLine label="Lightwallet Server" value={url} />
                   <DetailLine label="Network" value={info.testnet ? 'Testnet' : 'Mainnet'} />
                   <DetailLine label="Block Height" value={height} />

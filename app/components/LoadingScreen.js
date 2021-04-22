@@ -174,17 +174,20 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
   // v1 LightwalletD
   V1_LIGHTWALLETD: string = 'https://lightwalletd.zecwallet.co:1443';
 
-  // v2 lightwalletD
+  // v2 LightwalletD
   V2_LIGHTWALLETD: string = 'https://lwdv2.zecwallet.co:1443';
+
+  // v3 LightwalletD
+  V3_LIGHTWALLETD: string = 'https://lwdv3.zecwallet.co';
 
   loadServerURI = () => {
     // Try to read the default server
     const store = new Store();
-    let server = store.get('lightd/serveruri', this.V2_LIGHTWALLETD);
+    let server = store.get('lightd/serveruri', this.V3_LIGHTWALLETD);
 
     // Automatically upgrade to v2 server if you had the previous v1 server.
-    if (server === this.V1_LIGHTWALLETD) {
-      server = this.V2_LIGHTWALLETD;
+    if (server === this.V1_LIGHTWALLETD || server === this.V2_LIGHTWALLETD) {
+      server = this.V3_LIGHTWALLETD;
     }
 
     const newstate = new LoadingScreenState();
@@ -260,7 +263,7 @@ class LoadingScreen extends Component<Props, LoadingScreenState> {
     // Try getting the info.
     try {
       // Do a sync at start
-      this.setState({ currentStatus: 'Syncing...' });
+      this.setState({ currentStatus: 'Setting things up...' });
 
       // This will do the sync in another thread, so we have to check for sync status
       RPC.doSync();

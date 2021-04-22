@@ -622,7 +622,7 @@ class Sidebar extends PureComponent<Props, State> {
 
     let state = 'DISCONNECTED';
     let progress = 100;
-    if (info && info.version) {
+    if (info && info.latestBlock) {
       if (info.verificationProgress < 0.9999) {
         state = 'SYNCING';
         progress = (info.verificationProgress * 100).toFixed(1);

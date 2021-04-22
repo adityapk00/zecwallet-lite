@@ -366,6 +366,8 @@ export default class RouteApp extends React.Component<Props, AppState> {
       newInfo.zecPrice = info.zecPrice;
     }
 
+    console.log(newInfo);
+
     this.setState({ info: newInfo });
   };
 
@@ -515,7 +517,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
         />
 
         <div style={{ overflow: 'hidden' }}>
-          {info && info.version && (
+          {info && info.latestBlock && (
             <div className={cstyles.sidebarcontainer}>
               <Sidebar
                 info={info}
