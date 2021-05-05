@@ -245,10 +245,12 @@ const ConfirmModalInternal = ({
     // This will be replaced by either a success TXID or error message that the user
     // has to close manually.
     openErrorModal('Computing Transaction', 'Please wait...This could take a while');
-
     const setSendProgress = (progress: SendProgress) => {
       if (progress && progress.sendInProgress) {
-        openErrorModal(`Computing Transaction`, `Building...${progress.progress} of ${progress.total}`);
+        openErrorModal(
+          `Computing Transaction`,
+          `Building...\n${progress.progress} of ${progress.total}\nETA ${progress.etaSeconds}s`
+        );
       }
     };
 

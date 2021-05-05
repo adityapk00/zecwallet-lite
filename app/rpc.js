@@ -432,16 +432,32 @@ export default class RPC {
       throw err;
     }
 
+    const startTimeSeconds = new Date().getTime() / 1000;
+
     // The send command is async, so we need to poll to get the status
     const sendTxPromise = new Promise((resolve, reject) => {
       const intervalID = setInterval(() => {
         const progress = JSON.parse(native.litelib_execute('sendprogress', ''));
         console.log(progress);
 
+        // Calculate ETA.
+        let secondsPerComputation = 3; // defalt
+        if (progress.progress > 0) {
+          const currentTimeSeconds = new Date().getTime() / 1000;
+          secondsPerComputation = (currentTimeSeconds - startTimeSeconds) / progress.progress;
+        }
+        // console.log(`Seconds Per compute = ${secondsPerComputation}`);
+
+        let eta = Math.round((progress.total - progress.progress) * secondsPerComputation);
+        if (eta <= 0) {
+          eta = 1;
+        }
+
         const updatedProgress = new SendProgress();
-        updatedProgress.total = progress.total;
         updatedProgress.progress = progress.progress;
+        updatedProgress.total = Math.max(progress.total, progress.progress); // sometimes, due to change, the total can be off by 1
         updatedProgress.sendInProgress = true;
+        updatedProgress.etaSeconds = eta;
 
         if (progress.id === prevSendId) {
           // Still not started, so wait for more time
@@ -469,7 +485,7 @@ export default class RPC {
         if (progress.error) {
           reject(progress.error);
         }
-      }, 0.5 * 1000); // Every half a second
+      }, 2 * 1000); // Every 2 seconds
     });
 
     return sendTxPromise;

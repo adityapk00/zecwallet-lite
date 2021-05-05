@@ -181,6 +181,8 @@ export class SendProgress {
   progress: number;
 
   total: number;
+
+  etaSeconds: number;
 }
 
 // eslint-disable-next-line max-classes-per-file
