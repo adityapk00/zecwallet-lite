@@ -13,11 +13,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { withRouter } from 'react-router-dom';
 import styles from './Send.module.css';
 import cstyles from './Common.module.css';
-import { ToAddr, AddressBalance, SendPageState, Info, AddressBookEntry, TotalBalance } from './AppState';
+import { ToAddr, AddressBalance, SendPageState, Info, AddressBookEntry, TotalBalance, SendProgress } from './AppState';
 import Utils from '../utils/utils';
 import ScrollPane from './ScrollPane';
 import ArrowUpLight from '../assets/img/arrow_up_dark.png';
-import { ErrorModal } from './ErrorModal';
 import { BalanceBlockHighlight } from './BalanceBlocks';
 import RPC from '../rpc';
 import routes from '../constants/routes.json';
@@ -246,6 +245,14 @@ const ConfirmModalInternal = ({
     // This will be replaced by either a success TXID or error message that the user
     // has to close manually.
     openErrorModal('Computing Transaction', 'Please wait...This could take a while');
+    const setSendProgress = (progress: SendProgress) => {
+      if (progress && progress.sendInProgress) {
+        openErrorModal(
+          `Computing Transaction`,
+          `Building...\n${progress.progress} of ${progress.total}\nETA ${progress.etaSeconds}s`
+        );
+      }
+    };
 
     // Now, send the Tx in a timeout, so that the error modal above has a chance to display
     setTimeout(() => {
@@ -256,7 +263,8 @@ const ConfirmModalInternal = ({
           let txid = '';
 
           try {
-            txid = sendTransaction(sendJson);
+            txid = await sendTransaction(sendJson, setSendProgress);
+            console.log(txid);
 
             openErrorModal(
               'Successfully Broadcast Transaction',
@@ -339,10 +347,9 @@ type Props = {
   addressBook: AddressBookEntry[],
   sendPageState: SendPageState,
   setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void,
-  sendTransaction: (sendJson: []) => string,
+  sendTransaction: (sendJson: [], setSendProgress: (SendProgress) => void) => string,
   setSendPageState: (sendPageState: SendPageState) => void,
   openErrorModal: (title: string, body: string) => void,
-  closeErrorModal: () => void,
   info: Info,
   openPasswordAndUnlockIfNeeded: (successCallback: () => void) => void
 };
@@ -350,19 +357,10 @@ type Props = {
 class SendState {
   modalIsOpen: boolean;
 
-  errorModalIsOpen: boolean;
-
-  errorModalTitle: string;
-
-  errorModalBody: string;
-
   sendButtonEnabled: boolean;
 
   constructor() {
     this.modalIsOpen = false;
-    this.errorModalIsOpen = false;
-    this.errorModalBody = '';
-    this.errorModalTitle = '';
     this.sendButtonEnabled = false;
   }
 }
@@ -517,7 +515,7 @@ export default class Send extends PureComponent<Props, SendState> {
   };
 
   render() {
-    const { modalIsOpen, errorModalIsOpen, errorModalTitle, errorModalBody, sendButtonEnabled } = this.state;
+    const { modalIsOpen, sendButtonEnabled } = this.state;
     const {
       addresses,
       sendTransaction,
@@ -525,7 +523,6 @@ export default class Send extends PureComponent<Props, SendState> {
       info,
       totalBalance,
       openErrorModal,
-      closeErrorModal,
       openPasswordAndUnlockIfNeeded
     } = this.props;
 
@@ -605,13 +602,6 @@ export default class Send extends PureComponent<Props, SendState> {
             modalIsOpen={modalIsOpen}
             clearToAddrs={this.clearToAddrs}
             openPasswordAndUnlockIfNeeded={openPasswordAndUnlockIfNeeded}
-          />
-
-          <ErrorModal
-            title={errorModalTitle}
-            body={errorModalBody}
-            modalIsOpen={errorModalIsOpen}
-            closeModal={closeErrorModal}
           />
         </div>
       </div>

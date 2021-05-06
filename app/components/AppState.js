@@ -175,6 +175,16 @@ export class ConnectedCompanionApp {
   lastSeen: number;
 }
 
+export class SendProgress {
+  sendInProgress: boolean;
+
+  progress: number;
+
+  total: number;
+
+  etaSeconds: number;
+}
+
 // eslint-disable-next-line max-classes-per-file
 export default class AppState {
   // The total confirmed and unconfirmed balance in this wallet

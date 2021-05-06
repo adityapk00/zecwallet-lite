@@ -1,7 +1,15 @@
 // @flow
 /* eslint-disable max-classes-per-file */
 import axios from 'axios';
-import { TotalBalance, AddressBalance, Transaction, RPCConfig, TxDetail, Info } from './components/AppState';
+import {
+  TotalBalance,
+  AddressBalance,
+  Transaction,
+  RPCConfig,
+  TxDetail,
+  Info,
+  SendProgress
+} from './components/AppState';
 // $FlowFixMe
 import native from '../native/index.node';
 
@@ -410,35 +418,77 @@ export default class RPC {
   }
 
   // Send a transaction using the already constructed sendJson structure
-  sendTransaction(sendJson: []): string {
-    let sendStr;
+  async sendTransaction(sendJson: [], setSendProgress: SendProgress => void): Promise<string> {
+    // First, get the previous send progress id, so we know which ID to track
+    const prevProgress = JSON.parse(native.litelib_execute('sendprogress', ''));
+    const prevSendId = prevProgress.id;
+
     try {
       console.log(`Sending ${JSON.stringify(sendJson)}`);
-      sendStr = native.litelib_execute('send', JSON.stringify(sendJson));
+      native.litelib_execute('send', JSON.stringify(sendJson));
     } catch (err) {
       // TODO Show a modal with the error
       console.log(`Error sending Tx: ${err}`);
       throw err;
     }
 
-    if (sendStr.startsWith('Error')) {
-      // Throw the proper error
-      throw sendStr.split(/[\r\n]+/)[0];
-    }
+    const startTimeSeconds = new Date().getTime() / 1000;
 
-    console.log(`Send response: ${sendStr}`);
-    const sendJSON = JSON.parse(sendStr);
-    const { txid, error } = sendJSON;
+    // The send command is async, so we need to poll to get the status
+    const sendTxPromise = new Promise((resolve, reject) => {
+      const intervalID = setInterval(() => {
+        const progress = JSON.parse(native.litelib_execute('sendprogress', ''));
+        console.log(progress);
 
-    if (error) {
-      console.log(`Error sending Tx: ${error}`);
-      throw error;
-    } else {
-      // And refresh data (full refresh)
-      this.refresh(true);
+        // Calculate ETA.
+        let secondsPerComputation = 3; // defalt
+        if (progress.progress > 0) {
+          const currentTimeSeconds = new Date().getTime() / 1000;
+          secondsPerComputation = (currentTimeSeconds - startTimeSeconds) / progress.progress;
+        }
+        // console.log(`Seconds Per compute = ${secondsPerComputation}`);
 
-      return txid;
-    }
+        let eta = Math.round((progress.total - progress.progress) * secondsPerComputation);
+        if (eta <= 0) {
+          eta = 1;
+        }
+
+        const updatedProgress = new SendProgress();
+        updatedProgress.progress = progress.progress;
+        updatedProgress.total = Math.max(progress.total, progress.progress); // sometimes, due to change, the total can be off by 1
+        updatedProgress.sendInProgress = true;
+        updatedProgress.etaSeconds = eta;
+
+        if (progress.id === prevSendId) {
+          // Still not started, so wait for more time
+          setSendProgress(updatedProgress);
+          return;
+        }
+
+        if (!progress.txid && !progress.error) {
+          // Still processing
+          setSendProgress(updatedProgress);
+          return;
+        }
+
+        // Finished processing
+        clearInterval(intervalID);
+        setSendProgress(null);
+
+        if (progress.txid) {
+          // And refresh data (full refresh)
+          this.refresh(true);
+
+          resolve(progress.txid);
+        }
+
+        if (progress.error) {
+          reject(progress.error);
+        }
+      }, 2 * 1000); // Every 2 seconds
+    });
+
+    return sendTxPromise;
   }
 
   async encryptWallet(password: string): Promise<boolean> {
