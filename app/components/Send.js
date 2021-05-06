@@ -249,7 +249,7 @@ const ConfirmModalInternal = ({
       if (progress && progress.sendInProgress) {
         openErrorModal(
           `Computing Transaction`,
-          `Building...\n${progress.progress} of ${progress.total}\nETA ${progress.etaSeconds}s`
+          `Step ${progress.progress} of ${progress.total}. ETA ${progress.etaSeconds}s`
         );
       }
     };

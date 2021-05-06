@@ -440,6 +440,13 @@ export default class RPC {
         const progress = JSON.parse(native.litelib_execute('sendprogress', ''));
         console.log(progress);
 
+        const updatedProgress = new SendProgress();
+        if (progress.id === prevSendId) {
+          // Still not started, so wait for more time
+          setSendProgress(updatedProgress);
+          return;
+        }
+
         // Calculate ETA.
         let secondsPerComputation = 3; // defalt
         if (progress.progress > 0) {
@@ -453,7 +460,6 @@ export default class RPC {
           eta = 1;
         }
 
-        const updatedProgress = new SendProgress();
         updatedProgress.progress = progress.progress;
         updatedProgress.total = Math.max(progress.total, progress.progress); // sometimes, due to change, the total can be off by 1
         updatedProgress.sendInProgress = true;
