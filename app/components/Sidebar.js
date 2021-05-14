@@ -354,15 +354,16 @@ class Sidebar extends PureComponent<Props, State> {
               // Add a single quote "'" into the memo field to force interpretation as a string, rather than as a
               // formula from a rogue memo
               const escapedMemo = dt.memo ? `'${dt.memo.replace(/"/g, '""')}'` : '';
+              const price = t.zec_price ? t.zec_price.toFixed(2) : '--';
 
-              return `${t.time},"${normaldate}","${t.txid}","${t.type}",${dt.amount},"${dt.address}","${escapedMemo}"`;
+              return `${t.time},"${normaldate}","${t.txid}","${t.type}",${dt.amount},"${dt.address}","${price}","${escapedMemo}"`;
             });
           } else {
             return [];
           }
         });
 
-        const header = [`UnixTime, Date, Txid, Type, Amount, Address, Memo`];
+        const header = [`UnixTime, Date, Txid, Type, Amount, Address, ZECPrice, Memo`];
 
         try {
           await fs.promises.writeFile(save.filePath, header.concat(rows).join('\n'));

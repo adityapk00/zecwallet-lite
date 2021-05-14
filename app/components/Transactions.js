@@ -17,7 +17,7 @@ import AddressBook from './Addressbook';
 import routes from '../constants/routes.json';
 import RPC from '../rpc';
 
-const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, setSendTo, history }) => {
+const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, setSendTo, history }) => {
   let txid = '';
   let type = '';
   let typeIcon = '';
@@ -27,6 +27,8 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
   let amount = 0;
   let datePart = '';
   let timePart = '';
+  let price = 0;
+  let priceString = '';
 
   if (tx) {
     txid = tx.txid;
@@ -45,6 +47,10 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
     confirmations = tx.confirmations;
     detailedTxns = tx.detailedTxns;
     amount = Math.abs(tx.amount);
+    price = tx.zec_price;
+    if (price) {
+      priceString = `USD ${price.toFixed(2)} / ZEC`;
+    }
   }
 
   const openTxid = () => {
@@ -84,7 +90,7 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
           {type}
           <BalanceBlockHighlight
             zecValue={amount}
-            usdValue={Utils.getZecToUsdString(zecPrice, Math.abs(amount))}
+            usdValue={Utils.getZecToUsdString(price, Math.abs(amount))}
             currencyName={currencyName}
           />
         </div>
@@ -153,11 +159,19 @@ const TxModalInternal = ({ modalIsOpen, tx, closeModal, currencyName, zecPrice, 
               <div className={cstyles.margintoplarge} />
 
               <div className={[cstyles.sublight].join(' ')}>Amount</div>
-              <div>
-                <span>
-                  {currencyName} {bigPart}
-                </span>
-                <span className={[cstyles.small, cstyles.zecsmallpart].join(' ')}>{smallPart}</span>
+              <div className={[cstyles.flexspacebetween].join(' ')}>
+                <div className={[cstyles.verticalflex].join(' ')}>
+                  <div>
+                    <span>
+                      {currencyName} {bigPart}
+                    </span>
+                    <span className={[cstyles.small, cstyles.zecsmallpart].join(' ')}>{smallPart}</span>
+                  </div>
+                  <div>{Utils.getZecToUsdString(price, Math.abs(amount))}</div>
+                </div>
+                <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(' ')}>
+                  <div className={[cstyles.sublight].join(' ')}>{priceString}</div>
+                </div>
               </div>
 
               <div className={cstyles.margintoplarge} />
