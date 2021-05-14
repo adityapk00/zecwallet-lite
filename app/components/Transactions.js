@@ -366,7 +366,6 @@ export default class Transactions extends Component<Props, State> {
           tx={clickedTx}
           closeModal={this.closeModal}
           currencyName={info.currencyName}
-          zecPrice={info.zecPrice}
           setSendTo={setSendTo}
         />
       </div>
