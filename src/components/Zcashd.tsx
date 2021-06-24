@@ -1,30 +1,30 @@
 // @flow
 /* eslint-disable react/prop-types */
-import React, { Component } from 'react';
-import { Info, RPCConfig } from './AppState';
-import cstyles from './Common.module.css';
-import styles from './Zcashd.module.css';
-import ScrollPane from './ScrollPane';
-import Heart from '../assets/img/zcashdlogo.gif';
+import React, { Component } from "react";
+import { Info, RPCConfig } from "./AppState";
+import cstyles from "./Common.module.css";
+import styles from "./Zcashd.module.css";
+import ScrollPane from "./ScrollPane";
+import Heart from "../assets/img/zcashdlogo.gif";
 
 type DetailLineProps = {
-  label: string,
-  value: string,
-}
+  label: string;
+  value: string;
+};
 const DetailLine = ({ label, value }: DetailLineProps) => {
   return (
     <div className={styles.detailline}>
-      <div className={[cstyles.sublight].join(' ')}>{label} :</div>
+      <div className={[cstyles.sublight].join(" ")}>{label} :</div>
       <div className={cstyles.breakword}>{value}</div>
     </div>
   );
 };
 
 type Props = {
-  info: Info,
-  refresh: () => void,
-  rpcConfig: RPCConfig,
-  openServerSelectModal: () => void
+  info: Info;
+  refresh: () => void;
+  rpcConfig: RPCConfig;
+  openServerSelectModal: () => void;
 };
 
 export default class Zcashd extends Component<Props> {
@@ -35,9 +35,9 @@ export default class Zcashd extends Component<Props> {
     if (!info || !info.latestBlock) {
       return (
         <div>
-          <div className={[cstyles.verticalflex, cstyles.center].join(' ')}>
-            <div style={{ marginTop: '100px' }}>
-              <i className={['fas', 'fa-times-circle'].join(' ')} style={{ fontSize: '96px', color: 'red' }} />
+          <div className={[cstyles.verticalflex, cstyles.center].join(" ")}>
+            <div style={{ marginTop: "100px" }}>
+              <i className={["fas", "fa-times-circle"].join(" ")} style={{ fontSize: "96px", color: "red" }} />
             </div>
             <div className={cstyles.margintoplarge}>Not Connected</div>
           </div>
@@ -63,7 +63,7 @@ export default class Zcashd extends Component<Props> {
                 <div className={styles.detaillines}>
                   <DetailLine label="Version" value={info.version} />
                   <DetailLine label="Lightwallet Server" value={url} />
-                  <DetailLine label="Network" value={info.testnet ? 'Testnet' : 'Mainnet'} />
+                  <DetailLine label="Network" value={info.testnet ? "Testnet" : "Mainnet"} />
                   <DetailLine label="Block Height" value={height} />
                   <DetailLine label="ZEC Price" value={`USD ${info.zecPrice}`} />
                 </div>

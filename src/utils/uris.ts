@@ -4,11 +4,11 @@
 /* eslint-disable vars-on-top */
 /* eslint-disable no-restricted-syntax */
 // @flow
-import url from 'url';
-import querystring from 'querystring';
-import { Base64 } from 'js-base64';
+import url from "url";
+import querystring from "querystring";
+import { Base64 } from "js-base64";
 
-import Utils from './utils';
+import Utils from "./utils";
 
 export class ZcashURITarget {
   address?: string;
@@ -27,8 +27,8 @@ export class ZcashURITarget {
 }
 
 export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
-  if (!uri || uri === '') {
-    return 'Bad URI';
+  if (!uri || uri === "") {
+    return "Bad URI";
   }
 
   // See if it is a straight address.
@@ -37,8 +37,8 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   }
 
   const parsedUri = url.parse(uri);
-  if (!parsedUri || parsedUri.protocol !== 'zcash:') {
-    return 'Invalid URI or protocol';
+  if (!parsedUri || parsedUri.protocol !== "zcash:") {
+    return "Invalid URI or protocol";
   }
 
   const targets: Map<number, ZcashURITarget> = new Map();
@@ -46,7 +46,7 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   // The first address is special, it can be the "host" part of the URI
   const address = parsedUri.host;
   if (address && !(Utils.isTransparent(address) || Utils.isZaddr(address))) {
-    return `"${address || ''}" was not a valid zcash address`;
+    return `"${address || ""}" was not a valid zcash address`;
   }
 
   // Has to have at least 1 element
@@ -57,14 +57,14 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   targets.set(0, t);
 
   // Go over all the query params
-  const params = querystring.parse(parsedUri.query || '');
+  const params = querystring.parse(parsedUri.query || "");
   for (const [q, value] of Object.entries(params)) {
-    const [qName, qIdxS, extra] = q.split('.');
-    if (typeof extra !== 'undefined') {
+    const [qName, qIdxS, extra] = q.split(".");
+    if (typeof extra !== "undefined") {
       return `${q} was not understood as a valid parameter`;
     }
 
-    if (typeof value !== 'string') {
+    if (typeof value !== "string") {
       return `Didn't understand param ${q}`;
     }
 
@@ -80,8 +80,8 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
     }
 
     switch (qName.toLowerCase()) {
-      case 'address':
-        if (typeof target.address !== 'undefined') {
+      case "address":
+        if (typeof target.address !== "undefined") {
           return `Duplicate param ${qName}`;
         }
 
@@ -90,20 +90,20 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
         }
         target.address = value;
         break;
-      case 'label':
-        if (typeof target.label !== 'undefined') {
+      case "label":
+        if (typeof target.label !== "undefined") {
           return `Duplicate param ${qName}`;
         }
         target.label = value;
         break;
-      case 'message':
-        if (typeof target.message !== 'undefined') {
+      case "message":
+        if (typeof target.message !== "undefined") {
           return `Duplicate param ${qName}`;
         }
         target.message = value;
         break;
-      case 'memo':
-        if (typeof target.memoBase64 !== 'undefined') {
+      case "memo":
+        if (typeof target.memoBase64 !== "undefined") {
           return `Duplicate param ${qName}`;
         }
 
@@ -116,8 +116,8 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
         }
 
         break;
-      case 'amount':
-        if (typeof target.amount !== 'undefined') {
+      case "amount":
+        if (typeof target.amount !== "undefined") {
           return `Duplicate param ${qName}`;
         }
         const a = parseFloat(value);
@@ -135,21 +135,21 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   // Make sure everyone has at least an amount and address if there are multiple addresses
   if (targets.size > 1) {
     for (const [key, value] of targets) {
-      if (typeof value.amount === 'undefined') {
+      if (typeof value.amount === "undefined") {
         return `URI ${key} didn't have an amount`;
       }
 
-      if (typeof value.address === 'undefined') {
+      if (typeof value.address === "undefined") {
         return `URI ${key} didn't have an address`;
       }
     }
   } else {
     // If there is only 1 entry, make sure it has at least an address
     if (!targets.get(0)) {
-      return 'URI Should have at least 1 entry';
+      return "URI Should have at least 1 entry";
     }
 
-    if (typeof targets.get(0)?.address === 'undefined') {
+    if (typeof targets.get(0)?.address === "undefined") {
       return `URI ${0} didn't have an address`;
     }
   }
@@ -161,7 +161,7 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   });
 
   if (ans.includes(undefined)) {
-    return 'Some indexes were missing';
+    return "Some indexes were missing";
   }
 
   return ans as ZcashURITarget[];

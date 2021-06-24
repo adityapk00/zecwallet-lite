@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 type PaneState = {
-  height: number
+  height: number;
 };
 
 type Props = {
-  children: React.ReactNode,
-  className?: string,
-  offsetHeight: number
+  children: React.ReactNode;
+  className?: string;
+  offsetHeight: number;
 };
 
 export default class ScrollPane extends Component<Props, PaneState> {
@@ -19,11 +19,11 @@ export default class ScrollPane extends Component<Props, PaneState> {
 
   componentDidMount() {
     this.updateDimensions();
-    window.addEventListener('resize', this.updateDimensions);
+    window.addEventListener("resize", this.updateDimensions);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener("resize", this.updateDimensions);
   }
 
   /**
@@ -40,7 +40,7 @@ export default class ScrollPane extends Component<Props, PaneState> {
     const { height } = this.state;
 
     return (
-      <div className={className} style={{ overflowY: 'auto', overflowX: 'hidden', height }}>
+      <div className={className} style={{ overflowY: "auto", overflowX: "hidden", height }}>
         {children}
       </div>
     );

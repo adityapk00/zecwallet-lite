@@ -3,51 +3,51 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable react/prop-types */
 // @flow
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   AccordionItemButton,
   AccordionItem,
   AccordionItemHeading,
   AccordionItemPanel,
-  Accordion
-} from 'react-accessible-accordion';
-import styles from './Dashboard.module.css';
-import cstyles from './Common.module.css';
-import { TotalBalance, Info, AddressBalance } from './AppState';
-import Utils from '../utils/utils';
-import ScrollPane from './ScrollPane';
-import { BalanceBlockHighlight, BalanceBlock } from './BalanceBlocks';
+  Accordion,
+} from "react-accessible-accordion";
+import styles from "./Dashboard.module.css";
+import cstyles from "./Common.module.css";
+import { TotalBalance, Info, AddressBalance } from "./AppState";
+import Utils from "../utils/utils";
+import ScrollPane from "./ScrollPane";
+import { BalanceBlockHighlight, BalanceBlock } from "./BalanceBlocks";
 
 type AddressBalanceItemProps = {
-  currencyName: string,
-  zecPrice: number,
-  item: AddressBalance
+  currencyName: string;
+  zecPrice: number;
+  item: AddressBalance;
 };
 
 const AddressBalanceItem = ({ currencyName, zecPrice, item }: AddressBalanceItemProps) => {
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(Math.abs(item.balance));
 
   return (
-    <AccordionItem key={item.label} className={[cstyles.well, cstyles.margintopsmall].join(' ')} uuid={item.address}>
+    <AccordionItem key={item.label} className={[cstyles.well, cstyles.margintopsmall].join(" ")} uuid={item.address}>
       <AccordionItemHeading>
         <AccordionItemButton className={cstyles.accordionHeader}>
-          <div className={[cstyles.flexspacebetween].join(' ')}>
+          <div className={[cstyles.flexspacebetween].join(" ")}>
             <div>
-              <div>{Utils.splitStringIntoChunks(item.address, 6).join(' ')}</div>
+              <div>{Utils.splitStringIntoChunks(item.address, 6).join(" ")}</div>
               {item.containsPending && (
-                <div className={[cstyles.red, cstyles.small, cstyles.padtopsmall].join(' ')}>
+                <div className={[cstyles.red, cstyles.small, cstyles.padtopsmall].join(" ")}>
                   Some transactions are pending. Balances may change.
                 </div>
               )}
             </div>
-            <div className={[styles.txamount, cstyles.right].join(' ')}>
+            <div className={[styles.txamount, cstyles.right].join(" ")}>
               <div>
                 <span>
                   {currencyName} {bigPart}
                 </span>
-                <span className={[cstyles.small, cstyles.zecsmallpart].join(' ')}>{smallPart}</span>
+                <span className={[cstyles.small, cstyles.zecsmallpart].join(" ")}>{smallPart}</span>
               </div>
-              <div className={[cstyles.sublight, cstyles.small, cstyles.padtopsmall].join(' ')}>
+              <div className={[cstyles.sublight, cstyles.small, cstyles.padtopsmall].join(" ")}>
                 {Utils.getZecToUsdString(zecPrice, Math.abs(item.balance))}
               </div>
             </div>
@@ -60,20 +60,20 @@ const AddressBalanceItem = ({ currencyName, zecPrice, item }: AddressBalanceItem
 };
 
 type Props = {
-  totalBalance: TotalBalance,
-  info: Info,
-  addressesWithBalance: AddressBalance[]
+  totalBalance: TotalBalance;
+  info: Info;
+  addressesWithBalance: AddressBalance[];
 };
 
 export default class Home extends Component<Props> {
   render() {
     const { totalBalance, info, addressesWithBalance } = this.props;
 
-    const anyPending = addressesWithBalance && addressesWithBalance.find(i => i.containsPending);
+    const anyPending = addressesWithBalance && addressesWithBalance.find((i) => i.containsPending);
 
     return (
       <div>
-        <div className={[cstyles.well, cstyles.containermargin].join(' ')}>
+        <div className={[cstyles.well, cstyles.containermargin].join(" ")}>
           <div className={cstyles.balancebox}>
             <BalanceBlockHighlight
               zecValue={totalBalance.total}
@@ -95,7 +95,7 @@ export default class Home extends Component<Props> {
           </div>
           <div>
             {anyPending && (
-              <div className={[cstyles.red, cstyles.small, cstyles.padtopsmall].join(' ')}>
+              <div className={[cstyles.red, cstyles.small, cstyles.padtopsmall].join(" ")}>
                 Some transactions are pending. Balances may change.
               </div>
             )}
@@ -105,18 +105,18 @@ export default class Home extends Component<Props> {
         <div className={styles.addressbalancecontainer}>
           <ScrollPane offsetHeight={200}>
             <div className={styles.addressbooklist}>
-              <div className={[cstyles.flexspacebetween, cstyles.tableheader, cstyles.sublight].join(' ')}>
+              <div className={[cstyles.flexspacebetween, cstyles.tableheader, cstyles.sublight].join(" ")}>
                 <div>Address</div>
                 <div>Balance</div>
               </div>
               {addressesWithBalance &&
                 (addressesWithBalance.length === 0 ? (
-                  <div className={[cstyles.center, cstyles.sublight].join(' ')}>No Addresses with a balance</div>
+                  <div className={[cstyles.center, cstyles.sublight].join(" ")}>No Addresses with a balance</div>
                 ) : (
                   <Accordion>
                     {addressesWithBalance
-                      .filter(ab => ab.balance > 0)
-                      .map(ab => (
+                      .filter((ab) => ab.balance > 0)
+                      .map((ab) => (
                         <AddressBalanceItem
                           key={ab.address}
                           item={ab}

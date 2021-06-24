@@ -1,26 +1,26 @@
 // @flow
-import React, { PureComponent } from 'react';
-import Modal from 'react-modal';
-import cstyles from './Common.module.css';
+import React, { PureComponent } from "react";
+import Modal from "react-modal";
+import cstyles from "./Common.module.css";
 
 type Props = {
-  modalIsOpen: boolean,
-  confirmNeeded: boolean,
-  passwordCallback: (password: string) => void,
-  closeCallback: () => void,
-  helpText?: string | JSX.Element
+  modalIsOpen: boolean;
+  confirmNeeded: boolean;
+  passwordCallback: (password: string) => void;
+  closeCallback: () => void;
+  helpText?: string | JSX.Element;
 };
 
 type State = {
-  password: string,
-  confirmPassword: string
+  password: string;
+  confirmPassword: string;
 };
 
 export default class PasswordModal extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = { password: '', confirmPassword: '' };
+    this.state = { password: "", confirmPassword: "" };
   }
 
   enterButton = () => {
@@ -30,7 +30,7 @@ export default class PasswordModal extends PureComponent<Props, State> {
     passwordCallback(password);
 
     // Clear the passwords
-    this.setState({ password: '', confirmPassword: '' });
+    this.setState({ password: "", confirmPassword: "" });
   };
 
   closeButton = () => {
@@ -39,7 +39,7 @@ export default class PasswordModal extends PureComponent<Props, State> {
     closeCallback();
 
     // Clear the passwords
-    this.setState({ password: '', confirmPassword: '' });
+    this.setState({ password: "", confirmPassword: "" });
   };
 
   render() {
@@ -55,19 +55,19 @@ export default class PasswordModal extends PureComponent<Props, State> {
         className={cstyles.modal}
         overlayClassName={cstyles.modalOverlay}
       >
-        <div className={[cstyles.verticalflex].join(' ')}>
-          <div className={cstyles.marginbottomlarge} style={{ textAlign: 'left' }}>
+        <div className={[cstyles.verticalflex].join(" ")}>
+          <div className={cstyles.marginbottomlarge} style={{ textAlign: "left" }}>
             {helpText && <span>{helpText}</span>}
             {!helpText && <span>Enter Wallet Password</span>}
           </div>
 
-          <div className={cstyles.well} style={{ textAlign: 'left' }}>
+          <div className={cstyles.well} style={{ textAlign: "left" }}>
             <div className={cstyles.sublight}>Password</div>
             <input
               type="password"
-              className={[cstyles.inputbox, cstyles.marginbottomlarge].join(' ')}
+              className={[cstyles.inputbox, cstyles.marginbottomlarge].join(" ")}
               value={password}
-              onChange={e => this.setState({ password: e.target.value })}
+              onChange={(e) => this.setState({ password: e.target.value })}
             />
 
             {confirmNeeded && (
@@ -75,19 +75,19 @@ export default class PasswordModal extends PureComponent<Props, State> {
                 <div className={cstyles.sublight}>Confirm Password</div>
                 <input
                   type="password"
-                  className={[cstyles.inputbox, cstyles.marginbottomlarge].join(' ')}
+                  className={[cstyles.inputbox, cstyles.marginbottomlarge].join(" ")}
                   value={confirmPassword}
-                  onChange={e => this.setState({ confirmPassword: e.target.value })}
+                  onChange={(e) => this.setState({ confirmPassword: e.target.value })}
                 />
               </div>
             )}
           </div>
 
           <div className={cstyles.buttoncontainer}>
-            {!enabled && <div className={[cstyles.red].join(' ')}>Passwords do not match</div>}
+            {!enabled && <div className={[cstyles.red].join(" ")}>Passwords do not match</div>}
             <button
               type="button"
-              className={[cstyles.primarybutton, cstyles.margintoplarge].join(' ')}
+              className={[cstyles.primarybutton, cstyles.margintoplarge].join(" ")}
               onClick={this.enterButton}
               disabled={!enabled}
             >

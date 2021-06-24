@@ -1,31 +1,31 @@
 /* eslint-disable react/prop-types */
-import React, { Component, useState, useEffect } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import React, { Component, useState, useEffect } from "react";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import {
   Accordion,
   AccordionItem,
   AccordionItemHeading,
   AccordionItemButton,
-  AccordionItemPanel
-} from 'react-accessible-accordion';
-import QRCode from 'qrcode.react';
-import styles from './Receive.module.css';
-import cstyles from './Common.module.css';
-import Utils from '../utils/utils';
-import { AddressBalance, Info, ReceivePageState, AddressBookEntry } from './AppState';
-import ScrollPane from './ScrollPane';
+  AccordionItemPanel,
+} from "react-accessible-accordion";
+import QRCode from "qrcode.react";
+import styles from "./Receive.module.css";
+import cstyles from "./Common.module.css";
+import Utils from "../utils/utils";
+import { AddressBalance, Info, ReceivePageState, AddressBookEntry } from "./AppState";
+import ScrollPane from "./ScrollPane";
 
 const { shell, clipboard } = window.require("electron");
 
 type AddressBlockProps = {
-  addressBalance: AddressBalance,
-  currencyName: string,
-  zecPrice: number,
-  privateKey?: string,
-  viewKey?: string,
-  label?: string,
-  fetchAndSetSinglePrivKey: (k: string) => void,
-  fetchAndSetSingleViewKey: (k: string) => void,
+  addressBalance: AddressBalance;
+  currencyName: string;
+  zecPrice: number;
+  privateKey?: string;
+  viewKey?: string;
+  label?: string;
+  fetchAndSetSinglePrivKey: (k: string) => void;
+  fetchAndSetSingleViewKey: (k: string) => void;
 };
 const AddressBlock = ({
   addressBalance,
@@ -35,7 +35,7 @@ const AddressBlock = ({
   privateKey,
   fetchAndSetSinglePrivKey,
   viewKey,
-  fetchAndSetSingleViewKey
+  fetchAndSetSingleViewKey,
 }: AddressBlockProps) => {
   const { address } = addressBalance;
 
@@ -53,7 +53,7 @@ const AddressBlock = ({
   const balance = addressBalance.balance || 0;
 
   const openAddress = () => {
-    if (currencyName === 'TAZ') {
+    if (currencyName === "TAZ") {
       shell.openExternal(`https://chain.so/address/ZECTEST/${address}`);
     } else {
       shell.openExternal(`https://zcha.in/accounts/${address}`);
@@ -61,50 +61,50 @@ const AddressBlock = ({
   };
 
   return (
-    <AccordionItem key={copied ? 1 : 0} className={[cstyles.well, styles.receiveblock].join(' ')} uuid={address}>
+    <AccordionItem key={copied ? 1 : 0} className={[cstyles.well, styles.receiveblock].join(" ")} uuid={address}>
       <AccordionItemHeading>
         <AccordionItemButton className={cstyles.accordionHeader}>{address}</AccordionItemButton>
       </AccordionItemHeading>
-      <AccordionItemPanel className={[styles.receiveDetail].join(' ')}>
-        <div className={[cstyles.flexspacebetween].join(' ')}>
-          <div className={[cstyles.verticalflex, cstyles.marginleft].join(' ')}>
+      <AccordionItemPanel className={[styles.receiveDetail].join(" ")}>
+        <div className={[cstyles.flexspacebetween].join(" ")}>
+          <div className={[cstyles.verticalflex, cstyles.marginleft].join(" ")}>
             {label && (
               <div className={cstyles.margintoplarge}>
-                <div className={[cstyles.sublight].join(' ')}>Label</div>
-                <div className={[cstyles.padtopsmall, cstyles.fixedfont].join(' ')}>{label}</div>
+                <div className={[cstyles.sublight].join(" ")}>Label</div>
+                <div className={[cstyles.padtopsmall, cstyles.fixedfont].join(" ")}>{label}</div>
               </div>
             )}
 
-            <div className={[cstyles.sublight, cstyles.margintoplarge].join(' ')}>Funds</div>
-            <div className={[cstyles.padtopsmall].join(' ')}>
+            <div className={[cstyles.sublight, cstyles.margintoplarge].join(" ")}>Funds</div>
+            <div className={[cstyles.padtopsmall].join(" ")}>
               {currencyName} {balance}
             </div>
-            <div className={[cstyles.padtopsmall].join(' ')}>{Utils.getZecToUsdString(zecPrice, balance)}</div>
+            <div className={[cstyles.padtopsmall].join(" ")}>{Utils.getZecToUsdString(zecPrice, balance)}</div>
 
-            <div className={[cstyles.margintoplarge, cstyles.breakword].join(' ')}>
+            <div className={[cstyles.margintoplarge, cstyles.breakword].join(" ")}>
               {privateKey && (
                 <div>
-                  <div className={[cstyles.sublight].join(' ')}>Private Key</div>
+                  <div className={[cstyles.sublight].join(" ")}>Private Key</div>
                   <div
-                    className={[cstyles.breakword, cstyles.padtopsmall, cstyles.fixedfont, cstyles.flex].join(' ')}
-                    style={{ maxWidth: '600px' }}
+                    className={[cstyles.breakword, cstyles.padtopsmall, cstyles.fixedfont, cstyles.flex].join(" ")}
+                    style={{ maxWidth: "600px" }}
                   >
-                    <QRCode value={privateKey} className={[styles.receiveQrcode].join(' ')} />
+                    <QRCode value={privateKey} className={[styles.receiveQrcode].join(" ")} />
                     <div>{privateKey}</div>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className={[cstyles.margintoplarge, cstyles.breakword].join(' ')}>
+            <div className={[cstyles.margintoplarge, cstyles.breakword].join(" ")}>
               {viewKey && (
                 <div>
-                  <div className={[cstyles.sublight].join(' ')}>Viewing Key</div>
+                  <div className={[cstyles.sublight].join(" ")}>Viewing Key</div>
                   <div
-                    className={[cstyles.breakword, cstyles.padtopsmall, cstyles.fixedfont, cstyles.flex].join(' ')}
-                    style={{ maxWidth: '600px' }}
+                    className={[cstyles.breakword, cstyles.padtopsmall, cstyles.fixedfont, cstyles.flex].join(" ")}
+                    style={{ maxWidth: "600px" }}
                   >
-                    <QRCode value={viewKey} className={[styles.receiveQrcode].join(' ')} />
+                    <QRCode value={viewKey} className={[styles.receiveQrcode].join(" ")} />
                     <div>{viewKey}</div>
                   </div>
                 </div>
@@ -113,7 +113,7 @@ const AddressBlock = ({
 
             <div>
               <button
-                className={[cstyles.primarybutton, cstyles.margintoplarge].join(' ')}
+                className={[cstyles.primarybutton, cstyles.margintoplarge].join(" ")}
                 type="button"
                 onClick={() => {
                   clipboard.writeText(address);
@@ -125,7 +125,7 @@ const AddressBlock = ({
               </button>
               {!privateKey && (
                 <button
-                  className={[cstyles.primarybutton].join(' ')}
+                  className={[cstyles.primarybutton].join(" ")}
                   type="button"
                   onClick={() => fetchAndSetSinglePrivKey(address)}
                 >
@@ -135,7 +135,7 @@ const AddressBlock = ({
 
               {Utils.isZaddr(address) && !viewKey && (
                 <button
-                  className={[cstyles.primarybutton].join(' ')}
+                  className={[cstyles.primarybutton].join(" ")}
                   type="button"
                   onClick={() => fetchAndSetSingleViewKey(address)}
                 >
@@ -144,14 +144,14 @@ const AddressBlock = ({
               )}
 
               {Utils.isTransparent(address) && (
-                <button className={[cstyles.primarybutton].join(' ')} type="button" onClick={() => openAddress()}>
-                  View on explorer <i className={['fas', 'fa-external-link-square-alt'].join(' ')} />
+                <button className={[cstyles.primarybutton].join(" ")} type="button" onClick={() => openAddress()}>
+                  View on explorer <i className={["fas", "fa-external-link-square-alt"].join(" ")} />
                 </button>
               )}
             </div>
           </div>
           <div>
-            <QRCode value={address} className={[styles.receiveQrcode].join(' ')} />
+            <QRCode value={address} className={[styles.receiveQrcode].join(" ")} />
           </div>
         </div>
       </AccordionItemPanel>
@@ -160,17 +160,17 @@ const AddressBlock = ({
 };
 
 type Props = {
-  addresses: string[],
-  addressesWithBalance: AddressBalance[],
-  addressBook: AddressBookEntry[],
-  info: Info,
-  addressPrivateKeys: Map<string, string>,
-  addressViewKeys: Map<string, string>,
-  receivePageState: ReceivePageState,
-  fetchAndSetSinglePrivKey: (k: string) => void,
-  fetchAndSetSingleViewKey: (k: string) => void,
-  createNewAddress: (t: boolean) => void,
-  rerenderKey: number
+  addresses: string[];
+  addressesWithBalance: AddressBalance[];
+  addressBook: AddressBookEntry[];
+  info: Info;
+  addressPrivateKeys: Map<string, string>;
+  addressViewKeys: Map<string, string>;
+  receivePageState: ReceivePageState;
+  fetchAndSetSinglePrivKey: (k: string) => void;
+  fetchAndSetSingleViewKey: (k: string) => void;
+  createNewAddress: (t: boolean) => void;
+  rerenderKey: number;
 };
 
 export default class Receive extends Component<Props> {
@@ -186,7 +186,7 @@ export default class Receive extends Component<Props> {
       fetchAndSetSinglePrivKey,
       fetchAndSetSingleViewKey,
       createNewAddress,
-      rerenderKey
+      rerenderKey,
     } = this.props;
 
     // Convert the addressBalances into a map.
@@ -197,34 +197,34 @@ export default class Receive extends Component<Props> {
     }, new Map());
 
     const zaddrs = addresses
-      .filter(a => Utils.isSapling(a))
+      .filter((a) => Utils.isSapling(a))
       .slice(0, 100)
-      .map(a => new AddressBalance(a, addressMap.get(a) || 0));
+      .map((a) => new AddressBalance(a, addressMap.get(a) || 0));
 
-    let defaultZaddr = zaddrs.length ? zaddrs[0].address : '';
+    let defaultZaddr = zaddrs.length ? zaddrs[0].address : "";
     if (receivePageState && Utils.isSapling(receivePageState.newAddress)) {
       defaultZaddr = receivePageState.newAddress;
 
       // move this address to the front, since the scrollbar will reset when we re-render
       zaddrs.sort((x, y) => {
         // eslint-disable-next-line, no-nested-ternary
-        return x.address === defaultZaddr ? -1 : y.address === defaultZaddr ? 1 : 0
+        return x.address === defaultZaddr ? -1 : y.address === defaultZaddr ? 1 : 0;
       });
     }
 
     const taddrs = addresses
-      .filter(a => Utils.isTransparent(a))
+      .filter((a) => Utils.isTransparent(a))
       .slice(0, 100)
-      .map(a => new AddressBalance(a, addressMap.get(a) || 0));
+      .map((a) => new AddressBalance(a, addressMap.get(a) || 0));
 
-    let defaultTaddr = taddrs.length ? taddrs[0].address : '';
+    let defaultTaddr = taddrs.length ? taddrs[0].address : "";
     if (receivePageState && Utils.isTransparent(receivePageState.newAddress)) {
       defaultTaddr = receivePageState.newAddress;
 
       // move this address to the front, since the scrollbar will reset when we re-render
       taddrs.sort((x, y) => {
         // eslint-disable-next-line  no-nested-ternary
-        return x.address === defaultTaddr ? -1 : y.address === defaultTaddr ? 1 : 0
+        return x.address === defaultTaddr ? -1 : y.address === defaultTaddr ? 1 : 0;
       });
     }
 
@@ -247,7 +247,7 @@ export default class Receive extends Component<Props> {
               {/* Change the hardcoded height */}
               <ScrollPane offsetHeight={100}>
                 <Accordion preExpanded={[defaultZaddr]}>
-                  {zaddrs.map(a => (
+                  {zaddrs.map((a) => (
                     <AddressBlock
                       key={a.address}
                       addressBalance={a}
@@ -263,7 +263,7 @@ export default class Receive extends Component<Props> {
                 </Accordion>
 
                 <button
-                  className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(' ')}
+                  className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(" ")}
                   onClick={() => createNewAddress(true)}
                   type="button"
                 >
@@ -276,7 +276,7 @@ export default class Receive extends Component<Props> {
               {/* Change the hardcoded height */}
               <ScrollPane offsetHeight={100}>
                 <Accordion preExpanded={[defaultTaddr]}>
-                  {taddrs.map(a => (
+                  {taddrs.map((a) => (
                     <AddressBlock
                       key={a.address}
                       addressBalance={a}
@@ -291,7 +291,7 @@ export default class Receive extends Component<Props> {
                 </Accordion>
 
                 <button
-                  className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(' ')}
+                  className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(" ")}
                   type="button"
                   onClick={() => createNewAddress(false)}
                 >

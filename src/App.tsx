@@ -4,7 +4,7 @@ import logo from "./logo.svg";
 import "./App.css";
 
 //const addon = require('./native.node');
-import addon from './native.node';
+import addon from "./native.node";
 
 function App() {
   console.log("Addon is:");
@@ -17,9 +17,9 @@ function App() {
         <p>{addon.litelib_say_hello("Me")}</p>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>public/electron.js</code> or <code>src/App.js</code> and
-          save to reload.
-        </p>d
+          Edit <code>public/electron.js</code> or <code>src/App.js</code> and save to reload.
+        </p>
+        d
       </header>
     </div>
   );

@@ -1,18 +1,18 @@
 /* eslint-disable camelcase */
-const fs = require('fs');
-const electron_notarize = require('electron-notarize');
+const fs = require("fs");
+const electron_notarize = require("electron-notarize");
 
-module.exports = async function(params) {
+module.exports = async function (params) {
   // Only notarize the app on Mac OS only.
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     return;
   }
   // console.log('afterSign hook triggered', params);
 
   // Same appId in electron-builder.
-  const appId = 'co.zecwallet.lite';
+  const appId = "co.zecwallet.lite";
 
-  const appPath = params.artifactPaths.find(p => p.endsWith('.dmg'));
+  const appPath = params.artifactPaths.find((p) => p.endsWith(".dmg"));
 
   if (!fs.existsSync(appPath)) {
     throw new Error(`Cannot find application at: ${appPath}`);
@@ -25,7 +25,7 @@ module.exports = async function(params) {
       appBundleId: appId,
       appPath,
       appleId: process.env.appleId,
-      appleIdPassword: process.env.appleIdPassword
+      appleIdPassword: process.env.appleIdPassword,
     });
   } catch (error) {
     console.error(error);

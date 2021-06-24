@@ -7,11 +7,11 @@ import {
   RPCConfig,
   TxDetail,
   Info,
-  SendProgress
-} from './components/AppState';
-import { SendManyJson } from './components/Send';
+  SendProgress,
+} from "./components/AppState";
+import { SendManyJson } from "./components/Send";
 
-import native from './native.node';
+import native from "./native.node";
 
 export default class RPC {
   rpcConfig?: RPCConfig;
@@ -64,30 +64,30 @@ export default class RPC {
   }
 
   static getDefaultFee(): number {
-    const feeStr = native.litelib_execute('defaultfee', '');
+    const feeStr = native.litelib_execute("defaultfee", "");
     const fee = JSON.parse(feeStr);
 
     return fee.defaultfee / 10 ** 8;
   }
 
   static doSync() {
-    const syncstr = native.litelib_execute('sync', '');
+    const syncstr = native.litelib_execute("sync", "");
     console.log(`Sync exec result: ${syncstr}`);
   }
 
   static doRescan() {
-    const syncstr = native.litelib_execute('rescan', '');
+    const syncstr = native.litelib_execute("rescan", "");
     console.log(`rescan exec result: ${syncstr}`);
   }
 
   static doSyncStatus(): string {
-    const syncstr = native.litelib_execute('syncstatus', '');
+    const syncstr = native.litelib_execute("syncstatus", "");
     console.log(`syncstatus: ${syncstr}`);
     return syncstr;
   }
 
   static doSave() {
-    const savestr = native.litelib_execute('save', '');
+    const savestr = native.litelib_execute("save", "");
     console.log(`Save status: ${savestr}`);
   }
 
@@ -127,33 +127,33 @@ export default class RPC {
       }, 1000);
     } else {
       // Already at the latest block
-      console.log('Already have latest block, waiting for next refresh');
+      console.log("Already have latest block, waiting for next refresh");
     }
   }
 
   // Special method to get the Info object. This is used both internally and by the Loading screen
   static getInfoObject(): Info {
-    const infostr = native.litelib_execute('info', '');
+    const infostr = native.litelib_execute("info", "");
     try {
       const infoJSON = JSON.parse(infostr);
 
       const info = new Info();
-      info.testnet = infoJSON.chain_name === 'test';
+      info.testnet = infoJSON.chain_name === "test";
       info.latestBlock = infoJSON.latest_block_height;
       info.connections = 1;
       info.version = `${infoJSON.vendor}/${infoJSON.git_commit.substring(0, 6)}/${infoJSON.version}`;
       info.verificationProgress = 1;
-      info.currencyName = info.testnet ? 'TAZ' : 'ZEC';
+      info.currencyName = info.testnet ? "TAZ" : "ZEC";
       info.solps = 0;
 
-      const encStatus = native.litelib_execute('encryptionstatus', '');
+      const encStatus = native.litelib_execute("encryptionstatus", "");
       const encJSON = JSON.parse(encStatus);
       info.encrypted = encJSON.encrypted;
       info.locked = encJSON.locked;
 
       return info;
     } catch (err) {
-      console.log('Failed to parse info', err);
+      console.log("Failed to parse info", err);
       return new Info();
     }
   }
@@ -166,7 +166,7 @@ export default class RPC {
       return `Error: Couldn't parse ${birthday} as a number`;
     }
 
-    const address = native.litelib_execute('import', JSON.stringify(args));
+    const address = native.litelib_execute("import", JSON.stringify(args));
 
     return address;
   }
@@ -181,7 +181,7 @@ export default class RPC {
 
   // This method will get the total balances
   fetchTotalBalance() {
-    const balanceStr = native.litelib_execute('balance', '');
+    const balanceStr = native.litelib_execute("balance", "");
     const balanceJSON = JSON.parse(balanceStr);
 
     // Total Balance
@@ -195,7 +195,7 @@ export default class RPC {
     this.fnSetTotalBalance(balance);
 
     // Fetch pending notes and UTXOs
-    const pendingNotes = native.litelib_execute('notes', '');
+    const pendingNotes = native.litelib_execute("notes", "");
     const pendingJSON = JSON.parse(pendingNotes);
 
     const pendingAddressBalances = new Map();
@@ -246,35 +246,35 @@ export default class RPC {
   }
 
   static getPrivKeyAsString(address: string): string {
-    const privKeyStr = native.litelib_execute('export', address);
+    const privKeyStr = native.litelib_execute("export", address);
     const privKeyJSON = JSON.parse(privKeyStr);
 
     return privKeyJSON[0].private_key;
   }
 
   static getViewKeyAsString(address: string): string {
-    const privKeyStr = native.litelib_execute('export', address);
+    const privKeyStr = native.litelib_execute("export", address);
     const privKeyJSON = JSON.parse(privKeyStr);
 
     return privKeyJSON[0].viewing_key;
   }
 
   static createNewAddress(zaddress: boolean) {
-    const addrStr = native.litelib_execute('new', zaddress ? 'z' : 't');
+    const addrStr = native.litelib_execute("new", zaddress ? "z" : "t");
     const addrJSON = JSON.parse(addrStr);
 
     return addrJSON[0];
   }
 
   static fetchSeed(): string {
-    const seedStr = native.litelib_execute('seed', '');
+    const seedStr = native.litelib_execute("seed", "");
     const seedJSON = JSON.parse(seedStr);
 
     return seedJSON.seed;
   }
 
   static fetchWalletHeight(): number {
-    const heightStr = native.litelib_execute('height', '');
+    const heightStr = native.litelib_execute("height", "");
     const heightJSON = JSON.parse(heightStr);
 
     return heightJSON.height;
@@ -282,17 +282,17 @@ export default class RPC {
 
   // Fetch all T and Z transactions
   fetchTandZTransactions(latestBlockHeight: number) {
-    const listStr = native.litelib_execute('list', '');
+    const listStr = native.litelib_execute("list", "");
     const listJSON = JSON.parse(listStr);
 
     let txlist: Transaction[] = listJSON.map((tx: any) => {
       const transaction = new Transaction();
 
-      const type = tx.outgoing_metadata ? 'sent' : 'receive';
+      const type = tx.outgoing_metadata ? "sent" : "receive";
 
       transaction.address =
         // eslint-disable-next-line no-nested-ternary
-        type === 'sent' ? (tx.outgoing_metadata.length > 0 ? tx.outgoing_metadata[0].address : '') : tx.address;
+        type === "sent" ? (tx.outgoing_metadata.length > 0 ? tx.outgoing_metadata[0].address : "") : tx.address;
       transaction.type = type;
       transaction.amount = tx.amount / 10 ** 8;
       transaction.confirmations = tx.unconfirmed ? 0 : latestBlockHeight - tx.block_height + 1;
@@ -324,11 +324,11 @@ export default class RPC {
 
     // If you send yourself transactions, the underlying SDK doesn't handle it very well, so
     // we supress these in the UI to make things a bit clearer.
-    txlist = txlist.filter(tx => !(tx.type === 'sent' && tx.amount < 0 && tx.detailedTxns.length === 0));
+    txlist = txlist.filter((tx) => !(tx.type === "sent" && tx.amount < 0 && tx.detailedTxns.length === 0));
 
     // We need to group transactions that have the same (txid and send/recive), for multi-part memos
     const m = new Map<string, Transaction[]>();
-    txlist.forEach(tx => {
+    txlist.forEach((tx) => {
       const key = tx.txid + tx.type;
       const coll = m.get(key);
       if (!coll) {
@@ -340,13 +340,13 @@ export default class RPC {
 
     // Now, combine the amounts and memos
     const combinedTxList: Transaction[] = [];
-    m.forEach(txns => {
+    m.forEach((txns) => {
       // Get all the txdetails and merge them
 
       // Clone the first tx into a new one
       // eslint-disable-next-line prefer-object-spread
       const combinedTx = Object.assign({}, txns[0]);
-      combinedTx.detailedTxns = RPC.combineTxDetails(txns.flatMap(tx => tx.detailedTxns));
+      combinedTx.detailedTxns = RPC.combineTxDetails(txns.flatMap((tx) => tx.detailedTxns));
 
       combinedTxList.push(combinedTx);
     });
@@ -363,7 +363,7 @@ export default class RPC {
   static combineTxDetails(txdetails: TxDetail[]): TxDetail[] {
     // First, group by outgoing address.
     const m = new Map<string, TxDetail[]>();
-    txdetails.forEach(i => {
+    txdetails.forEach((i) => {
       const coll = m.get(i.address);
       if (!coll) {
         m.set(i.address, [i]);
@@ -378,8 +378,8 @@ export default class RPC {
       const totalAmount = txns.reduce((p, td) => p + parseFloat(td.amount), 0);
 
       const memos = txns
-        .filter(i => i.memo)
-        .map(i => {
+        .filter((i) => i.memo)
+        .map((i) => {
           const rex = /\((\d+)\/(\d+)\)((.|[\r\n])*)/;
           const tags = i.memo?.match(rex);
           if (tags && tags.length >= 4) {
@@ -390,12 +390,12 @@ export default class RPC {
           return { num: 0, memo: i.memo };
         })
         .sort((a, b) => a.num - b.num)
-        .map(a => a.memo);
+        .map((a) => a.memo);
 
       const detail = new TxDetail();
       detail.address = toaddr;
       detail.amount = totalAmount.toFixed(8);
-      detail.memo = memos.length > 0 ? memos.join('') : null;
+      detail.memo = memos.length > 0 ? memos.join("") : null;
 
       reducedDetailedTxns.push(detail);
     });
@@ -406,12 +406,12 @@ export default class RPC {
   // Send a transaction using the already constructed sendJson structure
   async sendTransaction(sendJson: SendManyJson[], setSendProgress: (p?: SendProgress) => void): Promise<string> {
     // First, get the previous send progress id, so we know which ID to track
-    const prevProgress = JSON.parse(native.litelib_execute('sendprogress', ''));
+    const prevProgress = JSON.parse(native.litelib_execute("sendprogress", ""));
     const prevSendId = prevProgress.id;
 
     try {
       console.log(`Sending ${JSON.stringify(sendJson)}`);
-      native.litelib_execute('send', JSON.stringify(sendJson));
+      native.litelib_execute("send", JSON.stringify(sendJson));
     } catch (err) {
       // TODO Show a modal with the error
       console.log(`Error sending Tx: ${err}`);
@@ -423,7 +423,7 @@ export default class RPC {
     // The send command is async, so we need to poll to get the status
     const sendTxPromise: Promise<string> = new Promise((resolve, reject) => {
       const intervalID = setInterval(() => {
-        const progress = JSON.parse(native.litelib_execute('sendprogress', ''));
+        const progress = JSON.parse(native.litelib_execute("sendprogress", ""));
         console.log(progress);
 
         const updatedProgress = new SendProgress();
@@ -484,7 +484,7 @@ export default class RPC {
   }
 
   async encryptWallet(password: string): Promise<boolean> {
-    const resultStr = native.litelib_execute('encrypt', password);
+    const resultStr = native.litelib_execute("encrypt", password);
     const resultJSON = JSON.parse(resultStr);
 
     // To update the wallet encryption status
@@ -493,11 +493,11 @@ export default class RPC {
     // And save the wallet
     RPC.doSave();
 
-    return resultJSON.result === 'success';
+    return resultJSON.result === "success";
   }
 
   async decryptWallet(password: string): Promise<boolean> {
-    const resultStr = native.litelib_execute('decrypt', password);
+    const resultStr = native.litelib_execute("decrypt", password);
     const resultJSON = JSON.parse(resultStr);
 
     // To update the wallet encryption status
@@ -506,32 +506,32 @@ export default class RPC {
     // And save the wallet
     RPC.doSave();
 
-    return resultJSON.result === 'success';
+    return resultJSON.result === "success";
   }
 
   async lockWallet(): Promise<boolean> {
-    const resultStr = native.litelib_execute('lock', '');
+    const resultStr = native.litelib_execute("lock", "");
     const resultJSON = JSON.parse(resultStr);
 
     // To update the wallet encryption status
     this.fetchInfo();
 
-    return resultJSON.result === 'success';
+    return resultJSON.result === "success";
   }
 
   async unlockWallet(password: string): Promise<boolean> {
-    const resultStr = native.litelib_execute('unlock', password);
+    const resultStr = native.litelib_execute("unlock", password);
     const resultJSON = JSON.parse(resultStr);
 
     // To update the wallet encryption status
     this.fetchInfo();
 
-    return resultJSON.result === 'success';
+    return resultJSON.result === "success";
   }
 
   async getZecPrice() {
-    const resultStr: string = native.litelib_execute('zecprice', '');
-    if (resultStr.toLowerCase().startsWith('error')) {
+    const resultStr: string = native.litelib_execute("zecprice", "");
+    if (resultStr.toLowerCase().startsWith("error")) {
       console.log(`Error fetching price ${resultStr}`);
       return;
     }

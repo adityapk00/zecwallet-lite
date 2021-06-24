@@ -1,41 +1,46 @@
 /* eslint-disable react/prop-types */
-import React, { Component } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import React, { Component } from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import {
   AccordionItemButton,
   AccordionItem,
   AccordionItemHeading,
   AccordionItemPanel,
-  Accordion
-} from 'react-accessible-accordion';
-import styles from './Addressbook.module.css';
-import cstyles from './Common.module.css';
-import { AddressBookEntry } from './AppState';
-import ScrollPane from './ScrollPane';
-import Utils from '../utils/utils';
-import { ZcashURITarget } from '../utils/uris';
-import routes from '../constants/routes.json';
+  Accordion,
+} from "react-accessible-accordion";
+import styles from "./Addressbook.module.css";
+import cstyles from "./Common.module.css";
+import { AddressBookEntry } from "./AppState";
+import ScrollPane from "./ScrollPane";
+import Utils from "../utils/utils";
+import { ZcashURITarget } from "../utils/uris";
+import routes from "../constants/routes.json";
 
 type AddressBookItemProps = {
-  item: AddressBookEntry,
-  removeAddressBookEntry: (label: string) => void,
-  setSendTo: (targets: ZcashURITarget | ZcashURITarget[]) => void,
-}
+  item: AddressBookEntry;
+  removeAddressBookEntry: (label: string) => void;
+  setSendTo: (targets: ZcashURITarget | ZcashURITarget[]) => void;
+};
 
 // Internal because we're using withRouter just below
-const AddressBookItemInteral: React.FC<RouteComponentProps & AddressBookItemProps> = ({ item, removeAddressBookEntry, setSendTo, history }) => {
+const AddressBookItemInteral: React.FC<RouteComponentProps & AddressBookItemProps> = ({
+  item,
+  removeAddressBookEntry,
+  setSendTo,
+  history,
+}) => {
   return (
-    <AccordionItem key={item.label} className={[cstyles.well, cstyles.margintopsmall].join(' ')} uuid={item.label}>
+    <AccordionItem key={item.label} className={[cstyles.well, cstyles.margintopsmall].join(" ")} uuid={item.label}>
       <AccordionItemHeading>
         <AccordionItemButton className={cstyles.accordionHeader}>
-          <div className={[cstyles.flexspacebetween].join(' ')}>
+          <div className={[cstyles.flexspacebetween].join(" ")}>
             <div>{item.label}</div>
             <div>{item.address}</div>
           </div>
         </AccordionItemButton>
       </AccordionItemHeading>
       <AccordionItemPanel>
-        <div className={[cstyles.well, styles.addressbookentrybuttons].join(' ')}>
+        <div className={[cstyles.well, styles.addressbookentrybuttons].join(" ")}>
           <button
             type="button"
             className={cstyles.primarybutton}
@@ -57,23 +62,23 @@ const AddressBookItemInteral: React.FC<RouteComponentProps & AddressBookItemProp
 const AddressBookItem = withRouter(AddressBookItemInteral);
 
 type AddressBookProps = {
-  addressBook: AddressBookEntry[],
-  addAddressBookEntry: (label: string, address: string) => void,
-  removeAddressBookEntry: (label: string) => void,
-  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void
+  addressBook: AddressBookEntry[];
+  addAddressBookEntry: (label: string, address: string) => void;
+  removeAddressBookEntry: (label: string) => void;
+  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void;
 };
 
 type AddressBookState = {
-  currentLabel: string,
-  currentAddress: string,
-  addButtonEnabled: boolean
+  currentLabel: string;
+  currentAddress: string;
+  addButtonEnabled: boolean;
 };
 
 export default class AddressBook extends Component<AddressBookProps, AddressBookState> {
   constructor(props: AddressBookProps) {
     super(props);
 
-    this.state = { currentLabel: '', currentAddress: '', addButtonEnabled: false };
+    this.state = { currentLabel: "", currentAddress: "", addButtonEnabled: false };
   }
 
   updateLabel = (currentLabel: string) => {
@@ -84,7 +89,7 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
     this.setState({ currentLabel });
 
     const { labelError, addressIsValid } = this.validate(currentLabel, currentAddress);
-    this.setAddButtonEnabled(!labelError && addressIsValid && currentLabel !== '' && currentAddress !== '');
+    this.setAddButtonEnabled(!labelError && addressIsValid && currentLabel !== "" && currentAddress !== "");
   };
 
   updateAddress = (currentAddress: string) => {
@@ -93,7 +98,7 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
 
     const { labelError, addressIsValid } = this.validate(currentLabel, currentAddress);
 
-    this.setAddButtonEnabled(!labelError && addressIsValid && currentLabel !== '' && currentAddress !== '');
+    this.setAddButtonEnabled(!labelError && addressIsValid && currentLabel !== "" && currentAddress !== "");
   };
 
   addButtonClicked = () => {
@@ -101,7 +106,7 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
     const { currentLabel, currentAddress } = this.state;
 
     addAddressBookEntry(currentLabel, currentAddress);
-    this.setState({ currentLabel: '', currentAddress: '' });
+    this.setState({ currentLabel: "", currentAddress: "" });
   };
 
   setAddButtonEnabled = (addButtonEnabled: boolean) => {
@@ -111,11 +116,11 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
   validate = (currentLabel: string, currentAddress: string) => {
     const { addressBook } = this.props;
 
-    let labelError = addressBook.find(i => i.label === currentLabel) ? 'Duplicate Label' : null;
-    labelError = currentLabel.length > 12 ? 'Label is too long' : labelError;
+    let labelError = addressBook.find((i) => i.label === currentLabel) ? "Duplicate Label" : null;
+    labelError = currentLabel.length > 12 ? "Label is too long" : labelError;
 
     const addressIsValid =
-      currentAddress === '' || Utils.isZaddr(currentAddress) || Utils.isTransparent(currentAddress);
+      currentAddress === "" || Utils.isZaddr(currentAddress) || Utils.isTransparent(currentAddress);
 
     return { labelError, addressIsValid };
   };
@@ -128,15 +133,15 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
 
     return (
       <div>
-        <div className={[cstyles.xlarge, cstyles.padall, cstyles.center].join(' ')}>Address Book</div>
+        <div className={[cstyles.xlarge, cstyles.padall, cstyles.center].join(" ")}>Address Book</div>
 
         <div className={styles.addressbookcontainer}>
-          <div className={[cstyles.well].join(' ')}>
-            <div className={[cstyles.flexspacebetween].join(' ')}>
+          <div className={[cstyles.well].join(" ")}>
+            <div className={[cstyles.flexspacebetween].join(" ")}>
               <div className={cstyles.sublight}>Label</div>
               <div className={cstyles.validationerror}>
                 {!labelError ? (
-                  <i className={[cstyles.green, 'fas', 'fa-check'].join(' ')} />
+                  <i className={[cstyles.green, "fas", "fa-check"].join(" ")} />
                 ) : (
                   <span className={cstyles.red}>{labelError}</span>
                 )}
@@ -145,17 +150,17 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
             <input
               type="text"
               value={currentLabel}
-              className={[cstyles.inputbox, cstyles.margintopsmall].join(' ')}
-              onChange={e => this.updateLabel(e.target.value)}
+              className={[cstyles.inputbox, cstyles.margintopsmall].join(" ")}
+              onChange={(e) => this.updateLabel(e.target.value)}
             />
 
             <div className={cstyles.margintoplarge} />
 
-            <div className={[cstyles.flexspacebetween].join(' ')}>
+            <div className={[cstyles.flexspacebetween].join(" ")}>
               <div className={cstyles.sublight}>Address</div>
               <div className={cstyles.validationerror}>
                 {addressIsValid ? (
-                  <i className={[cstyles.green, 'fas', 'fa-check'].join(' ')} />
+                  <i className={[cstyles.green, "fas", "fa-check"].join(" ")} />
                 ) : (
                   <span className={cstyles.red}>Invalid Address</span>
                 )}
@@ -164,8 +169,8 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
             <input
               type="text"
               value={currentAddress}
-              className={[cstyles.inputbox, cstyles.margintopsmall].join(' ')}
-              onChange={e => this.updateAddress(e.target.value)}
+              className={[cstyles.inputbox, cstyles.margintopsmall].join(" ")}
+              onChange={(e) => this.updateAddress(e.target.value)}
             />
 
             <div className={cstyles.margintoplarge} />
@@ -182,13 +187,13 @@ export default class AddressBook extends Component<AddressBookProps, AddressBook
 
           <ScrollPane offsetHeight={300}>
             <div className={styles.addressbooklist}>
-              <div className={[cstyles.flexspacebetween, cstyles.tableheader, cstyles.sublight].join(' ')}>
+              <div className={[cstyles.flexspacebetween, cstyles.tableheader, cstyles.sublight].join(" ")}>
                 <div>Label</div>
                 <div>Address</div>
               </div>
               {addressBook && (
                 <Accordion>
-                  {addressBook.map(item => (
+                  {addressBook.map((item) => (
                     <AddressBookItem
                       key={item.label}
                       item={item}

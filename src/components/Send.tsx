@@ -7,44 +7,45 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable max-classes-per-file */
 // @flow
-import React, { PureComponent } from 'react';
-import Modal from 'react-modal';
-import TextareaAutosize from 'react-textarea-autosize';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import styles from './Send.module.css';
-import cstyles from './Common.module.css';
-import { ToAddr, AddressBalance, SendPageState, Info, AddressBookEntry, TotalBalance, SendProgress } from './AppState';
-import Utils from '../utils/utils';
-import ScrollPane from './ScrollPane';
-import ArrowUpLight from '../assets/img/arrow_up_dark.png';
-import { BalanceBlockHighlight } from './BalanceBlocks';
-import RPC from '../rpc';
-import routes from '../constants/routes.json';
-import { parseZcashURI, ZcashURITarget } from '../utils/uris';
+import React, { PureComponent } from "react";
+import Modal from "react-modal";
+import TextareaAutosize from "react-textarea-autosize";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import styles from "./Send.module.css";
+import cstyles from "./Common.module.css";
+import { ToAddr, AddressBalance, SendPageState, Info, AddressBookEntry, TotalBalance, SendProgress } from "./AppState";
+import Utils from "../utils/utils";
+import ScrollPane from "./ScrollPane";
+import ArrowUpLight from "../assets/img/arrow_up_dark.png";
+import { BalanceBlockHighlight } from "./BalanceBlocks";
+import RPC from "../rpc";
+import routes from "../constants/routes.json";
+import { parseZcashURI, ZcashURITarget } from "../utils/uris";
 
 type OptionType = {
-  value: string,
-  label: string
+  value: string;
+  label: string;
 };
 
 const Spacer = () => {
-  return <div style={{ marginTop: '24px' }} />;
+  return <div style={{ marginTop: "24px" }} />;
 };
 
 type ToAddrBoxProps = {
-  toaddr: ToAddr,
-  zecPrice: number,
+  toaddr: ToAddr;
+  zecPrice: number;
   updateToField: (
     id: number,
     address: React.ChangeEvent<HTMLInputElement> | null,
     amount: React.ChangeEvent<HTMLInputElement> | null,
-    memo: React.ChangeEvent<HTMLTextAreaElement> | string | null) => void,
-  fromAddress: string,
-  fromAmount: number,
-  setSendButtonEnable: (sendButtonEnabled: boolean) => void,
-  setMaxAmount: (id: number, total: number) => void,
-  totalAmountAvailable: number,
-}
+    memo: React.ChangeEvent<HTMLTextAreaElement> | string | null
+  ) => void;
+  fromAddress: string;
+  fromAmount: number;
+  setSendButtonEnable: (sendButtonEnabled: boolean) => void;
+  setMaxAmount: (id: number, total: number) => void;
+  totalAmountAvailable: number;
+};
 const ToAddrBox = ({
   toaddr,
   zecPrice,
@@ -53,36 +54,36 @@ const ToAddrBox = ({
   fromAmount,
   setMaxAmount,
   setSendButtonEnable,
-  totalAmountAvailable
+  totalAmountAvailable,
 }: ToAddrBoxProps) => {
   const isMemoDisabled = !Utils.isZaddr(toaddr.to);
 
-  const addressIsValid = toaddr.to === '' || Utils.isZaddr(toaddr.to) || Utils.isTransparent(toaddr.to);
+  const addressIsValid = toaddr.to === "" || Utils.isZaddr(toaddr.to) || Utils.isTransparent(toaddr.to);
 
   let amountError = null;
   if (toaddr.amount) {
     if (toaddr.amount < 0) {
-      amountError = 'Amount cannot be negative';
+      amountError = "Amount cannot be negative";
     }
     if (toaddr.amount > fromAmount) {
-      amountError = 'Amount Exceeds Balance';
+      amountError = "Amount Exceeds Balance";
     }
     if (toaddr.amount < 10 ** -8) {
-      amountError = 'Amount is too small';
+      amountError = "Amount is too small";
     }
-    const s = toaddr.amount.toString().split('.');
+    const s = toaddr.amount.toString().split(".");
     if (s && s.length > 1 && s[1].length > 8) {
-      amountError = 'Too Many Decimals';
+      amountError = "Too Many Decimals";
     }
   }
 
   if (isNaN(toaddr.amount)) {
     // Amount is empty
-    amountError = 'Amount cannot be empty';
+    amountError = "Amount cannot be empty";
   }
 
   let buttonstate = true;
-  if (!addressIsValid || amountError || toaddr.to === '' || toaddr.amount === 0 || fromAmount === 0) {
+  if (!addressIsValid || amountError || toaddr.to === "" || toaddr.amount === 0 || fromAmount === 0) {
     buttonstate = false;
   }
 
@@ -104,12 +105,12 @@ const ToAddrBox = ({
 
   return (
     <div>
-      <div className={[cstyles.well, cstyles.verticalflex].join(' ')}>
-        <div className={[cstyles.flexspacebetween].join(' ')}>
+      <div className={[cstyles.well, cstyles.verticalflex].join(" ")}>
+        <div className={[cstyles.flexspacebetween].join(" ")}>
           <div className={cstyles.sublight}>To</div>
           <div className={cstyles.validationerror}>
             {addressIsValid ? (
-              <i className={[cstyles.green, 'fas', 'fa-check'].join(' ')} />
+              <i className={[cstyles.green, "fas", "fa-check"].join(" ")} />
             ) : (
               <span className={cstyles.red}>Invalid Address</span>
             )}
@@ -120,22 +121,22 @@ const ToAddrBox = ({
           placeholder="Z or T address"
           className={cstyles.inputbox}
           value={toaddr.to}
-          onChange={e => updateToField(toaddr.id as number, e, null, null)}
+          onChange={(e) => updateToField(toaddr.id as number, e, null, null)}
         />
         <Spacer />
-        <div className={[cstyles.flexspacebetween].join(' ')}>
+        <div className={[cstyles.flexspacebetween].join(" ")}>
           <div className={cstyles.sublight}>Amount</div>
           <div className={cstyles.validationerror}>
             {amountError ? <span className={cstyles.red}>{amountError}</span> : <span>{usdValue}</span>}
           </div>
         </div>
-        <div className={[cstyles.flexspacebetween].join(' ')}>
+        <div className={[cstyles.flexspacebetween].join(" ")}>
           <input
             type="number"
             step="any"
             className={cstyles.inputbox}
-            value={isNaN(toaddr.amount) ? '' : toaddr.amount}
-            onChange={e => updateToField(toaddr.id as number, null, e, null)}
+            value={isNaN(toaddr.amount) ? "" : toaddr.amount}
+            onChange={(e) => updateToField(toaddr.id as number, null, e, null)}
           />
           <img
             className={styles.toaddrbutton}
@@ -151,7 +152,7 @@ const ToAddrBox = ({
 
         {!isMemoDisabled && (
           <div>
-            <div className={[cstyles.flexspacebetween].join(' ')}>
+            <div className={[cstyles.flexspacebetween].join(" ")}>
               <div className={cstyles.sublight}>Memo</div>
               <div className={cstyles.validationerror}>{toaddr.memo.length}</div>
             </div>
@@ -159,9 +160,9 @@ const ToAddrBox = ({
               className={cstyles.inputbox}
               value={toaddr.memo}
               disabled={isMemoDisabled}
-              onChange={e => updateToField(toaddr.id as number, null, null, e)}
+              onChange={(e) => updateToField(toaddr.id as number, null, null, e)}
             />
-            <input type="checkbox" onChange={e => e.target.checked && addReplyTo()} />
+            <input type="checkbox" onChange={(e) => e.target.checked && addReplyTo()} />
             Include Reply-To address
           </div>
         )}
@@ -179,11 +180,11 @@ export type SendManyJson = {
 };
 
 function getSendManyJSON(sendPageState: SendPageState): SendManyJson[] {
-  const json = sendPageState.toaddrs.flatMap(to => {
-    const memo = to.memo || '';
+  const json = sendPageState.toaddrs.flatMap((to) => {
+    const memo = to.memo || "";
     const amount = parseInt((to.amount * 10 ** 8).toFixed(0));
 
-    if (memo === '') {
+    if (memo === "") {
       return { address: to.to, amount, memo: undefined };
     } else if (memo.length <= 512) {
       return { address: to.to, amount, memo };
@@ -205,55 +206,55 @@ function getSendManyJSON(sendPageState: SendPageState): SendManyJson[] {
     }
   });
 
-  console.log('Sending:');
+  console.log("Sending:");
   console.log(json);
 
   return json;
 }
 
 type ConfirmModalToAddrProps = {
-  toaddr: ToAddr,
-  info: Info
+  toaddr: ToAddr;
+  info: Info;
 };
 const ConfirmModalToAddr = ({ toaddr, info }: ConfirmModalToAddrProps) => {
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(toaddr.amount);
 
-  const memo: string = toaddr.memo ? toaddr.memo : '';
+  const memo: string = toaddr.memo ? toaddr.memo : "";
 
   return (
     <div className={cstyles.well}>
-      <div className={[cstyles.flexspacebetween, cstyles.margintoplarge].join(' ')}>
-        <div className={[styles.confirmModalAddress].join(' ')}>
-          {Utils.splitStringIntoChunks(toaddr.to, 6).join(' ')}
+      <div className={[cstyles.flexspacebetween, cstyles.margintoplarge].join(" ")}>
+        <div className={[styles.confirmModalAddress].join(" ")}>
+          {Utils.splitStringIntoChunks(toaddr.to, 6).join(" ")}
         </div>
-        <div className={[cstyles.verticalflex, cstyles.right].join(' ')}>
+        <div className={[cstyles.verticalflex, cstyles.right].join(" ")}>
           <div className={cstyles.large}>
             <div>
               <span>
                 {info.currencyName} {bigPart}
               </span>
-              <span className={[cstyles.small, styles.zecsmallpart].join(' ')}>{smallPart}</span>
+              <span className={[cstyles.small, styles.zecsmallpart].join(" ")}>{smallPart}</span>
             </div>
           </div>
           <div>{Utils.getZecToUsdString(info.zecPrice, toaddr.amount)}</div>
         </div>
       </div>
-      <div className={[cstyles.sublight, cstyles.breakword, cstyles.memodiv].join(' ')}>{memo}</div>
+      <div className={[cstyles.sublight, cstyles.breakword, cstyles.memodiv].join(" ")}>{memo}</div>
     </div>
   );
 };
 
 // Internal because we're using withRouter just below
 type ConfirmModalProps = {
-  sendPageState: SendPageState,
-  info: Info,
-  sendTransaction: (sendJson: SendManyJson[], setSendProgress: (p?: SendProgress) => void) => Promise<string>,
-  clearToAddrs: () => void,
-  closeModal: () => void,
-  modalIsOpen: boolean,
-  openErrorModal: (title: string, body: string) => void,
-  openPasswordAndUnlockIfNeeded: (successCallback: () => void | Promise<void>) => void,
-}
+  sendPageState: SendPageState;
+  info: Info;
+  sendTransaction: (sendJson: SendManyJson[], setSendProgress: (p?: SendProgress) => void) => Promise<string>;
+  clearToAddrs: () => void;
+  closeModal: () => void;
+  modalIsOpen: boolean;
+  openErrorModal: (title: string, body: string) => void;
+  openPasswordAndUnlockIfNeeded: (successCallback: () => void | Promise<void>) => void;
+};
 
 const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = ({
   sendPageState,
@@ -264,7 +265,7 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
   modalIsOpen,
   openErrorModal,
   openPasswordAndUnlockIfNeeded,
-  history
+  history,
 }) => {
   const defaultFee = RPC.getDefaultFee();
   const sendingTotal = sendPageState.toaddrs.reduce((s, t) => s + t.amount, 0.0) + defaultFee;
@@ -276,7 +277,7 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
 
     // This will be replaced by either a success TXID or error message that the user
     // has to close manually.
-    openErrorModal('Computing Transaction', 'Please wait...This could take a while');
+    openErrorModal("Computing Transaction", "Please wait...This could take a while");
     const setSendProgress = (progress?: SendProgress) => {
       if (progress && progress.sendInProgress) {
         openErrorModal(
@@ -292,14 +293,14 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
         // Then send the Tx async
         (async () => {
           const sendJson = getSendManyJSON(sendPageState);
-          let txid = '';
+          let txid = "";
 
           try {
             txid = await sendTransaction(sendJson, setSendProgress);
             console.log(txid);
 
             openErrorModal(
-              'Successfully Broadcast Transaction',
+              "Successfully Broadcast Transaction",
               `Transaction was successfully broadcast.\nTXID: ${txid}`
             );
 
@@ -309,7 +310,7 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
             history.push(routes.DASHBOARD);
           } catch (err) {
             // If there was an error, show the error modal
-            openErrorModal('Error Sending Transaction', `${err}`);
+            openErrorModal("Error Sending Transaction", `${err}`);
           }
         })();
       });
@@ -323,8 +324,8 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
       className={styles.confirmModal}
       overlayClassName={styles.confirmOverlay}
     >
-      <div className={[cstyles.verticalflex].join(' ')}>
-        <div className={[cstyles.marginbottomlarge, cstyles.center].join(' ')}>Confirm Transaction</div>
+      <div className={[cstyles.verticalflex].join(" ")}>
+        <div className={[cstyles.marginbottomlarge, cstyles.center].join(" ")}>Confirm Transaction</div>
         <div className={cstyles.flex}>
           <div
             className={[
@@ -332,16 +333,16 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
               cstyles.xlarge,
               cstyles.flexspacebetween,
               cstyles.well,
-              cstyles.maxwidth
-            ].join(' ')}
+              cstyles.maxwidth,
+            ].join(" ")}
           >
             <div>Total</div>
-            <div className={[cstyles.right, cstyles.verticalflex].join(' ')}>
+            <div className={[cstyles.right, cstyles.verticalflex].join(" ")}>
               <div>
                 <span>
                   {info.currencyName} {bigPart}
                 </span>
-                <span className={[cstyles.small, styles.zecsmallpart].join(' ')}>{smallPart}</span>
+                <span className={[cstyles.small, styles.zecsmallpart].join(" ")}>{smallPart}</span>
               </div>
 
               <div className={cstyles.normal}>{Utils.getZecToUsdString(info.zecPrice, sendingTotal)}</div>
@@ -350,12 +351,12 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
         </div>
 
         <ScrollPane offsetHeight={400}>
-          <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(' ')}>
-            {sendPageState.toaddrs.map(t => (
+          <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(" ")}>
+            {sendPageState.toaddrs.map((t) => (
               <ConfirmModalToAddr key={t.to} toaddr={t} info={info} />
             ))}
           </div>
-          <ConfirmModalToAddr toaddr={{ to: 'Fee', amount: defaultFee, memo: '' }} info={info} />
+          <ConfirmModalToAddr toaddr={{ to: "Fee", amount: defaultFee, memo: "" }} info={info} />
         </ScrollPane>
 
         <div className={cstyles.buttoncontainer}>
@@ -374,16 +375,16 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
 const ConfirmModal = withRouter(ConfirmModalInternal);
 
 type Props = {
-  addresses: string[],
-  totalBalance: TotalBalance,
-  addressBook: AddressBookEntry[],
-  sendPageState: SendPageState,
-  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void,
-  sendTransaction: (sendJson: SendManyJson[], setSendProgress: (p?: SendProgress) => void) => Promise<string>,
-  setSendPageState: (sendPageState: SendPageState) => void,
-  openErrorModal: (title: string, body: string) => void,
-  info: Info,
-  openPasswordAndUnlockIfNeeded: (successCallback: () => void) => void
+  addresses: string[];
+  totalBalance: TotalBalance;
+  addressBook: AddressBookEntry[];
+  sendPageState: SendPageState;
+  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void;
+  sendTransaction: (sendJson: SendManyJson[], setSendProgress: (p?: SendProgress) => void) => Promise<string>;
+  setSendPageState: (sendPageState: SendPageState) => void;
+  openErrorModal: (title: string, body: string) => void;
+  info: Info;
+  openPasswordAndUnlockIfNeeded: (successCallback: () => void) => void;
 };
 
 class SendState {
@@ -443,13 +444,13 @@ export default class Send extends PureComponent<Props, SendState> {
     id: number,
     address: React.ChangeEvent<HTMLInputElement> | null,
     amount: React.ChangeEvent<HTMLInputElement> | null,
-    memo: React.ChangeEvent<HTMLTextAreaElement> | string | null) => {
-
+    memo: React.ChangeEvent<HTMLTextAreaElement> | string | null
+  ) => {
     const { sendPageState, setSendPageState, setSendTo } = this.props;
 
     const newToAddrs = sendPageState.toaddrs.slice(0);
     // Find the correct toAddr
-    const toAddr = newToAddrs.find(a => a.id === id) as ToAddr;
+    const toAddr = newToAddrs.find((a) => a.id === id) as ToAddr;
     if (address) {
       // First, check if this is a URI
       // $FlowFixMe
@@ -459,7 +460,7 @@ export default class Send extends PureComponent<Props, SendState> {
         return;
       }
 
-      toAddr.to = address.target.value.replace(/ /g, ''); // Remove spaces
+      toAddr.to = address.target.value.replace(/ /g, ""); // Remove spaces
     }
 
     if (amount) {
@@ -474,7 +475,7 @@ export default class Send extends PureComponent<Props, SendState> {
     }
 
     if (memo) {
-      if (typeof memo === 'string') {
+      if (typeof memo === "string") {
         toAddr.memo = memo;
       } else {
         // $FlowFixMe
@@ -495,15 +496,13 @@ export default class Send extends PureComponent<Props, SendState> {
 
     const newToAddrs = sendPageState.toaddrs.slice(0);
 
-    let totalOtherAmount: number = newToAddrs
-      .filter(a => a.id !== id)
-      .reduce((s, a) => s + a.amount, 0);
+    let totalOtherAmount: number = newToAddrs.filter((a) => a.id !== id).reduce((s, a) => s + a.amount, 0);
 
     // Add Fee
     totalOtherAmount += RPC.getDefaultFee();
 
     // Find the correct toAddr
-    const toAddr = newToAddrs.find(a => a.id === id) as ToAddr;
+    const toAddr = newToAddrs.find((a) => a.id === id) as ToAddr;
     toAddr.amount = total - totalOtherAmount;
     if (toAddr.amount < 0) toAddr.amount = 0;
     //toAddr.amount = Utils.maxPrecisionTrimmed(toAddr.amount);
@@ -530,7 +529,7 @@ export default class Send extends PureComponent<Props, SendState> {
 
   getBalanceForAddress = (addr: string, addressesWithBalance: AddressBalance[]): number => {
     // Find the addr in addressesWithBalance
-    const addressBalance = addressesWithBalance.find(ab => ab.address === addr) as AddressBalance;
+    const addressBalance = addressesWithBalance.find((ab) => ab.address === addr) as AddressBalance;
 
     if (!addressBalance) {
       return 0;
@@ -542,8 +541,8 @@ export default class Send extends PureComponent<Props, SendState> {
   getLabelForFromAddress = (addr: string, addressesWithBalance: AddressBalance[], currencyName: string) => {
     // Find the addr in addressesWithBalance
     const { addressBook } = this.props;
-    const label = addressBook.find(ab => ab.address === addr);
-    const labelStr = label ? ` [ ${label.label} ]` : '';
+    const label = addressBook.find((ab) => ab.address === addr);
+    const labelStr = label ? ` [ ${label.label} ]` : "";
 
     const balance = this.getBalanceForAddress(addr, addressesWithBalance);
 
@@ -559,24 +558,24 @@ export default class Send extends PureComponent<Props, SendState> {
       info,
       totalBalance,
       openErrorModal,
-      openPasswordAndUnlockIfNeeded
+      openPasswordAndUnlockIfNeeded,
     } = this.props;
 
     const totalAmountAvailable = totalBalance.transparent + totalBalance.spendablePrivate;
-    const fromaddr = addresses.find(a => Utils.isSapling(a)) as string;
+    const fromaddr = addresses.find((a) => Utils.isSapling(a)) as string;
 
     // If there are unverified funds, then show a tooltip
-    let tooltip: string = '';
+    let tooltip: string = "";
     if (totalBalance.unverifiedPrivate) {
       tooltip = `Waiting for confirmation of ZEC ${totalBalance.unverifiedPrivate} with 5 blocks (approx 6 minutes)`;
     }
 
     return (
       <div>
-        <div className={[cstyles.xlarge, cstyles.padall, cstyles.center].join(' ')}>Send</div>
+        <div className={[cstyles.xlarge, cstyles.padall, cstyles.center].join(" ")}>Send</div>
 
         <div className={styles.sendcontainer}>
-          <div className={[cstyles.well, cstyles.balancebox, cstyles.containermargin].join(' ')}>
+          <div className={[cstyles.well, cstyles.balancebox, cstyles.containermargin].join(" ")}>
             <BalanceBlockHighlight
               topLabel="Spendable Funds"
               zecValue={totalAmountAvailable}
@@ -593,7 +592,7 @@ export default class Send extends PureComponent<Props, SendState> {
           </div>
 
           <ScrollPane className={cstyles.containermargin} offsetHeight={320}>
-            {sendPageState.toaddrs.map(toaddr => {
+            {sendPageState.toaddrs.map((toaddr) => {
               return (
                 <ToAddrBox
                   key={toaddr.id}
@@ -608,9 +607,9 @@ export default class Send extends PureComponent<Props, SendState> {
                 />
               );
             })}
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: "right" }}>
               <button type="button" onClick={this.addToAddr}>
-                <i className={['fas', 'fa-plus'].join(' ')} />
+                <i className={["fas", "fa-plus"].join(" ")} />
               </button>
             </div>
           </ScrollPane>
