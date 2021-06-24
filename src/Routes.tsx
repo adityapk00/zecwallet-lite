@@ -2,17 +2,17 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unused-state */
-import React from 'react';
-import ReactModal from 'react-modal';
-import { Switch, Route } from 'react-router';
-import native from './native.node';
-import { ErrorModal, ErrorModalData } from './components/ErrorModal';
-import cstyles from './components/Common.module.css';
-import routes from './constants/routes.json';
-import Dashboard from './components/Dashboard';
-import Send, { SendManyJson } from './components/Send';
-import Receive from './components/Receive';
-import LoadingScreen from './components/LoadingScreen';
+import React from "react";
+import ReactModal from "react-modal";
+import { Switch, Route } from "react-router";
+import native from "./native.node";
+import { ErrorModal, ErrorModalData } from "./components/ErrorModal";
+import cstyles from "./components/Common.module.css";
+import routes from "./constants/routes.json";
+import Dashboard from "./components/Dashboard";
+import Send, { SendManyJson } from "./components/Send";
+import Receive from "./components/Receive";
+import LoadingScreen from "./components/LoadingScreen";
 import AppState, {
   AddressBalance,
   TotalBalance,
@@ -25,19 +25,18 @@ import AppState, {
   AddressBookEntry,
   PasswordState,
   ServerSelectState,
-  SendProgress
-} from './components/AppState';
-import RPC from './rpc';
-import Utils from './utils/utils';
-import { ZcashURITarget } from './utils/uris';
-import Zcashd from './components/Zcashd';
-import AddressBook from './components/Addressbook';
-import AddressbookImpl from './utils/AddressbookImpl';
-import Sidebar from './components/Sidebar';
-import Transactions from './components/Transactions';
-import PasswordModal from './components/PasswordModal';
-import ServerSelectModal from './components/ServerSelectModal';
-
+  SendProgress,
+} from "./components/AppState";
+import RPC from "./rpc";
+import Utils from "./utils/utils";
+import { ZcashURITarget } from "./utils/uris";
+import Zcashd from "./components/Zcashd";
+import AddressBook from "./components/Addressbook";
+import AddressbookImpl from "./utils/AddressbookImpl";
+import Sidebar from "./components/Sidebar";
+import Transactions from "./components/Transactions";
+import PasswordModal from "./components/PasswordModal";
+import ServerSelectModal from "./components/ServerSelectModal";
 
 type Props = {};
 
@@ -54,7 +53,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.state.sendPageState.toaddrs = [new ToAddr(Utils.getNextToAddrID())];
 
     // Set the Modal's app element
-    ReactModal.setAppElement('#root');
+    ReactModal.setAppElement("#root");
 
     this.rpc = new RPC(
       this.setTotalBalance,
@@ -65,7 +64,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       this.setZecPrice
     );
 
-    console.log(native.litelib_wallet_exists('main'));
+    console.log(native.litelib_wallet_exists("main"));
   }
 
   componentDidMount() {
@@ -78,7 +77,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
     })();
   }
 
-  componentWillUnmount() { }
+  componentWillUnmount() {}
 
   getFullState = (): AppState => {
     return this.state;
@@ -124,7 +123,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
     passwordState.showPassword = true;
     passwordState.confirmNeeded = confirmNeeded;
-    passwordState.helpText = helpText || '';
+    passwordState.helpText = helpText || "";
 
     // Set the callbacks, but before calling them back, we close the modals
     passwordState.passwordCallback = (password: string) => {
@@ -165,12 +164,12 @@ export default class RouteApp extends React.Component<Props, AppState> {
               // If the unlock succeeded, do the submit
               successCallback();
             } else {
-              this.openErrorModal('Wallet unlock failed', 'Could not unlock the wallet with the password.');
+              this.openErrorModal("Wallet unlock failed", "Could not unlock the wallet with the password.");
             }
           })();
         },
         // Close callback is a no-op
-        () => { }
+        () => {}
       );
     } else {
       successCallback();
@@ -211,7 +210,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
     if (!sendPageState.fromaddr) {
       // Find a z-address with the highest balance
       const defaultAB = addressesWithBalance
-        .filter(ab => Utils.isSapling(ab.address))
+        .filter((ab) => Utils.isSapling(ab.address))
         .reduce((prev: AddressBalance | null, ab) => {
           // We'll start with a sapling address
           if (!prev) {
@@ -253,15 +252,15 @@ export default class RouteApp extends React.Component<Props, AppState> {
     for (let i = 0; i < keys.length; i++) {
       // eslint-disable-next-line no-await-in-loop
       const result = await RPC.doImportPrivKey(keys[i], birthday);
-      if (result === 'OK') {
+      if (result === "OK") {
         return true;
         // eslint-disable-next-line no-else-return
       } else {
         this.openErrorModal(
-          'Failed to import key',
+          "Failed to import key",
           <span>
             A private key failed to import.
-            < br />
+            <br />
             The error was:
             <br />
             {result}
@@ -289,7 +288,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       tgts = [targets as ZcashURITarget];
     }
 
-    tgts.forEach(tgt => {
+    tgts.forEach((tgt) => {
       const to = new ToAddr(Utils.getNextToAddrID());
       if (tgt.address) {
         to.to = tgt.address;
@@ -327,8 +326,9 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ info: newInfo });
   };
 
-  setRescanning = (rescanning: boolean) => {
+  setRescanning = (rescanning: boolean, prevSyncId: number) => {
     this.setState({ rescanning });
+    this.setState({ prevSyncId });
   };
 
   setInfo = (newInfo: Info) => {
@@ -348,13 +348,13 @@ export default class RouteApp extends React.Component<Props, AppState> {
     try {
       const txid = await this.rpc.sendTransaction(sendJson, setSendProgress);
 
-      if (txid.toLowerCase().startsWith('error')) {
+      if (txid.toLowerCase().startsWith("error")) {
         throw txid;
       }
 
       return txid;
     } catch (err) {
-      console.log('route sendtx error', err);
+      console.log("route sendtx error", err);
       throw err;
     }
   };
@@ -370,8 +370,8 @@ export default class RouteApp extends React.Component<Props, AppState> {
   fetchAndSetSinglePrivKey = async (address: string) => {
     this.openPasswordAndUnlockIfNeeded(async () => {
       let key = await RPC.getPrivKeyAsString(address);
-      if (key === '') {
-        key = '<No Key Available>';
+      if (key === "") {
+        key = "<No Key Available>";
       }
       const addressPrivateKeys = new Map();
       addressPrivateKeys.set(address, key);
@@ -403,7 +403,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
   removeAddressBookEntry = (label: string) => {
     const { addressBook } = this.state;
-    const newAddressBook = addressBook.filter(i => i.label !== label);
+    const newAddressBook = addressBook.filter((i) => i.label !== label);
 
     // Write to disk. This method is async
     AddressbookImpl.writeAddressBook(newAddressBook);
@@ -439,7 +439,6 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.rpc.clearTimers();
   };
 
-
   render() {
     const {
       totalBalance,
@@ -454,6 +453,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       rpcConfig,
       info,
       rescanning,
+      prevSyncId,
       errorModalData,
       serverSelectState,
       passwordState,
@@ -464,8 +464,10 @@ export default class RouteApp extends React.Component<Props, AppState> {
       closeErrorModal: this.closeErrorModal,
       setSendTo: this.setSendTo,
       info,
-      openPasswordAndUnlockIfNeeded: this.openPasswordAndUnlockIfNeeded
+      openPasswordAndUnlockIfNeeded: this.openPasswordAndUnlockIfNeeded,
     };
+
+    const hasLatestBlock = info && info.latestBlock > 0 ? true : false;
 
     return (
       <>
@@ -490,8 +492,8 @@ export default class RouteApp extends React.Component<Props, AppState> {
           openErrorModal={this.openErrorModal}
         />
 
-        <div style={{ overflow: 'hidden' }}>
-          {info && info.latestBlock && (
+        <div style={{ overflow: "hidden" }}>
+          {hasLatestBlock && (
             <div className={cstyles.sidebarcontainer}>
               <Sidebar
                 setInfo={this.setInfo}
@@ -509,6 +511,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
               />
             </div>
           )}
+
           <div className={cstyles.contentcontainer}>
             <Switch>
               <Route
@@ -591,6 +594,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                   <LoadingScreen
                     setRPCConfig={this.setRPCConfig}
                     rescanning={rescanning}
+                    prevSyncId={prevSyncId}
                     setRescanning={this.setRescanning}
                     setInfo={this.setInfo}
                     openServerSelectModal={this.openServerSelectModal}

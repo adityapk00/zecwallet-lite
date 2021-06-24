@@ -70,14 +70,12 @@ class LoadingScreenState {
 type Props = {
   setRPCConfig: (rpcConfig: RPCConfig) => void;
   rescanning: boolean;
-  setRescanning: (rescan: boolean) => void;
+  prevSyncId: number;
+  setRescanning: (rescan: boolean, prevSyncId: number) => void;
   setInfo: (info: Info) => void;
   openServerSelectModal: () => void;
 };
-class LoadingScreen extends Component<
-  Props & RouteComponentProps,
-  LoadingScreenState
-> {
+class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreenState> {
   constructor(props: Props & RouteComponentProps) {
     super(props);
 
@@ -86,10 +84,10 @@ class LoadingScreen extends Component<
   }
 
   componentDidMount() {
-    const { rescanning } = this.props;
+    const { rescanning, prevSyncId } = this.props;
 
     if (rescanning) {
-      this.runSyncStatusPoller();
+      this.runSyncStatusPoller(prevSyncId);
     } else {
       (async () => {
         const success = await this.ensureZcashParams();
@@ -101,12 +99,7 @@ class LoadingScreen extends Component<
     }
   }
 
-  download = (
-    url: string,
-    dest: string,
-    name: string,
-    cb: (msg: string) => void
-  ) => {
+  download = (url: string, dest: string, name: string, cb: (msg: string) => void) => {
     const file = fs.createWriteStream(dest);
     const sendReq = request.get(url);
 
@@ -121,11 +114,7 @@ class LoadingScreen extends Component<
 
       const str = progress({ time: 1000 }, (pgrs) => {
         this.setState({
-          currentStatus: `Downloading ${name}... (${(
-            pgrs.transferred /
-            1024 /
-            1024
-          ).toFixed(0)} MB / ${totalSize} MB)`,
+          currentStatus: `Downloading ${name}... (${(pgrs.transferred / 1024 / 1024).toFixed(0)} MB / ${totalSize} MB)`,
         });
       });
 
@@ -279,17 +268,20 @@ class LoadingScreen extends Component<
       // Do a sync at start
       this.setState({ currentStatus: "Setting things up..." });
 
+      // Grab the previous sync ID.
+      const prevSyncId = JSON.parse(RPC.doSyncStatus()).sync_id;
+
       // This will do the sync in another thread, so we have to check for sync status
       RPC.doSync();
 
-      this.runSyncStatusPoller();
+      this.runSyncStatusPoller(prevSyncId);
     } catch (err) {
       // Not yet finished loading. So update the state, and setup the next refresh
       this.setState({ currentStatus: err });
     }
   }
 
-  runSyncStatusPoller = () => {
+  runSyncStatusPoller = (prevSyncId: number) => {
     const me = this;
 
     const { setRPCConfig, setInfo, setRescanning } = this.props;
@@ -312,8 +304,9 @@ class LoadingScreen extends Component<
         clearInterval(poller);
       } else {
         const ss = JSON.parse(syncstatus);
+        console.log(ss);
 
-        if (!ss.in_progress) {
+        if (ss.sync_id > prevSyncId && !ss.in_progress) {
           // First, save the wallet so we don't lose the just-synced data
           RPC.doSave();
 
@@ -321,7 +314,7 @@ class LoadingScreen extends Component<
           console.log(info);
           setInfo(info);
 
-          setRescanning(false);
+          setRescanning(false, prevSyncId);
 
           // Configure the RPC, which will setup the refresh
           const rpcConfig = new RPCConfig();
@@ -335,9 +328,11 @@ class LoadingScreen extends Component<
           me.setState({ loadingDone: true });
         } else {
           // Still syncing, grab the status and update the status
-          const p = ss.synced_blocks;
-          const t = ss.total_blocks;
-          const currentStatus = `Syncing ${p} / ${t}`;
+          const progress_blocks =
+            (ss.witness_blocks + ss.synced_blocks + ss.trial_decryptions_blocks + ss.txn_scan_blocks) / 4;
+
+          const progress = ((progress_blocks * 100) / ss.total_blocks).toFixed(2);
+          const currentStatus = `Syncing: ${progress}%`;
 
           me.setState({ currentStatus });
         }
@@ -391,12 +386,7 @@ class LoadingScreen extends Component<
 
     const allowOverwrite = true;
 
-    const result = native.litelib_initialize_new_from_phrase(
-      url,
-      seed,
-      birthday,
-      allowOverwrite
-    );
+    const result = native.litelib_initialize_new_from_phrase(url, seed, birthday, allowOverwrite);
     if (result.startsWith("Error")) {
       this.setState({ newWalletError: result });
     } else {
@@ -406,28 +396,15 @@ class LoadingScreen extends Component<
   };
 
   render() {
-    const {
-      loadingDone,
-      currentStatus,
-      currentStatusIsError,
-      walletScreen,
-      newWalletError,
-      seed,
-      birthday,
-    } = this.state;
+    const { loadingDone, currentStatus, currentStatusIsError, walletScreen, newWalletError, seed, birthday } =
+      this.state;
 
     const { openServerSelectModal } = this.props;
 
     // If still loading, show the status
     if (!loadingDone) {
       return (
-        <div
-          className={[
-            cstyles.verticalflex,
-            cstyles.center,
-            styles.loadingcontainer,
-          ].join(" ")}
-        >
+        <div className={[cstyles.verticalflex, cstyles.center, styles.loadingcontainer].join(" ")}>
           {walletScreen === 0 && (
             <div>
               <div style={{ marginTop: "100px" }}>
@@ -436,11 +413,7 @@ class LoadingScreen extends Component<
               <div>{currentStatus}</div>
               {currentStatusIsError && (
                 <div className={cstyles.buttoncontainer}>
-                  <button
-                    type="button"
-                    className={cstyles.primarybutton}
-                    onClick={openServerSelectModal}
-                  >
+                  <button type="button" className={cstyles.primarybutton} onClick={openServerSelectModal}>
                     Switch LightwalletD Server
                   </button>
                   <button
@@ -467,48 +440,27 @@ class LoadingScreen extends Component<
               <div>
                 <img src={Logo} width="200px;" alt="Logo" />
               </div>
-              <div
-                className={[cstyles.well, styles.newwalletcontainer].join(" ")}
-              >
+              <div className={[cstyles.well, styles.newwalletcontainer].join(" ")}>
                 <div className={cstyles.verticalflex}>
-                  <div className={[cstyles.large, cstyles.highlight].join(" ")}>
-                    Create A New Wallet
-                  </div>
+                  <div className={[cstyles.large, cstyles.highlight].join(" ")}>Create A New Wallet</div>
                   <div className={cstyles.padtopsmall}>
-                    Creates a new wallet with a new randomly generated seed
-                    phrase. Please save the seed phrase carefully, it&rsquo;s
-                    the only way to restore your wallet.
+                    Creates a new wallet with a new randomly generated seed phrase. Please save the seed phrase
+                    carefully, it&rsquo;s the only way to restore your wallet.
                   </div>
                   <div className={cstyles.margintoplarge}>
-                    <button
-                      type="button"
-                      className={cstyles.primarybutton}
-                      onClick={this.createNewWallet}
-                    >
+                    <button type="button" className={cstyles.primarybutton} onClick={this.createNewWallet}>
                       Create New
                     </button>
                   </div>
                 </div>
-                <div
-                  className={[
-                    cstyles.verticalflex,
-                    cstyles.margintoplarge,
-                  ].join(" ")}
-                >
-                  <div className={[cstyles.large, cstyles.highlight].join(" ")}>
-                    Restore Wallet From Seed
-                  </div>
+                <div className={[cstyles.verticalflex, cstyles.margintoplarge].join(" ")}>
+                  <div className={[cstyles.large, cstyles.highlight].join(" ")}>Restore Wallet From Seed</div>
                   <div className={cstyles.padtopsmall}>
-                    If you already have a seed phrase, you can restore it to
-                    this wallet. This will rescan the blockchain for all
-                    transactions from the seed phrase.
+                    If you already have a seed phrase, you can restore it to this wallet. This will rescan the
+                    blockchain for all transactions from the seed phrase.
                   </div>
                   <div className={cstyles.margintoplarge}>
-                    <button
-                      type="button"
-                      className={cstyles.primarybutton}
-                      onClick={this.restoreExistingWallet}
-                    >
+                    <button type="button" className={cstyles.primarybutton} onClick={this.restoreExistingWallet}>
                       Restore Existing
                     </button>
                   </div>
@@ -522,49 +474,30 @@ class LoadingScreen extends Component<
               <div>
                 <img src={Logo} width="200px;" alt="Logo" />
               </div>
-              <div
-                className={[cstyles.well, styles.newwalletcontainer].join(" ")}
-              >
+              <div className={[cstyles.well, styles.newwalletcontainer].join(" ")}>
                 <div className={cstyles.verticalflex}>
                   {newWalletError && (
                     <div>
-                      <div
-                        className={[cstyles.large, cstyles.highlight].join(" ")}
-                      >
-                        Error Creating New Wallet
-                      </div>
-                      <div className={cstyles.padtopsmall}>
-                        There was an error creating a new wallet
-                      </div>
+                      <div className={[cstyles.large, cstyles.highlight].join(" ")}>Error Creating New Wallet</div>
+                      <div className={cstyles.padtopsmall}>There was an error creating a new wallet</div>
                       <hr />
-                      <div className={cstyles.padtopsmall}>
-                        {newWalletError}
-                      </div>
+                      <div className={cstyles.padtopsmall}>{newWalletError}</div>
                       <hr />
                     </div>
                   )}
 
                   {!newWalletError && (
                     <div>
-                      <div
-                        className={[cstyles.large, cstyles.highlight].join(" ")}
-                      >
-                        Your New Wallet
-                      </div>
+                      <div className={[cstyles.large, cstyles.highlight].join(" ")}>Your New Wallet</div>
                       <div className={cstyles.padtopsmall}>
-                        This is your new wallet. Below is your seed phrase.
-                        PLEASE STORE IT CAREFULLY! The seed phrase is the only
-                        way to recover your funds and transactions.
+                        This is your new wallet. Below is your seed phrase. PLEASE STORE IT CAREFULLY! The seed phrase
+                        is the only way to recover your funds and transactions.
                       </div>
                       <hr />
                       <div className={cstyles.padtopsmall}>{seed}</div>
                       <hr />
                       <div className={cstyles.margintoplarge}>
-                        <button
-                          type="button"
-                          className={cstyles.primarybutton}
-                          onClick={this.startNewWallet}
-                        >
+                        <button type="button" className={cstyles.primarybutton} onClick={this.startNewWallet}>
                           Start Wallet
                         </button>
                       </div>
@@ -580,31 +513,17 @@ class LoadingScreen extends Component<
               <div>
                 <img src={Logo} width="200px;" alt="Logo" />
               </div>
-              <div
-                className={[cstyles.well, styles.newwalletcontainer].join(" ")}
-              >
+              <div className={[cstyles.well, styles.newwalletcontainer].join(" ")}>
                 <div className={cstyles.verticalflex}>
                   {newWalletError && (
                     <div>
-                      <div
-                        className={[cstyles.large, cstyles.highlight].join(" ")}
-                      >
-                        Error Restoring Wallet
-                      </div>
-                      <div className={cstyles.padtopsmall}>
-                        There was an error restoring your seed phrase
-                      </div>
+                      <div className={[cstyles.large, cstyles.highlight].join(" ")}>Error Restoring Wallet</div>
+                      <div className={cstyles.padtopsmall}>There was an error restoring your seed phrase</div>
                       <hr />
-                      <div className={cstyles.padtopsmall}>
-                        {newWalletError}
-                      </div>
+                      <div className={cstyles.padtopsmall}>{newWalletError}</div>
                       <hr />
                       <div className={cstyles.margintoplarge}>
-                        <button
-                          type="button"
-                          className={cstyles.primarybutton}
-                          onClick={this.restoreWalletBack}
-                        >
+                        <button type="button" className={cstyles.primarybutton} onClick={this.restoreWalletBack}>
                           Back
                         </button>
                       </div>
@@ -613,22 +532,15 @@ class LoadingScreen extends Component<
 
                   {!newWalletError && (
                     <div>
-                      <div className={[cstyles.large].join(" ")}>
-                        Please enter your seed phrase
-                      </div>
+                      <div className={[cstyles.large].join(" ")}>Please enter your seed phrase</div>
                       <TextareaAutosize
                         className={cstyles.inputbox}
                         value={seed}
                         onChange={(e) => this.updateSeed(e)}
                       />
 
-                      <div
-                        className={[cstyles.large, cstyles.margintoplarge].join(
-                          " "
-                        )}
-                      >
-                        Wallet Birthday. If you don&rsquo;t know this, it is OK
-                        to enter &lsquo;0&rsquo;
+                      <div className={[cstyles.large, cstyles.margintoplarge].join(" ")}>
+                        Wallet Birthday. If you don&rsquo;t know this, it is OK to enter &lsquo;0&rsquo;
                       </div>
                       <input
                         type="number"
@@ -638,11 +550,7 @@ class LoadingScreen extends Component<
                       />
 
                       <div className={cstyles.margintoplarge}>
-                        <button
-                          type="button"
-                          className={cstyles.primarybutton}
-                          onClick={() => this.doRestoreWallet()}
-                        >
+                        <button type="button" className={cstyles.primarybutton} onClick={() => this.doRestoreWallet()}>
                           Restore Wallet
                         </button>
                       </div>

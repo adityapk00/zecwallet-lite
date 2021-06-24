@@ -65,8 +65,8 @@ export class TxDetail {
   memo: string | null;
 
   constructor() {
-    this.address = '';
-    this.amount = '';
+    this.address = "";
+    this.amount = "";
     this.memo = null;
   }
 }
@@ -84,12 +84,12 @@ export class Transaction {
   zecPrice: any;
 
   constructor() {
-    this.type = '';
-    this.address = '';
+    this.type = "";
+    this.address = "";
     this.amount = 0;
-    this.position = '';
+    this.position = "";
     this.confirmations = 0;
-    this.txid = '';
+    this.txid = "";
     this.time = 0;
     this.detailedTxns = [];
   }
@@ -105,9 +105,9 @@ export class ToAddr {
   constructor(id: number) {
     this.id = id;
 
-    this.to = '';
+    this.to = "";
     this.amount = 0;
-    this.memo = '';
+    this.memo = "";
   }
 }
 
@@ -117,7 +117,7 @@ export class SendPageState {
   toaddrs: ToAddr[];
 
   constructor() {
-    this.fromaddr = '';
+    this.fromaddr = "";
     this.toaddrs = [];
   }
 }
@@ -131,7 +131,7 @@ export class ReceivePageState {
   rerenderKey: number;
 
   constructor() {
-    this.newAddress = '';
+    this.newAddress = "";
     this.rerenderKey = 0;
   }
 }
@@ -140,7 +140,7 @@ export class RPCConfig {
   url: string;
 
   constructor() {
-    this.url = '';
+    this.url = "";
   }
 }
 
@@ -160,9 +160,9 @@ export class Info {
     this.testnet = false;
     this.latestBlock = 0;
     this.connections = 0;
-    this.version = '';
+    this.version = "";
     this.verificationProgress = 0;
-    this.currencyName = '';
+    this.currencyName = "";
     this.solps = 0;
     this.zecPrice = 0;
     this.encrypted = false;
@@ -182,21 +182,20 @@ export class PasswordState {
 
   confirmNeeded: boolean;
 
-  passwordCallback: ((password: string) => void);
+  passwordCallback: (password: string) => void;
 
-  closeCallback: (() => void);
+  closeCallback: () => void;
 
   helpText?: string | JSX.Element;
 
   constructor() {
     this.showPassword = false;
     this.confirmNeeded = false;
-    this.passwordCallback = (p) => { };
-    this.closeCallback = () => { };
+    this.passwordCallback = (p) => {};
+    this.closeCallback = () => {};
     this.helpText = undefined;
   }
 }
-
 
 export class SendProgress {
   sendInProgress: boolean;
@@ -261,6 +260,9 @@ export default class AppState {
   // Is the app rescanning?
   rescanning: boolean;
 
+  // Last sync ID
+  prevSyncId: number;
+
   // Callbacks for the password dialog box
   passwordState: PasswordState;
 
@@ -279,6 +281,7 @@ export default class AppState {
     this.rpcConfig = new RPCConfig();
     this.info = new Info();
     this.rescanning = false;
+    this.prevSyncId = -1;
     this.passwordState = new PasswordState();
   }
 }

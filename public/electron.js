@@ -10,19 +10,12 @@ class MenuBuilder {
   }
 
   buildMenu() {
-    const template =
-      process.platform === "darwin"
-        ? this.buildDarwinTemplate()
-        : this.buildDefaultTemplate();
+    const template = process.platform === "darwin" ? this.buildDarwinTemplate() : this.buildDefaultTemplate();
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 
-    const selectionMenu = Menu.buildFromTemplate([
-      { role: "copy" },
-      { type: "separator" },
-      { role: "selectall" },
-    ]);
+    const selectionMenu = Menu.buildFromTemplate([{ role: "copy" }, { type: "separator" }, { role: "selectall" }]);
 
     const inputMenu = Menu.buildFromTemplate([
       { role: "undo" },
@@ -41,10 +34,7 @@ class MenuBuilder {
         inputMenu.popup(this.mainWindow);
       } else if (selectionText && selectionText.trim() !== "") {
         selectionMenu.popup(this.mainWindow);
-      } else if (
-        process.env.NODE_ENV === "development" ||
-        process.env.DEBUG_PROD === "true"
-      ) {
+      } else if (process.env.NODE_ENV === "development" || process.env.DEBUG_PROD === "true") {
         const { x, y } = props;
 
         Menu.buildFromTemplate([
@@ -295,24 +285,19 @@ class MenuBuilder {
         {
           label: "Check github.com for updates",
           click() {
-            shell.openExternal(
-              "https://github.com/adityapk00/zecwallet-lite/releases"
-            );
+            shell.openExternal("https://github.com/adityapk00/zecwallet-lite/releases");
           },
         },
         {
           label: "File a bug...",
           click() {
-            shell.openExternal(
-              "https://github.com/adityapk00/zecwallet-lite/issues"
-            );
+            shell.openExternal("https://github.com/adityapk00/zecwallet-lite/issues");
           },
         },
       ],
     };
 
-    const subMenuView =
-      process.env.NODE_ENV === "development" ? subMenuViewDev : subMenuViewProd;
+    const subMenuView = process.env.NODE_ENV === "development" ? subMenuViewDev : subMenuViewProd;
 
     return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
@@ -431,17 +416,13 @@ class MenuBuilder {
           {
             label: "Check github.com for updates",
             click() {
-              shell.openExternal(
-                "https://github.com/adityapk00/zecwallet-lite/releases"
-              );
+              shell.openExternal("https://github.com/adityapk00/zecwallet-lite/releases");
             },
           },
           {
             label: "File a bug...",
             click() {
-              shell.openExternal(
-                "https://github.com/adityapk00/zecwallet-lite/issues"
-              );
+              shell.openExternal("https://github.com/adityapk00/zecwallet-lite/issues");
             },
           },
         ],
@@ -463,8 +444,10 @@ if (isDev) {
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1300,
+    height: 728,
+    minHeight: 500,
+    minWidth: 1100,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -475,11 +458,7 @@ function createWindow() {
 
   // Load from localhost if in development
   // Otherwise load index.html file
-  mainWindow.loadURL(
-    isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
-  );
+  mainWindow.loadURL(isDev ? "http://localhost:3000" : `file://${path.join(__dirname, "../build/index.html")}`);
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();

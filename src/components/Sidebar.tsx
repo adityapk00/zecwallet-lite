@@ -2,28 +2,28 @@
 // @flow
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
-import React, { PureComponent, ReactElement, useState } from 'react';
-import dateformat from 'dateformat';
-import Modal from 'react-modal';
-import { RouteComponentProps, withRouter } from 'react-router';
-import { Link } from 'react-router-dom';
-import TextareaAutosize from 'react-textarea-autosize';
-import styles from './Sidebar.module.css';
-import cstyles from './Common.module.css';
-import routes from '../constants/routes.json';
-import Logo from '../assets/img/logobig.png';
-import { Info, Transaction } from './AppState';
-import Utils from '../utils/utils';
-import RPC from '../rpc';
-import { parseZcashURI, ZcashURITarget } from '../utils/uris';
+import React, { PureComponent, ReactElement, useState } from "react";
+import dateformat from "dateformat";
+import Modal from "react-modal";
+import { RouteComponentProps, withRouter } from "react-router";
+import { Link } from "react-router-dom";
+import TextareaAutosize from "react-textarea-autosize";
+import styles from "./Sidebar.module.css";
+import cstyles from "./Common.module.css";
+import routes from "../constants/routes.json";
+import Logo from "../assets/img/logobig.png";
+import { Info, Transaction } from "./AppState";
+import Utils from "../utils/utils";
+import RPC from "../rpc";
+import { parseZcashURI, ZcashURITarget } from "../utils/uris";
 
 const { ipcRenderer, remote } = window.require("electron");
-const fs = window.require('fs');
+const fs = window.require("fs");
 
 type ExportPrivKeyModalProps = {
-  modalIsOpen: boolean,
-  exportedPrivKeys: string[],
-  closeModal: () => void,
+  modalIsOpen: boolean;
+  exportedPrivKeys: string[];
+  closeModal: () => void;
 };
 const ExportPrivKeyModal = ({ modalIsOpen, exportedPrivKeys, closeModal }: ExportPrivKeyModalProps) => {
   return (
@@ -33,17 +33,17 @@ const ExportPrivKeyModal = ({ modalIsOpen, exportedPrivKeys, closeModal }: Expor
       className={cstyles.modal}
       overlayClassName={cstyles.modalOverlay}
     >
-      <div className={[cstyles.verticalflex].join(' ')}>
-        <div className={cstyles.marginbottomlarge} style={{ textAlign: 'center' }}>
+      <div className={[cstyles.verticalflex].join(" ")}>
+        <div className={cstyles.marginbottomlarge} style={{ textAlign: "center" }}>
           Your Wallet Private Keys
         </div>
 
-        <div className={[cstyles.marginbottomlarge, cstyles.center].join(' ')}>
+        <div className={[cstyles.marginbottomlarge, cstyles.center].join(" ")}>
           These are all the private keys in your wallet. Please store them carefully!
         </div>
 
         {exportedPrivKeys && (
-          <TextareaAutosize value={exportedPrivKeys.join('\n')} className={styles.exportedPrivKeys} disabled />
+          <TextareaAutosize value={exportedPrivKeys.join("\n")} className={styles.exportedPrivKeys} disabled />
         )}
       </div>
 
@@ -56,15 +56,14 @@ const ExportPrivKeyModal = ({ modalIsOpen, exportedPrivKeys, closeModal }: Expor
   );
 };
 
-
 type ImportPrivKeyModalProps = {
-  modalIsOpen: boolean,
-  closeModal: () => void,
-  doImportPrivKeys: (pk: string, birthday: string) => void,
+  modalIsOpen: boolean;
+  closeModal: () => void;
+  doImportPrivKeys: (pk: string, birthday: string) => void;
 };
 const ImportPrivKeyModal = ({ modalIsOpen, closeModal, doImportPrivKeys }: ImportPrivKeyModalProps) => {
-  const [pkey, setPKey] = useState('');
-  const [birthday, setBirthday] = useState('0');
+  const [pkey, setPKey] = useState("");
+  const [birthday, setBirthday] = useState("0");
 
   return (
     <Modal
@@ -73,8 +72,8 @@ const ImportPrivKeyModal = ({ modalIsOpen, closeModal, doImportPrivKeys }: Impor
       className={cstyles.modal}
       overlayClassName={cstyles.modalOverlay}
     >
-      <div className={[cstyles.verticalflex].join(' ')}>
-        <div className={cstyles.marginbottomlarge} style={{ textAlign: 'center' }}>
+      <div className={[cstyles.verticalflex].join(" ")}>
+        <div className={cstyles.marginbottomlarge} style={{ textAlign: "center" }}>
           Import Spending or Viewing Key
         </div>
 
@@ -82,12 +81,12 @@ const ImportPrivKeyModal = ({ modalIsOpen, closeModal, doImportPrivKeys }: Impor
           Please paste your private key here (spending key or viewing key).
         </div>
 
-        <div className={[cstyles.well].join(' ')} style={{ textAlign: 'center' }}>
+        <div className={[cstyles.well].join(" ")} style={{ textAlign: "center" }}>
           <TextareaAutosize
             className={cstyles.inputbox}
             placeholder="Spending or Viewing Key"
             value={pkey}
-            onChange={e => setPKey(e.target.value)}
+            onChange={(e) => setPKey(e.target.value)}
           />
         </div>
 
@@ -100,7 +99,7 @@ const ImportPrivKeyModal = ({ modalIsOpen, closeModal, doImportPrivKeys }: Impor
             type="number"
             className={cstyles.inputbox}
             value={birthday}
-            onChange={e => setBirthday(e.target.value)}
+            onChange={(e) => setBirthday(e.target.value)}
           />
         </div>
       </div>
@@ -125,13 +124,13 @@ const ImportPrivKeyModal = ({ modalIsOpen, closeModal, doImportPrivKeys }: Impor
 };
 
 type PayURIModalProps = {
-  modalIsOpen: boolean,
-  modalInput?: string,
-  setModalInput: (i: string) => void,
-  closeModal: () => void,
-  modalTitle: string,
-  actionButtonName: string,
-  actionCallback: (uri: string) => void,
+  modalIsOpen: boolean;
+  modalInput?: string;
+  setModalInput: (i: string) => void;
+  closeModal: () => void;
+  modalTitle: string;
+  actionButtonName: string;
+  actionCallback: (uri: string) => void;
 };
 const PayURIModal = ({
   modalIsOpen,
@@ -140,7 +139,7 @@ const PayURIModal = ({
   closeModal,
   modalTitle,
   actionButtonName,
-  actionCallback
+  actionCallback,
 }: PayURIModalProps) => {
   return (
     <Modal
@@ -149,18 +148,18 @@ const PayURIModal = ({
       className={cstyles.modal}
       overlayClassName={cstyles.modalOverlay}
     >
-      <div className={[cstyles.verticalflex].join(' ')}>
-        <div className={cstyles.marginbottomlarge} style={{ textAlign: 'center' }}>
+      <div className={[cstyles.verticalflex].join(" ")}>
+        <div className={cstyles.marginbottomlarge} style={{ textAlign: "center" }}>
           {modalTitle}
         </div>
 
-        <div className={cstyles.well} style={{ textAlign: 'center' }}>
+        <div className={cstyles.well} style={{ textAlign: "center" }}>
           <input
             type="text"
             className={cstyles.inputbox}
             placeholder="URI"
             value={modalInput}
-            onChange={e => setModalInput(e.target.value)}
+            onChange={(e) => setModalInput(e.target.value)}
           />
         </div>
       </div>
@@ -190,28 +189,28 @@ const PayURIModal = ({
 };
 
 type SidebarMenuItemProps = {
-  name: string,
-  routeName: string,
-  currentRoute: string,
-  iconname: string,
+  name: string;
+  routeName: string;
+  currentRoute: string;
+  iconname: string;
 };
 const SidebarMenuItem = ({ name, routeName, currentRoute, iconname }: SidebarMenuItemProps) => {
   let isActive = false;
 
-  if ((currentRoute.endsWith('app.html') && routeName === routes.HOME) || currentRoute === routeName) {
+  if ((currentRoute.endsWith("app.html") && routeName === routes.HOME) || currentRoute === routeName) {
     isActive = true;
   }
 
-  let activeColorClass = '';
+  let activeColorClass = "";
   if (isActive) {
     activeColorClass = styles.sidebarmenuitemactive;
   }
 
   return (
-    <div className={[styles.sidebarmenuitem, activeColorClass].join(' ')}>
+    <div className={[styles.sidebarmenuitem, activeColorClass].join(" ")}>
       <Link to={routeName}>
         <span className={activeColorClass}>
-          <i className={['fas', iconname].join(' ')} />
+          <i className={["fas", iconname].join(" ")} />
           &nbsp; &nbsp;
           {name}
         </span>
@@ -221,35 +220,35 @@ const SidebarMenuItem = ({ name, routeName, currentRoute, iconname }: SidebarMen
 };
 
 type Props = {
-  info: Info,
-  setRescanning: (rescan: boolean) => void,
-  addresses: string[],
-  transactions: Transaction[],
-  setInfo: (info: Info) => void,
-  clearTimers: () => void,
-  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void,
-  getPrivKeyAsString: (address: string) => string,
-  importPrivKeys: (keys: string[], birthday: string) => Promise<boolean>,
-  openErrorModal: (title: string, body: string | ReactElement) => void,
+  info: Info;
+  setRescanning: (rescan: boolean, prevSyncId: number) => void;
+  addresses: string[];
+  transactions: Transaction[];
+  setInfo: (info: Info) => void;
+  clearTimers: () => void;
+  setSendTo: (targets: ZcashURITarget[] | ZcashURITarget) => void;
+  getPrivKeyAsString: (address: string) => string;
+  importPrivKeys: (keys: string[], birthday: string) => Promise<boolean>;
+  openErrorModal: (title: string, body: string | ReactElement) => void;
   openPassword: (
     confirmNeeded: boolean,
     passwordCallback: (p: string) => void,
     closeCallback: () => void,
     helpText?: string | JSX.Element
-  ) => void,
-  openPasswordAndUnlockIfNeeded: (successCallback: () => void | Promise<void>) => void,
-  lockWallet: () => void,
-  encryptWallet: (p: string) => void,
-  decryptWallet: (p: string) => Promise<boolean>
+  ) => void;
+  openPasswordAndUnlockIfNeeded: (successCallback: () => void | Promise<void>) => void;
+  lockWallet: () => void;
+  encryptWallet: (p: string) => void;
+  decryptWallet: (p: string) => Promise<boolean>;
 };
 
 type State = {
-  uriModalIsOpen: boolean,
-  uriModalInputValue?: string,
-  privKeyModalIsOpen: boolean,
-  privKeyInputValue: string | null,
-  exportPrivKeysModalIsOpen: boolean,
-  exportedPrivKeys: string[],
+  uriModalIsOpen: boolean;
+  uriModalInputValue?: string;
+  privKeyModalIsOpen: boolean;
+  privKeyInputValue: string | null;
+  exportPrivKeysModalIsOpen: boolean;
+  exportedPrivKeys: string[];
 };
 
 class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
@@ -261,7 +260,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       privKeyModalIsOpen: false,
       exportPrivKeysModalIsOpen: false,
       exportedPrivKeys: [],
-      privKeyInputValue: null
+      privKeyInputValue: null,
     };
 
     this.setupMenuHandlers();
@@ -269,20 +268,13 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
 
   // Handle menu items
   setupMenuHandlers = async () => {
-    const {
-      clearTimers,
-      setSendTo,
-      setInfo,
-      setRescanning,
-      history,
-      openErrorModal,
-      openPasswordAndUnlockIfNeeded
-    } = this.props;
+    const { clearTimers, setSendTo, setInfo, setRescanning, history, openErrorModal, openPasswordAndUnlockIfNeeded } =
+      this.props;
 
     // About
-    ipcRenderer.on('about', () => {
+    ipcRenderer.on("about", () => {
       openErrorModal(
-        'Zecwallet Lite',
+        "Zecwallet Lite",
         <div className={cstyles.verticalflex}>
           <div className={cstyles.margintoplarge}>Zecwallet Lite v1.6.1</div>
           <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2021, Aditya Kulkarni.</div>
@@ -312,7 +304,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     });
 
     // Donate button
-    ipcRenderer.on('donate', () => {
+    ipcRenderer.on("donate", () => {
       const { info } = this.props;
 
       setSendTo(
@@ -327,22 +319,22 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     });
 
     // Import Private Keys
-    ipcRenderer.on('import', () => {
+    ipcRenderer.on("import", () => {
       this.openImportPrivKeyModal(null);
     });
 
     // Pay URI
-    ipcRenderer.on('payuri', (event: any, uri: string) => {
+    ipcRenderer.on("payuri", (event: any, uri: string) => {
       this.openURIModal(uri);
     });
 
     // Export Seed
-    ipcRenderer.on('seed', () => {
+    ipcRenderer.on("seed", () => {
       openPasswordAndUnlockIfNeeded(() => {
         const seed = RPC.fetchSeed();
 
         openErrorModal(
-          'Wallet Seed',
+          "Wallet Seed",
           <div className={cstyles.verticalflex}>
             <div>
               This is your wallet&rsquo;s seed phrase. It can be used to recover your entire wallet.
@@ -350,7 +342,14 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
               PLEASE KEEP IT SAFE!
             </div>
             <hr />
-            <div style={{ wordBreak: 'break-word', fontFamily: 'monospace, Roboto' }}>{seed}</div>
+            <div
+              style={{
+                wordBreak: "break-word",
+                fontFamily: "monospace, Roboto",
+              }}
+            >
+              {seed}
+            </div>
             <hr />
           </div>
         );
@@ -358,26 +357,26 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     });
 
     // Export All Transactions
-    ipcRenderer.on('exportalltx', async () => {
+    ipcRenderer.on("exportalltx", async () => {
       const save = await remote.dialog.showSaveDialog({
-        title: 'Save Transactions As CSV',
-        defaultPath: 'zecwallet_transactions.csv',
-        filters: [{ name: 'CSV File', extensions: ['csv'] }],
-        properties: ['showOverwriteConfirmation']
+        title: "Save Transactions As CSV",
+        defaultPath: "zecwallet_transactions.csv",
+        filters: [{ name: "CSV File", extensions: ["csv"] }],
+        properties: ["showOverwriteConfirmation"],
       });
 
       if (save.filePath) {
         // Construct a CSV
         const { transactions } = this.props;
-        const rows = transactions.flatMap(t => {
+        const rows = transactions.flatMap((t) => {
           if (t.detailedTxns) {
-            return t.detailedTxns.map(dt => {
-              const normaldate = dateformat(t.time * 1000, 'mmm dd yyyy hh::MM tt');
+            return t.detailedTxns.map((dt) => {
+              const normaldate = dateformat(t.time * 1000, "mmm dd yyyy hh::MM tt");
 
               // Add a single quote "'" into the memo field to force interpretation as a string, rather than as a
               // formula from a rogue memo
-              const escapedMemo = dt.memo ? `'${dt.memo.replace(/"/g, '""')}'` : '';
-              const price = t.zecPrice ? t.zecPrice.toFixed(2) : '--';
+              const escapedMemo = dt.memo ? `'${dt.memo.replace(/"/g, '""')}'` : "";
+              const price = t.zecPrice ? t.zecPrice.toFixed(2) : "--";
 
               return `${t.time},"${normaldate}","${t.txid}","${t.type}",${dt.amount},"${dt.address}","${price}","${escapedMemo}"`;
             });
@@ -389,32 +388,32 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
         const header = [`UnixTime, Date, Txid, Type, Amount, Address, ZECPrice, Memo`];
 
         try {
-          await fs.promises.writeFile(save.filePath, header.concat(rows).join('\n'));
+          await fs.promises.writeFile(save.filePath, header.concat(rows).join("\n"));
         } catch (err) {
-          openErrorModal('Error Exporting Transactions', `${err}`);
+          openErrorModal("Error Exporting Transactions", `${err}`);
         }
       }
     });
 
     // Encrypt wallet
-    ipcRenderer.on('encrypt', async () => {
+    ipcRenderer.on("encrypt", async () => {
       const { info, lockWallet, encryptWallet, openPassword } = this.props;
 
       if (info.encrypted && info.locked) {
-        openErrorModal('Already Encrypted', 'Your wallet is already encrypted and locked.');
+        openErrorModal("Already Encrypted", "Your wallet is already encrypted and locked.");
       } else if (info.encrypted && !info.locked) {
         await lockWallet();
-        openErrorModal('Locked', 'Your wallet has been locked. A password will be needed to spend funds.');
+        openErrorModal("Locked", "Your wallet has been locked. A password will be needed to spend funds.");
       } else {
         // Encrypt the wallet
         openPassword(
           true,
-          async password => {
+          async (password) => {
             await encryptWallet(password);
-            openErrorModal('Encrypted', 'Your wallet has been encrypted. The password will be needed to spend funds.');
+            openErrorModal("Encrypted", "Your wallet has been encrypted. The password will be needed to spend funds.");
           },
           () => {
-            openErrorModal('Cancelled', 'Your wallet was not encrypted.');
+            openErrorModal("Cancelled", "Your wallet was not encrypted.");
           },
           <div>
             Please enter a password to encrypt your wallet. <br />
@@ -425,55 +424,59 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     });
 
     // Remove wallet encryption
-    ipcRenderer.on('decrypt', async () => {
+    ipcRenderer.on("decrypt", async () => {
       const { info, decryptWallet, openPassword } = this.props;
 
       if (!info.encrypted) {
-        openErrorModal('Not Encrypted', 'Your wallet is not encrypted and ready for spending.');
+        openErrorModal("Not Encrypted", "Your wallet is not encrypted and ready for spending.");
       } else {
         // Remove the wallet remove the wallet encryption
         openPassword(
           false,
-          async password => {
+          async (password) => {
             const success = await decryptWallet(password);
             if (success) {
               openErrorModal(
-                'Decrypted',
+                "Decrypted",
                 `Your wallet's encryption has been removed. A password will no longer be needed to spend funds.`
               );
             } else {
-              openErrorModal('Decryption Failed', 'Wallet decryption failed. Do you have the right password?');
+              openErrorModal("Decryption Failed", "Wallet decryption failed. Do you have the right password?");
             }
           },
           () => {
-            openErrorModal('Cancelled', 'Your wallet is still encrypted.');
+            openErrorModal("Cancelled", "Your wallet is still encrypted.");
           },
-          ''
+          ""
         );
       }
     });
 
     // Unlock wallet
-    ipcRenderer.on('unlock', () => {
+    ipcRenderer.on("unlock", () => {
       const { info } = this.props;
       if (!info.encrypted || !info.locked) {
-        openErrorModal('Already Unlocked', 'Your wallet is already unlocked for spending');
+        openErrorModal("Already Unlocked", "Your wallet is already unlocked for spending");
       } else {
         openPasswordAndUnlockIfNeeded(async () => {
-          openErrorModal('Unlocked', 'Your wallet is unlocked for spending');
+          openErrorModal("Unlocked", "Your wallet is unlocked for spending");
         });
       }
     });
 
     // Rescan
-    ipcRenderer.on('rescan', () => {
+    ipcRenderer.on("rescan", () => {
       // To rescan, we reset the wallet loading
       // So set info the default, and redirect to the loading screen
       clearTimers();
+
+      // Grab the previous sync ID.
+      const prevSyncId = JSON.parse(RPC.doSyncStatus()).sync_id;
+
       RPC.doRescan();
 
       // Set the rescanning global state to true
-      setRescanning(true);
+      setRescanning(true, prevSyncId);
 
       // Reset the info object, it will be refetched
       setInfo(new Info());
@@ -482,11 +485,11 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     });
 
     // Export all private keys
-    ipcRenderer.on('exportall', async () => {
+    ipcRenderer.on("exportall", async () => {
       // Get all the addresses and run export key on each of them.
       const { addresses, getPrivKeyAsString } = this.props;
       openPasswordAndUnlockIfNeeded(async () => {
-        const privKeysPromise = addresses.map(async a => {
+        const privKeysPromise = addresses.map(async (a) => {
           const privKey = await getPrivKeyAsString(a);
           return `${privKey} #${a}`;
         });
@@ -497,12 +500,12 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     });
 
     // View zcashd
-    ipcRenderer.on('zcashd', () => {
+    ipcRenderer.on("zcashd", () => {
       history.push(routes.ZCASHD);
     });
 
     // Connect mobile app
-    ipcRenderer.on('connectmobile', () => {
+    ipcRenderer.on("connectmobile", () => {
       history.push(routes.CONNECTMOBILE);
     });
   };
@@ -512,7 +515,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
   };
 
   openImportPrivKeyModal = (defaultValue: string | null) => {
-    const privKeyInputValue = defaultValue || '';
+    const privKeyInputValue = defaultValue || "";
     this.setState({ privKeyModalIsOpen: true, privKeyInputValue });
   };
 
@@ -525,7 +528,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
   };
 
   openURIModal = (defaultValue: string | null) => {
-    const uriModalInputValue = defaultValue || '';
+    const uriModalInputValue = defaultValue || "";
     this.setState({ uriModalIsOpen: true, uriModalInputValue });
   };
 
@@ -535,31 +538,31 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     // eslint-disable-next-line no-control-regex
     if (key) {
       // eslint-disable-next-line no-control-regex
-      let keys = key.split(new RegExp('[\n\r]+'));
+      let keys = key.split(new RegExp("[\n\r]+"));
       if (!keys || keys.length === 0) {
-        openErrorModal('No Keys Imported', 'No keys were specified, so none were imported');
+        openErrorModal("No Keys Imported", "No keys were specified, so none were imported");
         return;
       }
 
       // Filter out empty lines and clean up the private keys
-      keys = keys.filter(k => !(k.trim().startsWith('#') || k.trim().length === 0));
+      keys = keys.filter((k) => !(k.trim().startsWith("#") || k.trim().length === 0));
 
       // Special case.
       // Sometimes, when importing from a paperwallet or such, the key is split by newlines, and might have
       // been pasted like that. So check to see if the whole thing is one big private key
-      if (Utils.isValidSaplingPrivateKey(keys.join('')) || Utils.isValidSaplingViewingKey(keys.join(''))) {
-        keys = [keys.join('')];
+      if (Utils.isValidSaplingPrivateKey(keys.join("")) || Utils.isValidSaplingViewingKey(keys.join(""))) {
+        keys = [keys.join("")];
       }
 
       if (keys.length > 1) {
-        openErrorModal('Multiple Keys Not Supported', 'Please import one key at a time');
+        openErrorModal("Multiple Keys Not Supported", "Please import one key at a time");
         return;
       }
 
       if (!Utils.isValidSaplingPrivateKey(keys[0]) && !Utils.isValidSaplingViewingKey(keys[0])) {
         openErrorModal(
-          'Bad Key',
-          'The input key was not recognized as either a sapling spending key or a sapling viewing key'
+          "Bad Key",
+          "The input key was not recognized as either a sapling spending key or a sapling viewing key"
         );
         return;
       }
@@ -568,8 +571,8 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       // but it must be unlocked
       if (Utils.isValidSaplingViewingKey(keys[0]) && info.locked) {
         openErrorModal(
-          'Wallet Is Locked',
-          'In order to import a Sapling viewing key, your wallet must be unlocked. If you wish to continue, unlock your wallet and try again.'
+          "Wallet Is Locked",
+          "In order to import a Sapling viewing key, your wallet must be unlocked. If you wish to continue, unlock your wallet and try again."
         );
         return;
       }
@@ -577,16 +580,19 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       // in order to import a private key, the wallet must be unencrypted
       if (Utils.isValidSaplingPrivateKey(keys[0]) && info.encrypted) {
         openErrorModal(
-          'Wallet Is Encrypted',
-          'In order to import a Sapling private key, your wallet cannot be encrypted. If you wish to continue, remove the encryption from your wallet and try again.'
+          "Wallet Is Encrypted",
+          "In order to import a Sapling private key, your wallet cannot be encrypted. If you wish to continue, remove the encryption from your wallet and try again."
         );
         return;
       }
 
+      // Grab the previous sync ID.
+      const prevSyncId = JSON.parse(RPC.doSyncStatus()).sync_id;
       const success = await importPrivKeys(keys, birthday);
+
       if (success) {
         // Set the rescanning global state to true
-        setRescanning(true);
+        setRescanning(true, prevSyncId);
 
         // Reset the info object, it will be refetched
         setInfo(new Info());
@@ -608,7 +614,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     console.log(`Paying ${uri}`);
     const { openErrorModal, setSendTo, history } = this.props;
 
-    const errTitle = 'URI Error';
+    const errTitle = "URI Error";
     const getErrorBody = (explain: string): ReactElement => {
       return (
         <div>
@@ -618,13 +624,13 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       );
     };
 
-    if (!uri || uri === '') {
-      openErrorModal(errTitle, getErrorBody('URI was not found or invalid'));
+    if (!uri || uri === "") {
+      openErrorModal(errTitle, getErrorBody("URI was not found or invalid"));
       return;
     }
 
     const parsedUri = parseZcashURI(uri);
-    if (typeof parsedUri === 'string') {
+    if (typeof parsedUri === "string") {
       openErrorModal(errTitle, getErrorBody(parsedUri));
       return;
     }
@@ -641,17 +647,17 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       privKeyModalIsOpen,
       //privKeyInputValue,
       exportPrivKeysModalIsOpen,
-      exportedPrivKeys
+      exportedPrivKeys,
     } = this.state;
 
-    let state = 'DISCONNECTED';
-    let progress = '100';
+    let state = "DISCONNECTED";
+    let progress = "100";
     if (info && info.latestBlock) {
       if (info.verificationProgress < 0.9999) {
-        state = 'SYNCING';
+        state = "SYNCING";
         progress = (info.verificationProgress * 100).toFixed(1);
       } else {
-        state = 'CONNECTED';
+        state = "CONNECTED";
       }
     }
 
@@ -684,7 +690,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
           closeModal={this.closeExportPrivKeysModal}
         />
 
-        <div className={[cstyles.center, styles.sidebarlogobg].join(' ')}>
+        <div className={[cstyles.center, styles.sidebarlogobg].join(" ")}>
           <img src={Logo} width="70" alt="logo" />
         </div>
 
@@ -722,24 +728,24 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
         </div>
 
         <div className={cstyles.center}>
-          {state === 'CONNECTED' && (
-            <div className={[cstyles.padsmallall, cstyles.margintopsmall, cstyles.blackbg].join(' ')}>
-              <i className={[cstyles.green, 'fas', 'fa-check'].join(' ')} />
+          {state === "CONNECTED" && (
+            <div className={[cstyles.padsmallall, cstyles.margintopsmall, cstyles.blackbg].join(" ")}>
+              <i className={[cstyles.green, "fas", "fa-check"].join(" ")} />
               &nbsp; Connected
             </div>
           )}
-          {state === 'SYNCING' && (
-            <div className={[cstyles.padsmallall, cstyles.margintopsmall, cstyles.blackbg].join(' ')}>
+          {state === "SYNCING" && (
+            <div className={[cstyles.padsmallall, cstyles.margintopsmall, cstyles.blackbg].join(" ")}>
               <div>
-                <i className={[cstyles.yellow, 'fas', 'fa-sync'].join(' ')} />
+                <i className={[cstyles.yellow, "fas", "fa-sync"].join(" ")} />
                 &nbsp; Syncing
               </div>
               <div>{`${progress}%`}</div>
             </div>
           )}
-          {state === 'DISCONNECTED' && (
-            <div className={[cstyles.padsmallall, cstyles.margintopsmall, cstyles.blackbg].join(' ')}>
-              <i className={[cstyles.yellow, 'fas', 'fa-times-circle'].join(' ')} />
+          {state === "DISCONNECTED" && (
+            <div className={[cstyles.padsmallall, cstyles.margintopsmall, cstyles.blackbg].join(" ")}>
+              <i className={[cstyles.yellow, "fas", "fa-times-circle"].join(" ")} />
               &nbsp; Connected
             </div>
           )}
