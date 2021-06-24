@@ -8,15 +8,13 @@ use neon::prelude::JsNumber;
 use neon::prelude::JsResult;
 use neon::prelude::JsString;
 use neon::register_module;
+use zecwalletlitelib::lightclient::lightclient_config::LightClientConfig;
 
 use std::cell::RefCell;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-use zecwalletlitelib::{
-    commands,
-    lightclient::{LightClient, LightClientConfig},
-};
+use zecwalletlitelib::{commands, lightclient::LightClient};
 
 // We'll use a MUTEX to store a global lightclient instance,
 // so we don't have to keep creating it. We need to store it here, in rust
@@ -79,7 +77,7 @@ fn litelib_initialize_new(mut cx: FunctionContext) -> JsResult<JsString> {
         // Initialize logging
         let _ = lightclient.init_logging();
 
-        let seed = match lightclient.do_seed_phrase() {
+        let seed = match lightclient.do_seed_phrase_sync() {
             Ok(s) => s.dump(),
             Err(e) => {
                 return format!("Error: {}", e);

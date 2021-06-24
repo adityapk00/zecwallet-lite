@@ -470,7 +470,6 @@ function createWindow() {
       contextIsolation: false,
       nodeIntegrationInWorker: true,
       enableRemoteModule: true,
-      //preload: path.join(__dirname, "preload.js"),
     },
   });
 
