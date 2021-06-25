@@ -15,10 +15,7 @@ export default class Utils {
 
   static isSapling(addr: string): boolean {
     if (!addr) return false;
-    return (
-      new RegExp("^z[a-z0-9]{77}$").test(addr) ||
-      new RegExp("^ztestsapling[a-z0-9]{76}$").test(addr)
-    );
+    return new RegExp("^z[a-z0-9]{77}$").test(addr) || new RegExp("^ztestsapling[a-z0-9]{76}$").test(addr);
   }
 
   static isSprout(addr: string): boolean {
@@ -142,10 +139,7 @@ export default class Utils {
     return "Thanks for supporting Zecwallet!";
   }
 
-  static getZecToUsdString(
-    price: number | null,
-    zecValue: number | null
-  ): string {
+  static getZecToUsdString(price: number | null, zecValue: number | null): string {
     if (!price || !zecValue) {
       return "USD --";
     }
