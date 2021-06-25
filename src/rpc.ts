@@ -115,6 +115,9 @@ export default class RPC {
           // We are synced. Cancel the poll timer
           clearInterval(pollerID);
 
+          // Save the wallet
+          RPC.doSave();
+
           // And fetch the rest of the data.
           this.fetchTotalBalance();
           this.fetchTandZTransactions(latestBlockHeight);

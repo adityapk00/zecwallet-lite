@@ -252,7 +252,6 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
   setupExitHandler = () => {
     // App is quitting, make sure to save the wallet properly.
     ipcRenderer.on("appquitting", () => {
-      RPC.doSave();
       RPC.deinitialize();
 
       // And reply that we're all done after 100ms, to allow cleanup of the rust stuff.
@@ -308,7 +307,9 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
 
         if (ss.sync_id > prevSyncId && !ss.in_progress) {
           // First, save the wallet so we don't lose the just-synced data
-          RPC.doSave();
+          if (!ss.last_error) {
+            RPC.doSave();
+          }
 
           // Set the info object, so the sidebar will show
           console.log(info);
@@ -331,10 +332,11 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
           const progress_blocks =
             (ss.witness_blocks + ss.synced_blocks + ss.trial_decryptions_blocks + ss.txn_scan_blocks) / 4;
 
-          const progress = ((progress_blocks * 100) / ss.total_blocks).toFixed(2);
-          const currentStatus = `Syncing: ${progress}%`;
-
-          me.setState({ currentStatus });
+          if (progress_blocks && !isNaN(progress_blocks)) {
+            const progress = ((progress_blocks * 100) / ss.total_blocks).toFixed(2);
+            const currentStatus = `Syncing: ${progress}%`;
+            me.setState({ currentStatus });
+          }
         }
       }
     }, 1000);
