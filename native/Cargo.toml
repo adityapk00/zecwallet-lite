@@ -1,22 +1,21 @@
 [package]
-name = "zecwalletnative"
+name = "zecwalletlite"
 version = "0.1.0"
 edition = "2018"
 authors = ["Zecwallet"]
 license = "MIT/Apache-2.0"
-build = "build.rs"
+exclude = ["index.node"]
 
 [lib]
-name = "zecwalletnative"
 crate-type = ["cdylib"]
 
-[build-dependencies]
-neon-build = "0.3.3"
+
+[dependencies.neon]
+version = "0.8"
+default-features = false
+features = ["napi-6"]
 
 [dependencies]
-zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "4a279179f885e9867809ba4bdc037dcfbd9c31aa" }
+zecwalletlitelib = { git = "https://github.com/adityapk00/zecwallet-light-cli", rev = "87ad71c28e255a365f736e19390994040aff4b41" }
 #zecwalletlitelib = { path = "../../zecwallet-light-cli/lib" }
-neon = "0.3.3"
 lazy_static = "1.4.0"
-neon-serde = "0.2.0"
-serde = "1.0.80"
