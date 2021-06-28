@@ -77,7 +77,7 @@ jobs:
         if: contains(matrix.os, 'ubuntu')
         with:
           name: ${{ matrix.os }}
-           path: dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
+          path: dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
       - name: Upload artifacts-AppImage
         uses: actions/upload-artifact@v1
         if: contains(matrix.os, 'ubuntu')
