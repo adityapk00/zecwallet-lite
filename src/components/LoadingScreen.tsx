@@ -343,8 +343,6 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
             progress = base + progress / ss.batch_total;
           }
 
-          console.log(`progress = ${progress_blocks}, base = ${base}`);
-
           if (progress_blocks && !isNaN(progress_blocks)) {
             const currentStatus = `Syncing: ${progress.toFixed(2)}%`;
             me.setState({ currentStatus });
