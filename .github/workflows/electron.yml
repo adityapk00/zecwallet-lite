@@ -68,12 +68,16 @@ jobs:
         if: contains(matrix.os, 'windows')
         run: |
           ./bin/printversion.ps1
+      - name: Name Packages@Linux
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          mv dist/zecwalletlite_${{ env.VERSION }}_amd64.deb dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
       - name: Upload artifacts-deb
         uses: actions/upload-artifact@v1
         if: contains(matrix.os, 'ubuntu')
         with:
           name: ${{ matrix.os }}
-          path: dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
+           path: dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
       - name: Upload artifacts-AppImage
         uses: actions/upload-artifact@v1
         if: contains(matrix.os, 'ubuntu')
