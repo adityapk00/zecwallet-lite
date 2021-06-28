@@ -5,9 +5,6 @@ import { Redirect, RouteComponentProps, withRouter } from "react-router";
 import TextareaAutosize from "react-textarea-autosize";
 import request from "request";
 import progress from "progress-stream";
-import path from "path";
-import os from "os";
-import { promisify } from "util";
 import native from "../native.node";
 import routes from "../constants/routes.json";
 import { RPCConfig, Info } from "./AppState";
@@ -17,20 +14,8 @@ import styles from "./LoadingScreen.module.css";
 import Logo from "../assets/img/logobig.png";
 import Utils from "../utils/utils";
 
-const { remote, ipcRenderer } = window.require("electron");
+const { ipcRenderer } = window.require("electron");
 const fs = window.require("fs");
-
-const locateZcashParamsDir = () => {
-  if (os.platform() === "darwin") {
-    return path.join(remote.app.getPath("appData"), "ZcashParams");
-  }
-
-  if (os.platform() === "linux") {
-    return path.join(remote.app.getPath("home"), ".zcash-params");
-  }
-
-  return path.join(remote.app.getPath("appData"), "ZcashParams");
-};
 
 class LoadingScreenState {
   currentStatus: string | JSX.Element;
