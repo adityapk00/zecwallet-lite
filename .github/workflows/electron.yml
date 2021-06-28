@@ -36,7 +36,7 @@ jobs:
       - name: Build and Package@Linux
         if: contains(matrix.os, 'ubuntu')
         run: |
-          yarn package-linux
+          yarn dist:linux
       - name: Mac Certificate-Gen
         if: contains(matrix.os, 'macos')
         env:
@@ -55,11 +55,11 @@ jobs:
           appleId: ${{ secrets.appleId }}
           appleIdPassword: ${{ secrets.appleIdPassword }}
         run: |
-          yarn package-mac
+          yarn dist:mac
       - name: Build and Package@Win
         if: contains(matrix.os, 'windows')
         run: |
-          yarn package-win
+          yarn dist:win
       - name: Version@Linux@Mac
         if: contains(matrix.os, 'ubuntu') || contains(matrix.os, 'macos')
         run: |
