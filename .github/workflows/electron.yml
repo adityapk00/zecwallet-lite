@@ -23,13 +23,13 @@ jobs:
           fetch-depth: 1
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: 1.46.0
+          toolchain: 1.52.0
           override: true
           components: rustfmt
-      - name: Use Node.js 12.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: yarn install
         run: |
           yarn install
