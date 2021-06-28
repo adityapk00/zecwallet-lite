@@ -103,9 +103,9 @@
     "start": "yarn neon && concurrently -k \"cross-env NODE_ENV=production BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electronmon .\"",
     "build": "yarn neon && node scripts/build.js",
     "test": "node scripts/test.js",
-    "dist:win": "yarn build && electron-builder -w -c.extraMetadata.main=build/electron.js",
-    "dist:mac": "yarn build && electron-builder -m -c.extraMetadata.main=build/electron.js",
-    "dist:linux": "yarn build && electron-builder -l -c.extraMetadata.main=build/electron.js",
+    "dist:win": "yarn build && electron-builder -w -c.extraMetadata.main=build/electron.js --publish never",
+    "dist:mac": "yarn build && electron-builder -m -c.extraMetadata.main=build/electron.js --publish never",
+    "dist:linux": "yarn build && electron-builder -l -c.extraMetadata.main=build/electron.js --publish never",
     "react-start": "node scripts/start.js",
     "neon": "cargo-cp-artifact -nc src/native.node -- cargo build --release --manifest-path native/Cargo.toml --message-format=json-render-diagnostics"
   },
