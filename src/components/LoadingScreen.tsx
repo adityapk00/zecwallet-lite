@@ -329,12 +329,24 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
           me.setState({ loadingDone: true });
         } else {
           // Still syncing, grab the status and update the status
-          const progress_blocks =
+          let progress_blocks =
             (ss.witness_blocks + ss.synced_blocks + ss.trial_decryptions_blocks + ss.txn_scan_blocks) / 4;
 
+          let progress = progress_blocks;
+          if (ss.total_blocks) {
+            progress = (progress_blocks * 100) / ss.total_blocks;
+          }
+
+          let base = 0;
+          if (ss.batch_total) {
+            base = (ss.batch_num * 100) / ss.batch_total;
+            progress = base + progress / ss.batch_total;
+          }
+
+          console.log(`progress = ${progress_blocks}, base = ${base}`);
+
           if (progress_blocks && !isNaN(progress_blocks)) {
-            const progress = ((progress_blocks * 100) / ss.total_blocks).toFixed(2);
-            const currentStatus = `Syncing: ${progress}%`;
+            const currentStatus = `Syncing: ${progress.toFixed(2)}%`;
             me.setState({ currentStatus });
           }
         }
