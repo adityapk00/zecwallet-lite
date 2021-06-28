@@ -39,6 +39,7 @@
     "dotenv-expand": "5.1.0",
     "electron-build-env": "^0.2.0",
     "electron-is-dev": "^1.2.0",
+    "electron-notarize": "^1.0.0",
     "eslint": "^7.11.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.0",
@@ -150,6 +151,7 @@
   "build": {
     "productName": "Zecwallet Lite",
     "appId": "co.zecwallet.lite",
+    "afterAllArtifactBuild": "./afterSignHook.js",
     "files": [
       "build/**/*",
       "node_modules/**/*"

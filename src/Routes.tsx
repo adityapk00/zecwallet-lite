@@ -63,8 +63,6 @@ export default class RouteApp extends React.Component<Props, AppState> {
       this.setInfo,
       this.setZecPrice
     );
-
-    console.log(native.litelib_wallet_exists("main"));
   }
 
   componentDidMount() {

@@ -90,11 +90,8 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
       this.runSyncStatusPoller(prevSyncId);
     } else {
       (async () => {
-        const success = await this.ensureZcashParams();
-        if (success) {
-          // Do it in a timeout, so the window has a chance to load.
-          setTimeout(() => this.doFirstTimeSetup(), 100);
-        }
+        // Do it in a timeout, so the window has a chance to load.
+        setTimeout(() => this.doFirstTimeSetup(), 100);
       })();
     }
   }
@@ -137,50 +134,6 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
         cb(err.message);
       }); // Delete the file async. (But we don't check the result)
     });
-  };
-
-  ensureZcashParams = async () => {
-    // Check if the zcash params dir exists and if the params files are present
-    const dir = locateZcashParamsDir();
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-
-    // Check for the params
-    const params = [
-      {
-        name: "sapling-output.params",
-        url: "https://params.zecwallet.co/params/sapling-output.params",
-      },
-      {
-        name: "sapling-spend.params",
-        url: "https://params.zecwallet.co/params/sapling-spend.params",
-      },
-    ];
-
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < params.length; i++) {
-      const p = params[i];
-
-      const fileName = path.join(dir, p.name);
-      if (!fs.existsSync(fileName)) {
-        // Download and save this file
-        this.setState({ currentStatus: `Downloading ${p.name}...` });
-
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          await promisify(this.download)(p.url, fileName, p.name);
-        } catch (err) {
-          console.log(`error: ${err}`);
-          this.setState({
-            currentStatus: `Error downloading ${p.name}. The error was: ${err}`,
-          });
-          return false;
-        }
-      }
-    }
-
-    return true;
   };
 
   loadServerURI = () => {
