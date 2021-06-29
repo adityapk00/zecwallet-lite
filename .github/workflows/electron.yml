@@ -71,7 +71,7 @@ jobs:
       - name: Name Packages@Linux
         if: contains(matrix.os, 'ubuntu')
         run: |
-          mv dist/zecwalletlite_${{ env.VERSION }}_amd64.deb dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
+          mv dist/zecwallet-lite_${{ env.VERSION }}_amd64.deb dist/Zecwallet_Lite_${{ env.VERSION }}_amd64.deb
       - name: Upload artifacts-deb
         uses: actions/upload-artifact@v1
         if: contains(matrix.os, 'ubuntu')
