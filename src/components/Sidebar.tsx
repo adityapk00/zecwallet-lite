@@ -533,7 +533,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
   };
 
   doImportPrivKeys = async (key: string, birthday: string) => {
-    const { importPrivKeys, openErrorModal, setInfo, setRescanning, history, info } = this.props;
+    const { importPrivKeys, openErrorModal, setInfo, clearTimers, setRescanning, history, info } = this.props;
 
     // eslint-disable-next-line no-control-regex
     if (key) {
@@ -585,6 +585,10 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
         );
         return;
       }
+
+      // To rescan, we reset the wallet loading
+      // So set info the default, and redirect to the loading screen
+      clearTimers();
 
       // Grab the previous sync ID.
       const prevSyncId = JSON.parse(RPC.doSyncStatus()).sync_id;
