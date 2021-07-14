@@ -120,8 +120,10 @@ export default class RPC {
 
     this.updateDataLock = true;
     const latest_txid = RPC.getLastTxid();
-    console.log(`Latest: ${latest_txid}, prev = ${this.lastTxId}`);
+
     if (this.lastTxId !== latest_txid) {
+      console.log(`Latest: ${latest_txid}, prev = ${this.lastTxId}`);
+
       const latestBlockHeight = await this.fetchInfo();
       this.lastBlockHeight = latestBlockHeight;
       this.lastTxId = latest_txid;
@@ -142,6 +144,8 @@ export default class RPC {
     const latestBlockHeight = await this.fetchInfo();
 
     if (fullRefresh || !this.lastBlockHeight || this.lastBlockHeight < latestBlockHeight) {
+      this.updateDataLock = true;
+
       // If the latest block height has changed, make sure to sync. This will happen in a new thread
       RPC.doSync();
 
@@ -166,6 +170,8 @@ export default class RPC {
 
           // Save the wallet
           RPC.doSave();
+
+          this.updateDataLock = false;
 
           // All done
           console.log(`Finished full refresh at ${latestBlockHeight}`);
