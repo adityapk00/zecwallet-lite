@@ -3,9 +3,7 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable vars-on-top */
 /* eslint-disable no-restricted-syntax */
-// @flow
-import url from "url";
-import querystring from "querystring";
+import Url from "url-parse";
 import { Base64 } from "js-base64";
 
 import Utils from "./utils";
@@ -36,7 +34,7 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
     return [new ZcashURITarget(uri)];
   }
 
-  const parsedUri = url.parse(uri);
+  const parsedUri = new Url(uri, true);
   if (!parsedUri || parsedUri.protocol !== "zcash:") {
     return "Invalid URI or protocol";
   }
@@ -44,7 +42,8 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   const targets: Map<number, ZcashURITarget> = new Map();
 
   // The first address is special, it can be the "host" part of the URI
-  const address = parsedUri.host;
+  //console.log(parsedUri);
+  const address = parsedUri.pathname;
   if (address && !(Utils.isTransparent(address) || Utils.isZaddr(address))) {
     return `"${address || ""}" was not a valid zcash address`;
   }
@@ -57,7 +56,7 @@ export const parseZcashURI = (uri: string): ZcashURITarget[] | string => {
   targets.set(0, t);
 
   // Go over all the query params
-  const params = querystring.parse(parsedUri.query || "");
+  const params = parsedUri.query;
   for (const [q, value] of Object.entries(params)) {
     const [qName, qIdxS, extra] = q.split(".");
     if (typeof extra !== "undefined") {
