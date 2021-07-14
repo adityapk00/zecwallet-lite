@@ -25,7 +25,7 @@ lazy_static! {
 }
 
 register_module!(mut m, {
-    m.export_function("litelib_say_hello", litelib_say_hello)?;
+    //m.export_function("litelib_say_hello", litelib_say_hello)?;
     m.export_function("litelib_wallet_exists", litelib_wallet_exists)?;
     m.export_function("litelib_initialize_new", litelib_initialize_new)?;
     m.export_function("litelib_initialize_existing", litelib_initialize_existing)?;
@@ -38,13 +38,13 @@ register_module!(mut m, {
     Ok(())
 });
 
-fn litelib_say_hello(mut cx: FunctionContext) -> JsResult<JsString> {
-    let to = cx.argument::<JsString>(0)?.value(&mut cx);
+// fn litelib_say_hello(mut cx: FunctionContext) -> JsResult<JsString> {
+//     let to = cx.argument::<JsString>(0)?.value(&mut cx);
 
-    let ret = format!("Hello {}", to);
+//     let ret = format!("Hello {}", to);
 
-    Ok(cx.string(ret))
-}
+//     Ok(cx.string(ret))
+// }
 
 // Check if there is an existing wallet
 fn litelib_wallet_exists(mut cx: FunctionContext) -> JsResult<JsBoolean> {
@@ -84,10 +84,10 @@ fn litelib_initialize_new(mut cx: FunctionContext) -> JsResult<JsString> {
             }
         };
 
-        LIGHTCLIENT
-            .lock()
-            .unwrap()
-            .replace(Some(Arc::new(lightclient)));
+        let lc = Arc::new(lightclient);
+        LightClient::start_mempool_monitor(lc.clone());
+
+        LIGHTCLIENT.lock().unwrap().replace(Some(lc));
 
         // Return the wallet's seed
         seed
@@ -123,10 +123,10 @@ fn litelib_initialize_new_from_phrase(mut cx: FunctionContext) -> JsResult<JsStr
         // Initialize logging
         let _ = lightclient.init_logging();
 
-        LIGHTCLIENT
-            .lock()
-            .unwrap()
-            .replace(Some(Arc::new(lightclient)));
+        let lc = Arc::new(lightclient);
+        LightClient::start_mempool_monitor(lc.clone());
+
+        LIGHTCLIENT.lock().unwrap().replace(Some(lc));
 
         format!("OK")
     };
@@ -157,10 +157,10 @@ fn litelib_initialize_existing(mut cx: FunctionContext) -> JsResult<JsString> {
         // Initialize logging
         let _ = lightclient.init_logging();
 
-        LIGHTCLIENT
-            .lock()
-            .unwrap()
-            .replace(Some(Arc::new(lightclient)));
+        let lc = Arc::new(lightclient);
+        LightClient::start_mempool_monitor(lc.clone());
+
+        LIGHTCLIENT.lock().unwrap().replace(Some(lc));
 
         format!("OK")
     };

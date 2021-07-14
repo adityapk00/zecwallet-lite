@@ -23,8 +23,12 @@ export default class RPC {
   fnSetAllAddresses: (a: string[]) => void;
   fnSetZecPrice: (p?: number) => void;
   refreshTimerID?: NodeJS.Timeout;
+  updateTimerId?: NodeJS.Timeout;
+
+  updateDataLock: boolean;
 
   lastBlockHeight: number;
+  lastTxId?: string;
 
   constructor(
     fnSetTotalBalance: (tb: TotalBalance) => void,
@@ -43,13 +47,19 @@ export default class RPC {
     this.lastBlockHeight = 0;
 
     this.refreshTimerID = undefined;
+    this.updateTimerId = undefined;
+    this.updateDataLock = false;
   }
 
   async configure(rpcConfig: RPCConfig) {
     this.rpcConfig = rpcConfig;
 
     if (!this.refreshTimerID) {
-      this.refreshTimerID = setInterval(() => this.refresh(false), 60 * 1000);
+      this.refreshTimerID = setInterval(() => this.refresh(false), 3 * 60 * 1000); // 3 mins
+    }
+
+    if (!this.updateTimerId) {
+      this.updateTimerId = setInterval(() => this.updateData(), 3 * 1000); // 3 secs
     }
 
     // Immediately call the refresh after configure to update the UI
@@ -60,6 +70,11 @@ export default class RPC {
     if (this.refreshTimerID) {
       clearInterval(this.refreshTimerID);
       this.refreshTimerID = undefined;
+    }
+
+    if (this.updateTimerId) {
+      clearInterval(this.updateTimerId);
+      this.updateTimerId = undefined;
     }
   }
 
@@ -96,6 +111,36 @@ export default class RPC {
     console.log(`Deinitialize status: ${str}`);
   }
 
+  async updateData() {
+    //console.log("Update data triggered");
+    if (this.updateDataLock) {
+      //console.log("Update lock, returning");
+      return;
+    }
+
+    this.updateDataLock = true;
+    const latest_txid = RPC.getLastTxid();
+    console.log(`Latest: ${latest_txid}, prev = ${this.lastTxId}`);
+    if (this.lastTxId !== latest_txid) {
+      const latestBlockHeight = await this.fetchInfo();
+      this.lastBlockHeight = latestBlockHeight;
+      this.lastTxId = latest_txid;
+
+      //console.log("Update data fetching new txns");
+
+      // And fetch the rest of the data.
+      this.fetchTotalBalance();
+      this.fetchTandZTransactions(latestBlockHeight);
+      this.getZecPrice();
+
+      // Save the wallet
+      RPC.doSave();
+
+      //console.log(`Finished update data at ${latestBlockHeight}`);
+    }
+    this.updateDataLock = false;
+  }
+
   async refresh(fullRefresh: boolean) {
     const latestBlockHeight = await this.fetchInfo();
 
@@ -115,16 +160,17 @@ export default class RPC {
           // We are synced. Cancel the poll timer
           clearInterval(pollerID);
 
-          // Save the wallet
-          RPC.doSave();
-
           // And fetch the rest of the data.
           this.fetchTotalBalance();
           this.fetchTandZTransactions(latestBlockHeight);
           this.getZecPrice();
 
           this.lastBlockHeight = latestBlockHeight;
-          // All done, set up next fetch
+
+          // Save the wallet
+          RPC.doSave();
+
+          // All done
           console.log(`Finished full refresh at ${latestBlockHeight}`);
         }
       }, 1000);
@@ -248,6 +294,13 @@ export default class RPC {
     this.fnSetAllAddresses(allAddresses);
   }
 
+  static getLastTxid(): string {
+    const lastTxid = native.litelib_execute("lasttxid", "");
+    const lastTxidJSON = JSON.parse(lastTxid);
+
+    return lastTxidJSON.last_txid;
+  }
+
   static getPrivKeyAsString(address: string): string {
     const privKeyStr = native.litelib_execute("export", address);
     const privKeyJSON = JSON.parse(privKeyStr);
@@ -287,6 +340,7 @@ export default class RPC {
   fetchTandZTransactions(latestBlockHeight: number) {
     const listStr = native.litelib_execute("list", "");
     const listJSON = JSON.parse(listStr);
+    //console.log(listJSON);
 
     let txlist: Transaction[] = listJSON.map((tx: any) => {
       const transaction = new Transaction();
