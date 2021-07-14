@@ -133,9 +133,6 @@ export default class RPC {
       this.fetchTandZTransactions(latestBlockHeight);
       this.getZecPrice();
 
-      // Save the wallet
-      RPC.doSave();
-
       //console.log(`Finished update data at ${latestBlockHeight}`);
     }
     this.updateDataLock = false;
