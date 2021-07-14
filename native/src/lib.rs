@@ -67,7 +67,7 @@ fn litelib_initialize_new(mut cx: FunctionContext) -> JsResult<JsString> {
             }
         };
 
-        let lightclient = match LightClient::new(&config, latest_block_height) {
+        let lightclient = match LightClient::new(&config, latest_block_height.saturating_sub(100)) {
             Ok(l) => l,
             Err(e) => {
                 return format!("Error: {}", e);
