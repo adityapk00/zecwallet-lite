@@ -267,8 +267,7 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
           me.setState({ loadingDone: true });
         } else {
           // Still syncing, grab the status and update the status
-          let progress_blocks =
-            (ss.witness_blocks + ss.synced_blocks + ss.trial_decryptions_blocks + ss.txn_scan_blocks) / 4;
+          let progress_blocks = (ss.synced_blocks + ss.trial_decryptions_blocks + ss.txn_scan_blocks) / 3;
 
           let progress = progress_blocks;
           if (ss.total_blocks) {

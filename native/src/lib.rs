@@ -38,14 +38,6 @@ register_module!(mut m, {
     Ok(())
 });
 
-// fn litelib_say_hello(mut cx: FunctionContext) -> JsResult<JsString> {
-//     let to = cx.argument::<JsString>(0)?.value(&mut cx);
-
-//     let ret = format!("Hello {}", to);
-
-//     Ok(cx.string(ret))
-// }
-
 // Check if there is an existing wallet
 fn litelib_wallet_exists(mut cx: FunctionContext) -> JsResult<JsBoolean> {
     let chain_name = cx.argument::<JsString>(0)?.value(&mut cx);
