@@ -318,7 +318,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       history.push(routes.SEND);
     });
 
-    // Import Private Keys
+    // Import a Private Key
     ipcRenderer.on("import", () => {
       this.openImportPrivKeyModal(null);
     });
