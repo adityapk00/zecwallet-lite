@@ -56,7 +56,7 @@ const AddressBlock = ({
     if (currencyName === "TAZ") {
       shell.openExternal(`https://chain.so/address/ZECTEST/${address}`);
     } else {
-      shell.openExternal(`https://zcha.in/accounts/${address}`);
+      shell.openExternal(`https://zcashblockexplorer.com/transactions/${address}`);
     }
   };
 

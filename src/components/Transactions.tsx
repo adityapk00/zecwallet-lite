@@ -72,7 +72,7 @@ const TxModalInternal: React.FC<RouteComponentProps & TxModalInternalProps> = ({
     if (currencyName === "TAZ") {
       shell.openExternal(`https://chain.so/tx/ZECTEST/${txid}`);
     } else {
-      shell.openExternal(`https://zcha.in/transactions/${txid}`);
+      shell.openExternal(`https://zcashblockexplorer.com/transactions/${txid}`);
     }
   };
 
