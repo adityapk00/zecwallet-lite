@@ -507,6 +507,8 @@ function createWindow() {
   }
 }
 
+app.commandLine.appendSwitch('in-process-gpu');
+
 // Create a new browser window by invoking the createWindow
 // function once the Electron application is initialized.
 // Install REACT_DEVELOPER_TOOLS as well if isDev
