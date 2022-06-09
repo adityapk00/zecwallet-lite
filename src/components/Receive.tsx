@@ -89,6 +89,8 @@ const AddressBlock = ({
                     className={[cstyles.breakword, cstyles.padtopsmall, cstyles.fixedfont, cstyles.flex].join(" ")}
                     style={{ maxWidth: "600px" }}
                   >
+                    {/*
+                    // @ts-ignore */}
                     <QRCode value={privateKey} className={[styles.receiveQrcode].join(" ")} />
                     <div>{privateKey}</div>
                   </div>
@@ -104,6 +106,8 @@ const AddressBlock = ({
                     className={[cstyles.breakword, cstyles.padtopsmall, cstyles.fixedfont, cstyles.flex].join(" ")}
                     style={{ maxWidth: "600px" }}
                   >
+                    {/*
+                    // @ts-ignore */}
                     <QRCode value={viewKey} className={[styles.receiveQrcode].join(" ")} />
                     <div>{viewKey}</div>
                   </div>
@@ -151,6 +155,8 @@ const AddressBlock = ({
             </div>
           </div>
           <div>
+            {/*
+                    // @ts-ignore */}
             <QRCode value={address} className={[styles.receiveQrcode].join(" ")} />
           </div>
         </div>

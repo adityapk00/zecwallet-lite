@@ -759,5 +759,5 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
   }
 }
 
-// $FlowFixMe
+// @ts-ignore
 export default withRouter(Sidebar);

@@ -517,4 +517,5 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
   }
 }
 
+// @ts-ignore
 export default withRouter(LoadingScreen);
