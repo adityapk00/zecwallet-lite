@@ -507,7 +507,7 @@ function createWindow() {
   }
 }
 
-app.commandLine.appendSwitch('in-process-gpu');
+app.commandLine.appendSwitch("in-process-gpu");
 
 // Create a new browser window by invoking the createWindow
 // function once the Electron application is initialized.
