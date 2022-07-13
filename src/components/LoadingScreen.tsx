@@ -214,7 +214,7 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
       this.runSyncStatusPoller(prevSyncId);
     } catch (err) {
       // Not yet finished loading. So update the state, and setup the next refresh
-      this.setState({ currentStatus: err });
+      this.setState({ currentStatus: err as string });
     }
   }
 
@@ -517,4 +517,5 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
   }
 }
 
+// @ts-ignore
 export default withRouter(LoadingScreen);
