@@ -283,6 +283,9 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
           if (progress_blocks && !isNaN(progress_blocks)) {
             const currentStatus = `Syncing: ${progress.toFixed(2)}%`;
             me.setState({ currentStatus });
+          } else {
+            const currentStatus = <div>Syncing: 0.1%<br/>Please wait... This could take several minutes</div>;
+            me.setState({ currentStatus });
           }
         }
       }
