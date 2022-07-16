@@ -30,6 +30,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.12
+        with:
+          cmake-version: "3.16.x"
+      - name: Use cmake
+        run: cmake --version
       - name: yarn install
         run: |
           yarn install
