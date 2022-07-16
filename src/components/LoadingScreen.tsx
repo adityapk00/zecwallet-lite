@@ -242,6 +242,7 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
       } else {
         const ss = JSON.parse(syncstatus);
         console.log(ss);
+        // console.log(`Prev SyncID: ${prevSyncId}`);
 
         if (ss.sync_id > prevSyncId && !ss.in_progress) {
           // First, save the wallet so we don't lose the just-synced data
@@ -280,11 +281,18 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
             progress = base + progress / ss.batch_total;
           }
 
-          if (progress_blocks && !isNaN(progress_blocks)) {
-            const currentStatus = `Syncing: ${progress.toFixed(2)}%`;
-            me.setState({ currentStatus });
-          } else {
-            const currentStatus = <div>Syncing: 0.1%<br/>Please wait... This could take several minutes</div>;
+          if (!isNaN(progress_blocks)) {
+            const currentStatus = (
+              <div>
+                Syncing batch {ss.batch_num} of {ss.batch_total}
+                <br />
+                Batch Progress: {((progress_blocks * 100) / ss.total_blocks).toFixed(2)}%. Total progress:{" "}
+                {progress.toFixed(2)}%.
+                <br />
+                <br />
+                Please wait... This could take several minutes or hours
+              </div>
+            );
             me.setState({ currentStatus });
           }
         }
