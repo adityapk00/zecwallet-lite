@@ -111,7 +111,9 @@
     "neon": "cargo-cp-artifact -nc src/native.node -- cargo build --release --manifest-path native/Cargo.toml --message-format=json-render-diagnostics"
   },
   "electronmon": {
-    "patterns": ["!native/**"]
+    "patterns": [
+      "!native/**"
+    ]
   },
   "eslintConfig": {
     "extends": [
