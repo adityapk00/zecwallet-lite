@@ -203,6 +203,9 @@ export default class RPC {
       info.encrypted = encJSON.encrypted;
       info.locked = encJSON.locked;
 
+      const walletHeight = RPC.fetchWalletHeight();
+      info.walletHeight = walletHeight;
+
       return info;
     } catch (err) {
       console.log("Failed to parse info", err);

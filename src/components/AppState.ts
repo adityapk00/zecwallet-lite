@@ -155,6 +155,7 @@ export class Info {
   zecPrice: number;
   encrypted: boolean;
   locked: boolean;
+  walletHeight: number;
 
   constructor() {
     this.testnet = false;
@@ -167,6 +168,7 @@ export class Info {
     this.zecPrice = 0;
     this.encrypted = false;
     this.locked = false;
+    this.walletHeight = 0;
   }
 }
 

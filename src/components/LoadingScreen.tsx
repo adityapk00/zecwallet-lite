@@ -282,12 +282,15 @@ class LoadingScreen extends Component<Props & RouteComponentProps, LoadingScreen
           }
 
           if (!isNaN(progress_blocks)) {
+            let batch_progress = (progress_blocks * 100) / ss.total_blocks;
+            if (isNaN(batch_progress)) {
+              batch_progress = 0;
+            }
             const currentStatus = (
               <div>
                 Syncing batch {ss.batch_num} of {ss.batch_total}
                 <br />
-                Batch Progress: {((progress_blocks * 100) / ss.total_blocks).toFixed(2)}%. Total progress:{" "}
-                {progress.toFixed(2)}%.
+                Batch Progress: {batch_progress.toFixed(2)}%. Total progress: {progress.toFixed(2)}%.
                 <br />
                 <br />
                 Please wait... This could take several minutes or hours

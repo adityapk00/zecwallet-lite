@@ -1,7 +1,7 @@
 {
   "name": "zecwallet-lite",
   "productName": "Zecwallet Lite",
-  "version": "1.7.16",
+  "version": "1.7.20",
   "private": true,
   "description": "Zecwallet Lite",
   "license": "MIT",
@@ -109,6 +109,9 @@
     "dist:linux": "yarn build && electron-builder -l -c.extraMetadata.main=build/electron.js --publish never",
     "react-start": "node scripts/start.js",
     "neon": "cargo-cp-artifact -nc src/native.node -- cargo build --release --manifest-path native/Cargo.toml --message-format=json-render-diagnostics"
+  },
+  "electronmon": {
+    "patterns": ["!native/**"]
   },
   "eslintConfig": {
     "extends": [
