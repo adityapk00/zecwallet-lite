@@ -151,19 +151,7 @@ class MenuBuilder {
             this.mainWindow.webContents.send("zcashd");
           },
         },
-        {
-          label: "Connect Mobile App",
-          click: () => {
-            this.mainWindow.webContents.send("connectmobile");
-          },
-        },
         { type: "separator" },
-        {
-          label: "Encrypt Wallet",
-          click: () => {
-            this.mainWindow.webContents.send("encrypt");
-          },
-        },
         {
           label: "Remove Wallet Encryption",
           click: () => {
@@ -233,19 +221,7 @@ class MenuBuilder {
             this.mainWindow.webContents.send("zcashd");
           },
         },
-        {
-          label: "Connect Mobile App",
-          click: () => {
-            this.mainWindow.webContents.send("connectmobile");
-          },
-        },
         { type: "separator" },
-        {
-          label: "Encrypt Wallet",
-          click: () => {
-            this.mainWindow.webContents.send("encrypt");
-          },
-        },
         {
           label: "Remove Wallet Encryption",
           click: () => {
@@ -365,12 +341,6 @@ class MenuBuilder {
               this.mainWindow.webContents.send("zcashd");
             },
           },
-          {
-            label: "Connect Mobile App",
-            click: () => {
-              this.mainWindow.webContents.send("connectmobile");
-            },
-          },
           // {
           //   label: 'Devtools',
           //   click: () => {
@@ -378,12 +348,6 @@ class MenuBuilder {
           //   }
           // },
           { type: "separator" },
-          {
-            label: "Encrypt Wallet",
-            click: () => {
-              this.mainWindow.webContents.send("encrypt");
-            },
-          },
           {
             label: "Remove Wallet Encryption",
             click: () => {

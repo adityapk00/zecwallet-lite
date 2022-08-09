@@ -11,7 +11,12 @@ export default class Utils {
   static V2_LIGHTWALLETD: string = "https://lwdv2.zecwallet.co:1443";
 
   // v3 LightwalletD
-  static V3_LIGHTWALLETD: string = "https://lwdv3.zecwallet.co";
+  static V3_LIGHTWALLETD: string = "https://mainnet.lightwalletd.com:9067";
+
+  static isUnified(addr: string): boolean {
+    if (!addr) return false;
+    return addr.startsWith("u");
+  }
 
   static isSapling(addr: string): boolean {
     if (!addr) return false;

@@ -1,7 +1,7 @@
 {
   "name": "zecwallet-lite",
   "productName": "Zecwallet Lite",
-  "version": "1.7.20",
+  "version": "1.8.0-beta3",
   "private": true,
   "description": "Zecwallet Lite",
   "license": "MIT",

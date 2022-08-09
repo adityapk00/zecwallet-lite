@@ -12,7 +12,7 @@ import styles from "./Sidebar.module.css";
 import cstyles from "./Common.module.css";
 import routes from "../constants/routes.json";
 import Logo from "../assets/img/logobig.png";
-import { Info, Transaction } from "./AppState";
+import { AddressDetail, Info, Transaction } from "./AppState";
 import Utils from "../utils/utils";
 import RPC from "../rpc";
 import { parseZcashURI, ZcashURITarget } from "../utils/uris";
@@ -222,7 +222,7 @@ const SidebarMenuItem = ({ name, routeName, currentRoute, iconname }: SidebarMen
 type Props = {
   info: Info;
   setRescanning: (rescan: boolean, prevSyncId: number) => void;
-  addresses: string[];
+  addresses: AddressDetail[];
   transactions: Transaction[];
   setInfo: (info: Info) => void;
   clearTimers: () => void;
@@ -276,10 +276,10 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       openErrorModal(
         "Zecwallet Lite",
         <div className={cstyles.verticalflex}>
-          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.7.20</div>
-          <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2021, Aditya Kulkarni.</div>
+          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.8.0-beta3</div>
+          <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2022, Aditya Kulkarni.</div>
           <div className={cstyles.margintoplarge}>
-            The MIT License (MIT) Copyright (c) 2018-2021 Zecwallet
+            The MIT License (MIT) Copyright (c) 2018-2022 Zecwallet
             <br />
             <br />
             Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -490,7 +490,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       const { addresses, getPrivKeyAsString } = this.props;
       openPasswordAndUnlockIfNeeded(async () => {
         const privKeysPromise = addresses.map(async (a) => {
-          const privKey = await getPrivKeyAsString(a);
+          const privKey = getPrivKeyAsString(a.address);
           return `${privKey} #${a}`;
         });
         const exportedPrivKeys = await Promise.all(privKeysPromise);

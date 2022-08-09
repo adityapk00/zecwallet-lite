@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 1
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: 1.56.1
+          toolchain: 1.62
           override: true
           components: rustfmt
       - name: Use Node.js 14.x

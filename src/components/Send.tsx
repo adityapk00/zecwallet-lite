@@ -13,7 +13,16 @@ import TextareaAutosize from "react-textarea-autosize";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import styles from "./Send.module.css";
 import cstyles from "./Common.module.css";
-import { ToAddr, AddressBalance, SendPageState, Info, AddressBookEntry, TotalBalance, SendProgress } from "./AppState";
+import {
+  ToAddr,
+  AddressBalance,
+  SendPageState,
+  Info,
+  AddressBookEntry,
+  TotalBalance,
+  SendProgress,
+  AddressDetail,
+} from "./AppState";
 import Utils from "../utils/utils";
 import ScrollPane from "./ScrollPane";
 import ArrowUpLight from "../assets/img/arrow_up_dark.png";
@@ -56,9 +65,10 @@ const ToAddrBox = ({
   setSendButtonEnable,
   totalAmountAvailable,
 }: ToAddrBoxProps) => {
-  const isMemoDisabled = !Utils.isZaddr(toaddr.to);
+  const isMemoDisabled = !(Utils.isZaddr(toaddr.to) || Utils.isUnified(toaddr.to));
 
-  const addressIsValid = toaddr.to === "" || Utils.isZaddr(toaddr.to) || Utils.isTransparent(toaddr.to);
+  const addressIsValid =
+    toaddr.to === "" || Utils.isUnified(toaddr.to) || Utils.isZaddr(toaddr.to) || Utils.isTransparent(toaddr.to);
 
   let amountError = null;
   if (toaddr.amount) {
@@ -118,7 +128,7 @@ const ToAddrBox = ({
         </div>
         <input
           type="text"
-          placeholder="Z or T address"
+          placeholder="U | Z | T address"
           className={cstyles.inputbox}
           value={toaddr.to}
           onChange={(e) => updateToField(toaddr.id as number, e, null, null)}
@@ -148,7 +158,7 @@ const ToAddrBox = ({
 
         <Spacer />
 
-        {isMemoDisabled && <div className={cstyles.sublight}>Memos only for z-addresses</div>}
+        {isMemoDisabled && <div className={cstyles.sublight}>Memos only for sapling or UA addresses</div>}
 
         {!isMemoDisabled && (
           <div>
@@ -375,7 +385,7 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
 const ConfirmModal = withRouter(ConfirmModalInternal);
 
 type Props = {
-  addresses: string[];
+  addresses: AddressDetail[];
   totalBalance: TotalBalance;
   addressBook: AddressBookEntry[];
   sendPageState: SendPageState;
@@ -561,13 +571,13 @@ export default class Send extends PureComponent<Props, SendState> {
       openPasswordAndUnlockIfNeeded,
     } = this.props;
 
-    const totalAmountAvailable = totalBalance.transparent + totalBalance.spendablePrivate;
-    const fromaddr = addresses.find((a) => Utils.isSapling(a)) as string;
+    const totalAmountAvailable = totalBalance.transparent + totalBalance.spendableZ + totalBalance.uabalance;
+    const fromaddr = addresses.find((a) => Utils.isSapling(a.address))?.address || "";
 
     // If there are unverified funds, then show a tooltip
     let tooltip: string = "";
-    if (totalBalance.unverifiedPrivate) {
-      tooltip = `Waiting for confirmation of ZEC ${totalBalance.unverifiedPrivate} with 5 blocks (approx 6 minutes)`;
+    if (totalBalance.unverifiedZ) {
+      tooltip = `Waiting for confirmation of ZEC ${totalBalance.unverifiedZ} with 5 blocks (approx 6 minutes)`;
     }
 
     return (

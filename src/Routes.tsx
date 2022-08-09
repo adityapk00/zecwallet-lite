@@ -25,6 +25,8 @@ import AppState, {
   PasswordState,
   ServerSelectState,
   SendProgress,
+  AddressType,
+  AddressDetail,
 } from "./components/AppState";
 import RPC from "./rpc";
 import Utils from "./utils/utils";
@@ -234,7 +236,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ transactions });
   };
 
-  setAllAddresses = (addresses: string[]) => {
+  setAllAddresses = (addresses: AddressDetail[]) => {
     this.setState({ addresses });
   };
 
@@ -408,10 +410,10 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ addressBook: newAddressBook });
   };
 
-  createNewAddress = async (zaddress: boolean) => {
+  createNewAddress = async (type: AddressType) => {
     this.openPasswordAndUnlockIfNeeded(async () => {
       // Create a new address
-      const newaddress = RPC.createNewAddress(zaddress);
+      const newaddress = RPC.createNewAddress(type);
       console.log(`Created new Address ${newaddress}`);
 
       // And then fetch the list of addresses again to refresh (totalBalance gets all addresses)

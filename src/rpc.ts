@@ -8,6 +8,8 @@ import {
   TxDetail,
   Info,
   SendProgress,
+  AddressType,
+  AddressDetail,
 } from "./components/AppState";
 import { SendManyJson } from "./components/Send";
 
@@ -20,7 +22,7 @@ export default class RPC {
   fnSetTotalBalance: (tb: TotalBalance) => void;
   fnSetAddressesWithBalance: (abs: AddressBalance[]) => void;
   fnSetTransactionsList: (t: Transaction[]) => void;
-  fnSetAllAddresses: (a: string[]) => void;
+  fnSetAllAddresses: (a: AddressDetail[]) => void;
   fnSetZecPrice: (p?: number) => void;
   refreshTimerID?: NodeJS.Timeout;
   updateTimerId?: NodeJS.Timeout;
@@ -34,7 +36,7 @@ export default class RPC {
     fnSetTotalBalance: (tb: TotalBalance) => void,
     fnSetAddressesWithBalance: (abs: AddressBalance[]) => void,
     fnSetTransactionsList: (t: Transaction[]) => void,
-    fnSetAllAddresses: (a: string[]) => void,
+    fnSetAllAddresses: (a: AddressDetail[]) => void,
     fnSetInfo: (info: Info) => void,
     fnSetZecPrice: (p?: number) => void
   ) {
@@ -241,12 +243,13 @@ export default class RPC {
 
     // Total Balance
     const balance = new TotalBalance();
-    balance.private = balanceJSON.zbalance / 10 ** 8;
+    balance.uabalance = balanceJSON.uabalance / 10 ** 8;
+    balance.zbalance = balanceJSON.zbalance / 10 ** 8;
     balance.transparent = balanceJSON.tbalance / 10 ** 8;
-    balance.verifiedPrivate = balanceJSON.verified_zbalance / 10 ** 8;
-    balance.unverifiedPrivate = balanceJSON.unverified_zbalance / 10 ** 8;
-    balance.spendablePrivate = balanceJSON.spendable_zbalance / 10 ** 8;
-    balance.total = balance.private + balance.transparent;
+    balance.verifiedZ = balanceJSON.verified_zbalance / 10 ** 8;
+    balance.unverifiedZ = balanceJSON.unverified_zbalance / 10 ** 8;
+    balance.spendableZ = balanceJSON.spendable_zbalance / 10 ** 8;
+    balance.total = balance.uabalance + balance.zbalance + balance.transparent;
     this.fnSetTotalBalance(balance);
 
     // Fetch pending notes and UTXOs
@@ -266,6 +269,17 @@ export default class RPC {
     });
 
     // Addresses with Balance. The lite client reports balances in zatoshi, so divide by 10^8;
+    const oaddresses = balanceJSON.ua_addresses
+      .map((o: any) => {
+        // If this has any unconfirmed txns, show that in the UI
+        const ab = new AddressBalance(o.address, o.balance / 10 ** 8);
+        if (pendingAddressBalances.has(ab.address)) {
+          ab.containsPending = true;
+        }
+        return ab;
+      })
+      .filter((ab: AddressBalance) => ab.balance > 0);
+
     const zaddresses = balanceJSON.z_addresses
       .map((o: any) => {
         // If this has any unconfirmed txns, show that in the UI
@@ -288,14 +302,17 @@ export default class RPC {
       })
       .filter((ab: AddressBalance) => ab.balance > 0);
 
-    const addresses = zaddresses.concat(taddresses);
+    const addresses = oaddresses.concat(zaddresses.concat(taddresses));
 
     this.fnSetAddressesWithBalance(addresses);
 
     // Also set all addresses
-    const allZAddresses = balanceJSON.z_addresses.map((o: any) => o.address);
-    const allTAddresses = balanceJSON.t_addresses.map((o: any) => o.address);
-    const allAddresses = allZAddresses.concat(allTAddresses);
+    const allOAddresses = balanceJSON.ua_addresses.map((o: any) => new AddressDetail(o.address, AddressType.unified));
+    const allZAddresses = balanceJSON.z_addresses.map((o: any) => new AddressDetail(o.address, AddressType.sapling));
+    const allTAddresses = balanceJSON.t_addresses.map(
+      (o: any) => new AddressDetail(o.address, AddressType.transparent)
+    );
+    const allAddresses = allOAddresses.concat(allZAddresses.concat(allTAddresses));
 
     this.fnSetAllAddresses(allAddresses);
   }
@@ -321,8 +338,11 @@ export default class RPC {
     return privKeyJSON[0].viewing_key;
   }
 
-  static createNewAddress(zaddress: boolean) {
-    const addrStr = native.litelib_execute("new", zaddress ? "z" : "t");
+  static createNewAddress(type: AddressType) {
+    const addrStr = native.litelib_execute(
+      "new",
+      type === AddressType.unified ? "u" : type === AddressType.sapling ? "z" : "t"
+    );
     const addrJSON = JSON.parse(addrStr);
 
     return addrJSON[0];

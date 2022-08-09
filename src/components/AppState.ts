@@ -2,31 +2,41 @@
 
 import { ErrorModalData } from "./ErrorModal";
 
+export enum AddressType {
+  transparent,
+  sapling,
+  unified,
+}
+
 export class TotalBalance {
   // Total t address, confirmed and spendable
   transparent: number;
 
+  // Total orchard balance
+  uabalance: number;
+
   // Total private, confirmed + unconfirmed
-  private: number;
+  zbalance: number;
 
   // Total private, confirmed funds that have been verified
-  verifiedPrivate: number;
+  verifiedZ: number;
 
   // Total private that are waiting for confirmation
-  unverifiedPrivate: number;
+  unverifiedZ: number;
 
   // Total private funds that are spendable
-  spendablePrivate: number;
+  spendableZ: number;
 
   // Total unconfirmed + spendable
   total: number;
 
   constructor() {
-    this.private = 0;
+    this.uabalance = 0;
+    this.zbalance = 0;
     this.transparent = 0;
-    this.verifiedPrivate = 0;
-    this.unverifiedPrivate = 0;
-    this.spendablePrivate = 0;
+    this.verifiedZ = 0;
+    this.unverifiedZ = 0;
+    this.spendableZ = 0;
     this.total = 0;
   }
 }
@@ -216,6 +226,20 @@ export class SendProgress {
   }
 }
 
+export class AddressDetail {
+  address: string;
+  type: AddressType;
+  account?: number;
+  diversifier?: number;
+
+  constructor(address: string, type: AddressType, account?: number, diversifier?: number) {
+    this.address = address;
+    this.type = type;
+    this.account = account;
+    this.diversifier = diversifier;
+  }
+}
+
 // eslint-disable-next-line max-classes-per-file
 export default class AppState {
   // The total confirmed and unconfirmed balance in this wallet
@@ -233,7 +257,7 @@ export default class AppState {
 
   // List of all addresses in the wallet, including change addresses and addresses
   // that don't have any balance or are unused
-  addresses: string[];
+  addresses: AddressDetail[];
 
   // List of Address / Label pairs
   addressBook: AddressBookEntry[];

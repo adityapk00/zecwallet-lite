@@ -12,7 +12,7 @@ import QRCode from "qrcode.react";
 import styles from "./Receive.module.css";
 import cstyles from "./Common.module.css";
 import Utils from "../utils/utils";
-import { AddressBalance, Info, ReceivePageState, AddressBookEntry } from "./AppState";
+import { AddressBalance, Info, ReceivePageState, AddressBookEntry, AddressDetail, AddressType } from "./AppState";
 import ScrollPane from "./ScrollPane";
 
 const { shell, clipboard } = window.require("electron");
@@ -127,7 +127,7 @@ const AddressBlock = ({
               >
                 {copied ? <span>Copied!</span> : <span>Copy Address</span>}
               </button>
-              {!privateKey && (
+              {Utils.isZaddr(address) && !privateKey && (
                 <button
                   className={[cstyles.primarybutton].join(" ")}
                   type="button"
@@ -166,7 +166,7 @@ const AddressBlock = ({
 };
 
 type Props = {
-  addresses: string[];
+  addresses: AddressDetail[];
   addressesWithBalance: AddressBalance[];
   addressBook: AddressBookEntry[];
   info: Info;
@@ -175,7 +175,7 @@ type Props = {
   receivePageState: ReceivePageState;
   fetchAndSetSinglePrivKey: (k: string) => void;
   fetchAndSetSingleViewKey: (k: string) => void;
-  createNewAddress: (t: boolean) => void;
+  createNewAddress: (t: AddressType) => void;
   rerenderKey: number;
 };
 
@@ -202,10 +202,24 @@ export default class Receive extends Component<Props> {
       return m;
     }, new Map());
 
-    const zaddrs = addresses
-      .filter((a) => Utils.isSapling(a))
+    const uaddrs = addresses
+      .filter((a) => a.type === AddressType.unified)
       .slice(0, 100)
-      .map((a) => new AddressBalance(a, addressMap.get(a) || 0));
+      .map((a) => new AddressBalance(a.address, addressMap.get(a.address) || 0));
+    let defaultUaddr = uaddrs.length ? uaddrs[0].address : "";
+    if (receivePageState && Utils.isUnified(receivePageState.newAddress)) {
+      defaultUaddr = receivePageState.newAddress;
+
+      // move this address to the front, since the scrollbar will reset when we re-render
+      uaddrs.sort((x, y) => {
+        return x.address === defaultUaddr ? -1 : y.address === defaultUaddr ? 1 : 0;
+      });
+    }
+
+    const zaddrs = addresses
+      .filter((a) => Utils.isSapling(a.address))
+      .slice(0, 100)
+      .map((a) => new AddressBalance(a.address, addressMap.get(a.address) || 0));
 
     let defaultZaddr = zaddrs.length ? zaddrs[0].address : "";
     if (receivePageState && Utils.isSapling(receivePageState.newAddress)) {
@@ -219,9 +233,9 @@ export default class Receive extends Component<Props> {
     }
 
     const taddrs = addresses
-      .filter((a) => Utils.isTransparent(a))
+      .filter((a) => Utils.isTransparent(a.address))
       .slice(0, 100)
-      .map((a) => new AddressBalance(a, addressMap.get(a) || 0));
+      .map((a) => new AddressBalance(a.address, addressMap.get(a.address) || 0));
 
     let defaultTaddr = taddrs.length ? taddrs[0].address : "";
     if (receivePageState && Utils.isTransparent(receivePageState.newAddress)) {
@@ -245,9 +259,38 @@ export default class Receive extends Component<Props> {
         <div className={styles.receivecontainer}>
           <Tabs>
             <TabList>
+              <Tab>Unified</Tab>
               <Tab>Shielded</Tab>
               <Tab>Transparent</Tab>
             </TabList>
+
+            <TabPanel key={`ua${rerenderKey}`}>
+              <ScrollPane offsetHeight={100}>
+                <Accordion preExpanded={[defaultUaddr]}>
+                  {uaddrs.map((a) => (
+                    <AddressBlock
+                      key={a.address}
+                      addressBalance={a}
+                      currencyName={info.currencyName}
+                      label={addressBookMap.get(a.address)}
+                      zecPrice={info.zecPrice}
+                      privateKey={addressPrivateKeys.get(a.address)}
+                      viewKey={addressViewKeys.get(a.address)}
+                      fetchAndSetSinglePrivKey={fetchAndSetSinglePrivKey}
+                      fetchAndSetSingleViewKey={fetchAndSetSingleViewKey}
+                    />
+                  ))}
+                </Accordion>
+
+                <button
+                  className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(" ")}
+                  onClick={() => createNewAddress(AddressType.unified)}
+                  type="button"
+                >
+                  New Unified Address
+                </button>
+              </ScrollPane>
+            </TabPanel>
 
             <TabPanel key={`z${rerenderKey}`}>
               {/* Change the hardcoded height */}
@@ -270,10 +313,10 @@ export default class Receive extends Component<Props> {
 
                 <button
                   className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(" ")}
-                  onClick={() => createNewAddress(true)}
+                  onClick={() => createNewAddress(AddressType.sapling)}
                   type="button"
                 >
-                  New Shielded Address
+                  New Sapling Address
                 </button>
               </ScrollPane>
             </TabPanel>
@@ -299,7 +342,7 @@ export default class Receive extends Component<Props> {
                 <button
                   className={[cstyles.primarybutton, cstyles.margintoplarge, cstyles.marginbottomlarge].join(" ")}
                   type="button"
-                  onClick={() => createNewAddress(false)}
+                  onClick={() => createNewAddress(AddressType.transparent)}
                 >
                   New Transparent Address
                 </button>
