@@ -233,7 +233,7 @@ const ConfirmModalToAddr = ({ toaddr, info }: ConfirmModalToAddrProps) => {
 
   return (
     <div className={cstyles.well}>
-      <div className={[cstyles.flexspacebetween, cstyles.margintoplarge].join(" ")}>
+      <div className={[cstyles.flexspacebetween, cstyles.margintopsmall].join(" ")}>
         <div className={[styles.confirmModalAddress].join(" ")}>
           {Utils.splitStringIntoChunks(toaddr.to, 6).join(" ")}
         </div>
@@ -257,6 +257,7 @@ const ConfirmModalToAddr = ({ toaddr, info }: ConfirmModalToAddrProps) => {
 // Internal because we're using withRouter just below
 type ConfirmModalProps = {
   sendPageState: SendPageState;
+  totalBalance: TotalBalance;
   info: Info;
   sendTransaction: (sendJson: SendManyJson[], setSendProgress: (p?: SendProgress) => void) => Promise<string>;
   clearToAddrs: () => void;
@@ -268,6 +269,7 @@ type ConfirmModalProps = {
 
 const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = ({
   sendPageState,
+  totalBalance,
   info,
   sendTransaction,
   clearToAddrs,
@@ -280,6 +282,28 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
   const defaultFee = RPC.getDefaultFee();
   const sendingTotal = sendPageState.toaddrs.reduce((s, t) => s + t.amount, 0.0) + defaultFee;
   const { bigPart, smallPart } = Utils.splitZecAmountIntoBigSmall(sendingTotal);
+
+  // Determine the tx privacy level
+  let privacyLevel = "";
+  // 1. If we're sending to a t-address, it is "transparent"
+  const isToTransparent = sendPageState.toaddrs.map((to) => Utils.isTransparent(to.to)).reduce((p, c) => p || c, false);
+  if (isToTransparent) {
+    privacyLevel = "Transparent";
+  } else {
+    // 2. If we're sending to sapling or orchard, and don't have enough funds in the pool, it is "AmountsRevealed"
+    const toSapling = sendPageState.toaddrs
+      .map((to) => (Utils.isSapling(to.to) ? to.amount : 0))
+      .reduce((s, c) => s + c, 0);
+    const toOrchard = sendPageState.toaddrs
+      .map((to) => (Utils.isUnified(to.to) ? to.amount : 0))
+      .reduce((s, c) => s + c, 0);
+    if (toSapling > totalBalance.spendableZ || toOrchard > totalBalance.uabalance) {
+      privacyLevel = "AmountsRevealed";
+    } else {
+      // Else, it is a shielded transaction
+      privacyLevel = "Shielded";
+    }
+  }
 
   const sendButton = () => {
     // First, close the confirm modal.
@@ -367,6 +391,19 @@ const ConfirmModalInternal: React.FC<RouteComponentProps & ConfirmModalProps> = 
             ))}
           </div>
           <ConfirmModalToAddr toaddr={{ to: "Fee", amount: defaultFee, memo: "" }} info={info} />
+
+          <div className={cstyles.well}>
+            <div className={[cstyles.flexspacebetween, cstyles.margintoplarge].join(" ")}>
+              <div className={[styles.confirmModalAddress].join(" ")}>Privacy Level</div>
+              <div className={[cstyles.verticalflex, cstyles.right].join(" ")}>
+                <div className={cstyles.large}>
+                  <div>
+                    <span>{privacyLevel}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </ScrollPane>
 
         <div className={cstyles.buttoncontainer}>
@@ -640,6 +677,7 @@ export default class Send extends PureComponent<Props, SendState> {
 
           <ConfirmModal
             sendPageState={sendPageState}
+            totalBalance={totalBalance}
             info={info}
             sendTransaction={sendTransaction}
             openErrorModal={openErrorModal}
