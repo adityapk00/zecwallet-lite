@@ -163,6 +163,7 @@ export class Info {
   currencyName: string;
   solps: number;
   zecPrice: number;
+  zcashdVersion: string;
   encrypted: boolean;
   locked: boolean;
   walletHeight: number;
@@ -172,6 +173,7 @@ export class Info {
     this.latestBlock = 0;
     this.connections = 0;
     this.version = "";
+    this.zcashdVersion = "";
     this.verificationProgress = 0;
     this.currencyName = "";
     this.solps = 0;

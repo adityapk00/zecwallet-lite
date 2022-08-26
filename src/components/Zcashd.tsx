@@ -62,10 +62,11 @@ export default class Zcashd extends Component<Props> {
               <div className={styles.detailcontainer}>
                 <div className={styles.detaillines}>
                   <DetailLine label="Version" value={info.version} />
+                  <DetailLine label="Node" value={info.zcashdVersion} />
                   <DetailLine label="Lightwallet Server" value={url} />
                   <DetailLine label="Network" value={info.testnet ? "Testnet" : "Mainnet"} />
                   <DetailLine label="Block Height" value={height} />
-                  <DetailLine label="ZEC Price" value={`USD ${info.zecPrice}`} />
+                  <DetailLine label="ZEC Price" value={`USD ${info.zecPrice.toFixed(2)}`} />
                 </div>
               </div>
 
