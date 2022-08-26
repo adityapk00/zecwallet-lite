@@ -1,7 +1,7 @@
 {
   "name": "zecwallet-lite",
   "productName": "Zecwallet Lite",
-  "version": "1.8.6",
+  "version": "1.8.7",
   "private": true,
   "description": "Zecwallet Lite",
   "license": "MIT",
@@ -40,6 +40,7 @@
     "electron-build-env": "^0.2.0",
     "electron-is-dev": "^1.2.0",
     "electron-notarize": "^1.2.1",
+    "electron-settings": "^4.0.2",
     "eslint": "^7.32.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.10.0",

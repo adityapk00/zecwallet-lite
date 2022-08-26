@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, shell, ipcMain } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
+const settings = require("electron-settings");
 
 class MenuBuilder {
   mainWindow;
@@ -430,6 +431,14 @@ function createWindow() {
   let waitingForClose = false;
   let proceedToClose = false;
 
+  ipcMain.handle("loadSettings", async () => {
+    return await settings.get("all");
+  });
+
+  ipcMain.handle("saveSettings", async (event, kv) => {
+    return await settings.set(`all.${kv.key}`, kv.value);
+  });
+
   mainWindow.on("close", (event) => {
     // If we are clear to close, then return and allow everything to close
     if (proceedToClose) {
@@ -452,7 +461,6 @@ function createWindow() {
       app.quit();
     });
 
-    // $FlowFixMe
     mainWindow.webContents.send("appquitting");
 
     // Failsafe, timeout after 5 seconds

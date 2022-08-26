@@ -1,8 +1,9 @@
 // @flow
 import Modal from "react-modal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import cstyles from "./Common.module.css";
 import Utils from "../utils/utils";
+const { ipcRenderer } = window.require("electron");
 
 type ModalProps = {
   modalIsOpen: boolean;
@@ -11,12 +12,16 @@ type ModalProps = {
 };
 
 export default function ServerSelectModal({ modalIsOpen, closeModal, openErrorModal }: ModalProps) {
-  //const store = new Store<Record<string, string>>();
-  //const currentServer = store.get('lightd/serveruri', '');
-  const currentServer = "";
-
   const [selected, setSelected] = useState("");
-  const [custom, setCustom] = useState(currentServer);
+  const [custom, setCustom] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const settings = await ipcRenderer.invoke("loadSettings");
+      const server = settings?.lwd?.serveruri || "";
+      setCustom(server);
+    })();
+  }, []);
 
   const switchServer = () => {
     let serveruri = selected;
@@ -24,7 +29,7 @@ export default function ServerSelectModal({ modalIsOpen, closeModal, openErrorMo
       serveruri = custom;
     }
 
-    //store.set('lightd/serveruri', serveruri);
+    ipcRenderer.invoke("saveSettings", { key: "lwd.serveruri", value: serveruri });
 
     closeModal();
 
@@ -35,8 +40,8 @@ export default function ServerSelectModal({ modalIsOpen, closeModal, openErrorMo
 
   const servers = [
     { name: "Zecwallet (Default)", uri: Utils.V3_LIGHTWALLETD },
-    { name: "Zecwallet (Backup)", uri: Utils.V2_LIGHTWALLETD },
-    { name: "ZcashFR (Community)", uri: "https://lightd-main.zcashfr.io:443" },
+    { name: "Zecwallet Zebra (Experimental)", uri: "https://zebra-lwd.zecwallet.co:9067" },
+    { name: "Zcash Community", uri: "https://mainnet.lightwalletd.com:9067" },
   ];
 
   return (
