@@ -1,5 +1,5 @@
 /* eslint-disable no-else-return */
-// @flow
+
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 import React, { PureComponent, ReactElement, useState } from "react";

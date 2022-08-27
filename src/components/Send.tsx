@@ -6,7 +6,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-classes-per-file */
-// @flow
+
 import React, { PureComponent } from "react";
 import Modal from "react-modal";
 import TextareaAutosize from "react-textarea-autosize";

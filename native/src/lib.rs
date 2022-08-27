@@ -53,12 +53,13 @@ fn litelib_initialize_new(mut cx: FunctionContext) -> JsResult<JsString> {
 
     let resp = || {
         let server = LightClientConfig::<MainNetwork>::get_server_or_default(Some(server_uri));
-        let (config, latest_block_height) = match LightClientConfig::create(MainNetwork, server) {
-            Ok((c, h)) => (c, h),
-            Err(e) => {
-                return format!("Error: {}", e);
-            }
-        };
+        let (config, latest_block_height) =
+            match LightClientConfig::create(MainNetwork, server, None) {
+                Ok((c, h)) => (c, h),
+                Err(e) => {
+                    return format!("Error: {}", e);
+                }
+            };
 
         let lightclient = match LightClient::new(&config, latest_block_height.saturating_sub(100)) {
             Ok(l) => l,
@@ -98,12 +99,13 @@ fn litelib_initialize_new_from_phrase(mut cx: FunctionContext) -> JsResult<JsStr
 
     let resp = || {
         let server = LightClientConfig::<MainNetwork>::get_server_or_default(Some(server_uri));
-        let (config, _latest_block_height) = match LightClientConfig::create(MainNetwork, server) {
-            Ok((c, h)) => (c, h),
-            Err(e) => {
-                return format!("Error: {}", e);
-            }
-        };
+        let (config, _latest_block_height) =
+            match LightClientConfig::create(MainNetwork, server, None) {
+                Ok((c, h)) => (c, h),
+                Err(e) => {
+                    return format!("Error: {}", e);
+                }
+            };
 
         let lightclient =
             match LightClient::new_from_phrase(seed, &config, birthday as u64, overwrite) {
@@ -133,12 +135,13 @@ fn litelib_initialize_existing(mut cx: FunctionContext) -> JsResult<JsString> {
 
     let resp = || {
         let server = LightClientConfig::<MainNetwork>::get_server_or_default(Some(server_uri));
-        let (config, _latest_block_height) = match LightClientConfig::create(MainNetwork, server) {
-            Ok((c, h)) => (c, h),
-            Err(e) => {
-                return format!("Error: {}", e);
-            }
-        };
+        let (config, _latest_block_height) =
+            match LightClientConfig::create(MainNetwork, server, None) {
+                Ok((c, h)) => (c, h),
+                Err(e) => {
+                    return format!("Error: {}", e);
+                }
+            };
 
         let lightclient = match LightClient::read_from_disk(&config) {
             Ok(l) => l,
