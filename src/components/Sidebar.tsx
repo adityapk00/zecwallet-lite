@@ -12,10 +12,11 @@ import styles from "./Sidebar.module.css";
 import cstyles from "./Common.module.css";
 import routes from "../constants/routes.json";
 import Logo from "../assets/img/logobig.png";
-import { AddressDetail, Info, Transaction } from "./AppState";
+import { AddressDetail, Info, Transaction, WalletSettings } from "./AppState";
 import Utils from "../utils/utils";
 import RPC from "../rpc";
 import { parseZcashURI, ZcashURITarget } from "../utils/uris";
+import WalletSettingsModal from "./WalletSettingsModal";
 
 const { ipcRenderer, remote } = window.require("electron");
 const fs = window.require("fs");
@@ -240,6 +241,8 @@ type Props = {
   lockWallet: () => void;
   encryptWallet: (p: string) => void;
   decryptWallet: (p: string) => Promise<boolean>;
+  walletSettings: WalletSettings;
+  setWalletSettings: (walletSettings: WalletSettings) => void;
 };
 
 type State = {
@@ -249,6 +252,7 @@ type State = {
   privKeyInputValue: string | null;
   exportPrivKeysModalIsOpen: boolean;
   exportedPrivKeys: string[];
+  walletSettingsModalIsOpen: boolean;
 };
 
 class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
@@ -261,6 +265,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       exportPrivKeysModalIsOpen: false,
       exportedPrivKeys: [],
       privKeyInputValue: null,
+      walletSettingsModalIsOpen: false,
     };
 
     this.setupMenuHandlers();
@@ -276,7 +281,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       openErrorModal(
         "Zecwallet Lite",
         <div className={cstyles.verticalflex}>
-          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.8.7</div>
+          <div className={cstyles.margintoplarge}>Zecwallet Lite v1.8.8</div>
           <div className={cstyles.margintoplarge}>Built with Electron. Copyright (c) 2018-2022, Aditya Kulkarni.</div>
           <div className={cstyles.margintoplarge}>
             The MIT License (MIT) Copyright (c) 2018-2022 Zecwallet
@@ -504,6 +509,11 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       history.push(routes.ZCASHD);
     });
 
+    // Wallet Settings
+    ipcRenderer.on("walletSettings", () => {
+      this.setState({ walletSettingsModalIsOpen: true });
+    });
+
     // Connect mobile app
     ipcRenderer.on("connectmobile", () => {
       history.push(routes.CONNECTMOBILE);
@@ -614,6 +624,16 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
     this.setState({ uriModalIsOpen: false });
   };
 
+  closeWalletSettingsModal = () => {
+    this.setState({ walletSettingsModalIsOpen: false });
+  };
+
+  setWalletSpamFilterThreshold = async (threshold: number) => {
+    // Call the RPC to set the threshold as an option
+    await RPC.setWalletSettingOption("spam_filter_threshold", threshold.toString());
+    // console.log("Setting spam filter threshold to", threshold);
+  };
+
   payURI = (uri: string) => {
     console.log(`Paying ${uri}`);
     const { openErrorModal, setSendTo, history } = this.props;
@@ -644,7 +664,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
   };
 
   render() {
-    const { location, info } = this.props;
+    const { location, info, walletSettings } = this.props;
     const {
       uriModalIsOpen,
       uriModalInputValue,
@@ -652,6 +672,7 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
       //privKeyInputValue,
       exportPrivKeysModalIsOpen,
       exportedPrivKeys,
+      walletSettingsModalIsOpen,
     } = this.state;
 
     let state = "DISCONNECTED";
@@ -692,6 +713,13 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
           modalIsOpen={exportPrivKeysModalIsOpen}
           exportedPrivKeys={exportedPrivKeys}
           closeModal={this.closeExportPrivKeysModal}
+        />
+
+        <WalletSettingsModal
+          modalIsOpen={walletSettingsModalIsOpen}
+          closeModal={this.closeWalletSettingsModal}
+          walletSettings={walletSettings}
+          setWalletSpamFilterThreshold={this.setWalletSpamFilterThreshold}
         />
 
         <div className={[cstyles.center, styles.sidebarlogobg].join(" ")}>

@@ -51,8 +51,8 @@ export default function ServerSelectModal({ modalIsOpen, closeModal, openErrorMo
       overlayClassName={cstyles.modalOverlay}
     >
       <div className={[cstyles.verticalflex].join(" ")}>
-        <div className={cstyles.marginbottomlarge} style={{ textAlign: "center" }}>
-          Select LightwalletD server
+        <div className={cstyles.marginbottomlarge} style={{ textAlign: "left", marginLeft: 10 }}>
+          Switch LightwalletD server
         </div>
 
         <div className={[cstyles.well, cstyles.verticalflex].join(" ")}>

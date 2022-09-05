@@ -27,6 +27,7 @@ import AppState, {
   SendProgress,
   AddressType,
   AddressDetail,
+  WalletSettings,
 } from "./components/AppState";
 import RPC from "./rpc";
 import Utils from "./utils/utils";
@@ -62,7 +63,8 @@ export default class RouteApp extends React.Component<Props, AppState> {
       this.setTransactionList,
       this.setAllAddresses,
       this.setInfo,
-      this.setZecPrice
+      this.setZecPrice,
+      this.setWalletSettings
     );
   }
 
@@ -198,6 +200,10 @@ export default class RouteApp extends React.Component<Props, AppState> {
 
   setTotalBalance = (totalBalance: TotalBalance) => {
     this.setState({ totalBalance });
+  };
+
+  setWalletSettings = (walletSettings: WalletSettings) => {
+    this.setState({ walletSettings });
   };
 
   setAddressesWithBalances = (addressesWithBalance: AddressBalance[]) => {
@@ -456,6 +462,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
       errorModalData,
       serverSelectState,
       passwordState,
+      walletSettings,
     } = this.state;
 
     const standardProps = {
@@ -506,6 +513,8 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 decryptWallet={this.decryptWallet}
                 openPassword={this.openPassword}
                 clearTimers={this.clearTimers}
+                walletSettings={walletSettings}
+                setWalletSettings={this.setWalletSettings}
                 {...standardProps}
               />
             </div>

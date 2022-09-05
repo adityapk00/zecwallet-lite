@@ -9,6 +9,7 @@ import {
   SendProgress,
   AddressType,
   AddressDetail,
+  WalletSettings,
 } from "./components/AppState";
 import { SendManyJson } from "./components/Send";
 
@@ -23,6 +24,7 @@ export default class RPC {
   fnSetTransactionsList: (t: Transaction[]) => void;
   fnSetAllAddresses: (a: AddressDetail[]) => void;
   fnSetZecPrice: (p?: number) => void;
+  fnSetWalletSettings: (settings: WalletSettings) => void;
   refreshTimerID?: NodeJS.Timeout;
   updateTimerId?: NodeJS.Timeout;
 
@@ -37,7 +39,8 @@ export default class RPC {
     fnSetTransactionsList: (t: Transaction[]) => void,
     fnSetAllAddresses: (a: AddressDetail[]) => void,
     fnSetInfo: (info: Info) => void,
-    fnSetZecPrice: (p?: number) => void
+    fnSetZecPrice: (p?: number) => void,
+    fnSetWalletSettings: (settings: WalletSettings) => void
   ) {
     this.fnSetTotalBalance = fnSetTotalBalance;
     this.fnSetAddressesWithBalance = fnSetAddressesWithBalance;
@@ -45,6 +48,7 @@ export default class RPC {
     this.fnSetAllAddresses = fnSetAllAddresses;
     this.fnSetInfo = fnSetInfo;
     this.fnSetZecPrice = fnSetZecPrice;
+    this.fnSetWalletSettings = fnSetWalletSettings;
     this.lastBlockHeight = 0;
 
     this.refreshTimerID = undefined;
@@ -135,6 +139,7 @@ export default class RPC {
       this.fetchTotalBalance();
       this.fetchTandZTransactions(latestBlockHeight);
       this.getZecPrice();
+      this.fetchWalletSettings();
 
       //console.log(`Finished update data at ${latestBlockHeight}`);
     }
@@ -226,6 +231,38 @@ export default class RPC {
     const address = native.litelib_execute("import", JSON.stringify(args));
 
     return address;
+  }
+
+  async fetchWalletSettings() {
+    const download_memos_str = native.litelib_execute("getoption", "download_memos");
+    const download_memos = JSON.parse(download_memos_str).download_memos;
+
+    let spam_filter_threshold = "0";
+    try {
+      const spam_filter_str = native.litelib_execute("getoption", "spam_filter_threshold");
+      spam_filter_threshold = JSON.parse(spam_filter_str).spam_filter_threshold;
+      // console.log(`Spam filter threshold: ${spam_filter_threshold}`);
+
+      // If it is -1, i.e., it was not set, then set it to 50
+      if (spam_filter_threshold === "-1") {
+        await RPC.setWalletSettingOption("spam_filter_threshold", "50");
+      }
+    } catch (e) {
+      console.log(`Error getting spam filter threshold: ${e}`);
+    }
+
+    const wallet_settings = new WalletSettings();
+    wallet_settings.download_memos = download_memos;
+    wallet_settings.spam_filter_threshold = parseInt(spam_filter_threshold);
+
+    this.fnSetWalletSettings(wallet_settings);
+  }
+
+  static async setWalletSettingOption(name: string, value: string): Promise<string> {
+    const r = native.litelib_execute("setoption", `${name}=${value}`);
+
+    RPC.doSave();
+    return r;
   }
 
   async fetchInfo(): Promise<number> {
