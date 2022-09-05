@@ -228,6 +228,16 @@ export class SendProgress {
   }
 }
 
+export class WalletSettings {
+  download_memos: string;
+  spam_filter_threshold: number;
+
+  constructor() {
+    this.download_memos = "wallet";
+    this.spam_filter_threshold = 0;
+  }
+}
+
 export class AddressDetail {
   address: string;
   type: AddressType;
@@ -279,6 +289,8 @@ export default class AppState {
   // getinfo and getblockchaininfo result
   info: Info;
 
+  walletSettings: WalletSettings;
+
   // Error modal data
   errorModalData: ErrorModalData;
 
@@ -311,5 +323,6 @@ export default class AppState {
     this.rescanning = false;
     this.prevSyncId = -1;
     this.passwordState = new PasswordState();
+    this.walletSettings = new WalletSettings();
   }
 }

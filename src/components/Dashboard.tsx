@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-plusplus */
 /* eslint-disable react/prop-types */
-// @flow
+
 import React, { Component } from "react";
 import {
   AccordionItemButton,
