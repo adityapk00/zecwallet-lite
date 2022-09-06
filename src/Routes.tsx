@@ -206,6 +206,10 @@ export default class RouteApp extends React.Component<Props, AppState> {
     this.setState({ walletSettings });
   };
 
+  updateWalletSettings = async () => {
+    await this.rpc.fetchWalletSettings();
+  };
+
   setAddressesWithBalances = (addressesWithBalance: AddressBalance[]) => {
     this.setState({ addressesWithBalance });
 
@@ -514,7 +518,7 @@ export default class RouteApp extends React.Component<Props, AppState> {
                 openPassword={this.openPassword}
                 clearTimers={this.clearTimers}
                 walletSettings={walletSettings}
-                setWalletSettings={this.setWalletSettings}
+                updateWalletSettings={this.updateWalletSettings}
                 {...standardProps}
               />
             </div>
