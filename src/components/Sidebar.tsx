@@ -242,7 +242,7 @@ type Props = {
   encryptWallet: (p: string) => void;
   decryptWallet: (p: string) => Promise<boolean>;
   walletSettings: WalletSettings;
-  setWalletSettings: (walletSettings: WalletSettings) => void;
+  updateWalletSettings: () => Promise<void>;
 };
 
 type State = {
@@ -631,7 +631,9 @@ class Sidebar extends PureComponent<Props & RouteComponentProps, State> {
   setWalletSpamFilterThreshold = async (threshold: number) => {
     // Call the RPC to set the threshold as an option
     await RPC.setWalletSettingOption("spam_filter_threshold", threshold.toString());
-    // console.log("Setting spam filter threshold to", threshold);
+
+    // Refresh the wallet settings
+    await this.props.updateWalletSettings();
   };
 
   payURI = (uri: string) => {
